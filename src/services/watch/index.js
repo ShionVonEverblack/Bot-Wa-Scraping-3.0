@@ -208,4 +208,17 @@ async function restoreWatches(client) {
   return count;
 }
 
-module.exports = { createWatch, removeWatch, listWatches, restoreWatches, parseCronExpression };
+/**
+ * Stop all active watch cron jobs (for graceful shutdown).
+ */
+function stopAll() {
+  for (const [id, entry] of activeWatches) {
+    entry.task.stop();
+    log.debug(`Watch stopped: ${id}`);
+  }
+  const count = activeWatches.size;
+  activeWatches.clear();
+  if (count > 0) log.info(`All ${count} watches stopped`);
+}
+
+module.exports = { createWatch, removeWatch, listWatches, restoreWatches, parseCronExpression, stopAll };

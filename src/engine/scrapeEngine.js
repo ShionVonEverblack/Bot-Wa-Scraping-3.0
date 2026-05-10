@@ -8,7 +8,6 @@
 
 const providerRouter = require('./providerRouter');
 const cache = require('../services/cache');
-const circuitBreaker = require('../services/resilience/circuitBreaker');
 const config = require('../config');
 const { createLogger } = require('../services/monitor/logger');
 
@@ -44,27 +43,10 @@ async function scrape(params) {
     }
   }
 
-  // 2. Circuit breaker check (if specific provider requested)
-  if (provider && circuitBreaker.isOpen(provider)) {
-    log.warn(`Circuit open for ${provider}, falling back to type routing`);
-    // Fall through to type-based routing
-  }
-
-  // 3. Route to provider(s)
-  let result;
-  try {
-    result = await providerRouter.route({
-      type, provider, keyword, limit, page, cursor, safeMode, signal,
-    });
-
-    // Record success for circuit breaker
-    if (result.providerUsed && result.providerUsed !== 'none') {
-      circuitBreaker.recordSuccess(result.providerUsed);
-    }
-  } catch (err) {
-    if (provider) circuitBreaker.recordFailure(provider);
-    throw err;
-  }
+  // 2. Route to provider(s) — circuit breaker is handled inside providerRouter
+  const result = await providerRouter.route({
+    type, provider, keyword, limit, page, cursor, safeMode, signal,
+  });
 
   // 4. Normalize items
   result.items = normalizeItems(result.items, type);
@@ -78,10 +60,10 @@ async function scrape(params) {
   // 7. Limit final results
   result.items = result.items.slice(0, limit);
 
-  // 8. Cache result
+  // 6. Cache result
   if (useCache && result.items.length > 0) {
     const cacheKey = cache.makeKey('scrape', { type, keyword, limit, page, provider });
-    cache.set(cacheKey);
+    cache.set(cacheKey, result);
   }
 
   log.info(`Scrape pipeline completed: ${result.items.length} items (${result.providerUsed})`);

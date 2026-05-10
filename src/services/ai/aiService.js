@@ -94,12 +94,14 @@ async function generate({ messages, model, temperature = 0.7, maxTokens = 2048, 
  * @param {Object} [options] - Additional options
  * @param {string} [options.aiProvider] - Provider override
  * @param {string} [options.systemPrompt] - Custom system prompt
+ * @param {Array<{role:string,content:string}>} [options.history] - Previous messages for multi-turn
  * @param {number} [options.maxTokens=2048] - Max tokens
  * @returns {Promise<string>} AI response text
  */
 async function chat(prompt, options = {}) {
   const messages = [
     { role: 'system', content: options.systemPrompt || getSystemPrompt() },
+    ...(options.history || []),
     { role: 'user', content: prompt },
   ];
 

@@ -98,18 +98,35 @@ async function main() {
 }
 
 /**
- * Graceful shutdown — cleanup client before exiting.
+ * Graceful shutdown — cleanup all resources before exiting.
+ * Order: watches → job queue → WhatsApp client (browser).
  * @param {string} signal - Signal name for logging
  */
 async function gracefulShutdown(signal) {
   log.info(`Received ${signal} — shutting down gracefully...`);
+
+  // 1. Stop watch cron jobs
+  try {
+    const watchService = require('./src/services/watch');
+    watchService.stopAll();
+  } catch { /* not loaded */ }
+
+  // 2. Drain job queue (wait for running jobs)
+  try {
+    const jobQueue = require('./src/jobs/jobQueue');
+    await jobQueue.shutdown();
+  } catch { /* not loaded */ }
+
+  // 3. Shutdown WhatsApp client (closes browser)
   if (manager) {
     try {
       await manager.shutdown();
     } catch (err) {
-      log.error('Shutdown error', { error: err.message });
+      log.error('Client shutdown error', { error: err.message });
     }
   }
+
+  log.info('Shutdown complete');
   process.exit(0);
 }
 

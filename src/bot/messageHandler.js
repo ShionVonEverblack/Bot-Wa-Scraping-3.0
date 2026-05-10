@@ -14,6 +14,7 @@ const { classifyIntent, INTENTS } = require('./nlp/intentClassifier');
 const { extractEntities, extractIdentifier } = require('./nlp/entityExtractor');
 const contextMemory = require('./nlp/contextMemory');
 const { sanitizeInput, checkRateLimit } = require('../services/security');
+const { friendlyError } = require('../utils/errorMessages');
 
 const log = createLogger('bot:handler');
 
@@ -129,7 +130,7 @@ async function routeCommand(msg, client) {
     }
   } catch (err) {
     log.error(`Command handler error: !${command}`, { error: err.message });
-    await msg.reply(`❌ Error menjalankan command: ${err.message}`);
+    await msg.reply(`❌ Error menjalankan command: ${friendlyError(err)}`);
     return true;
   }
 
@@ -200,7 +201,7 @@ async function handleNlpIntent(msg, client, userId, text) {
         await msg.reply(`${typeEmoji[type] || '🔍'} Mencari ${type} "${keyword}"... (Job: ${job.jobId})`);
       } catch (err) {
         log.error('Auto-scrape failed', { error: err.message });
-        await msg.reply(`❌ Gagal membuat job: ${err.message}`);
+        await msg.reply(`❌ Gagal membuat job: ${friendlyError(err)}`);
       }
       break;
     }
@@ -228,7 +229,7 @@ async function handleNlpIntent(msg, client, userId, text) {
 
         await msg.reply(`📄 Downloading paper... (Job: ${job.jobId})`);
       } catch (err) {
-        await msg.reply(`❌ Download paper gagal: ${err.message}`);
+        await msg.reply(`❌ Download paper gagal: ${friendlyError(err)}`);
       }
       break;
     }
@@ -237,7 +238,12 @@ async function handleNlpIntent(msg, client, userId, text) {
       try {
         const aiService = require('../services/ai/aiService');
         await msg.reply('🤔 Sedang berpikir...');
-        const response = await aiService.chat(text);
+
+        // Build multi-turn history from context (max 6 messages)
+        const history = (userContext?.messages || []).slice(-6)
+          .map(m => ({ role: m.role, content: m.content }));
+
+        const response = await aiService.chat(text, { history });
         await msg.reply(response);
 
         contextMemory.store(userId, {
@@ -298,8 +304,17 @@ async function handleNlpIntent(msg, client, userId, text) {
       // Fallback to AI chat in DM or when mentioned in group
       try {
         const aiService = require('../services/ai/aiService');
-        const response = await aiService.chat(text);
+
+        // Include conversation history for multi-turn context
+        const history = (userContext?.messages || []).slice(-6)
+          .map(m => ({ role: m.role, content: m.content }));
+
+        const response = await aiService.chat(text, { history });
         await msg.reply(response);
+
+        contextMemory.store(userId, {
+          message: { role: 'assistant', content: truncate(response, 500) },
+        });
       } catch {
         await msg.reply(`Maaf, saya tidak mengerti. 🤔\nKetik \`!help\` untuk bantuan atau \`!menu\` untuk fitur lengkap.`);
       }
