@@ -112,17 +112,6 @@ function createClientManager() {
     return client;
   }
 
-  // Graceful shutdown on process signals
-  process.on('SIGINT', async () => {
-    await shutdown();
-    process.exit(0);
-  });
-
-  process.on('SIGTERM', async () => {
-    await shutdown();
-    process.exit(0);
-  });
-
   return { start, restart, getClient, shutdown };
 }
 

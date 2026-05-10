@@ -13,8 +13,8 @@ const log = createLogger('resilience:cb');
 /** @type {Map<string, { failures: number, state: string, lastFailure: number, nextRetry: number }>} */
 const circuits = new Map();
 
-const FAILURE_THRESHOLD = config.resilience?.cbFailureThreshold || 5;
-const RESET_TIMEOUT = config.resilience?.cbResetTimeoutMs || 60000;
+const FAILURE_THRESHOLD = config.cache?.cbFailureThreshold || 5;
+const RESET_TIMEOUT = config.cache?.cbResetTimeoutMs || 60000;
 
 const STATES = { CLOSED: 'CLOSED', OPEN: 'OPEN', HALF_OPEN: 'HALF_OPEN' };
 

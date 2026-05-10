@@ -59,6 +59,8 @@ async function healthCheck() {
  * Main bootstrap function.
  * @returns {Promise<void>}
  */
+let manager = null;
+
 async function main() {
   try {
     log.info('═══════════════════════════════════════════');
@@ -75,14 +77,12 @@ async function main() {
     await ensureDirectories();
 
     // 3. Create client manager and start bot
-    // NOTE: clientManager will be implemented in Phase 2 (Bot Core)
-    //       For now, log readiness.
     log.info('Foundation loaded — ready to initialize WhatsApp client');
 
     // Lazy-load to avoid circular deps and allow graceful error if module missing
     try {
       const { createClientManager } = require('./src/bot/clientManager');
-      const manager = createClientManager();
+      manager = createClientManager();
       await manager.start();
     } catch (err) {
       if (err.code === 'MODULE_NOT_FOUND') {
@@ -97,16 +97,25 @@ async function main() {
   }
 }
 
-// Graceful shutdown handlers
-process.on('SIGINT', () => {
-  log.info('Received SIGINT — shutting down gracefully...');
+/**
+ * Graceful shutdown — cleanup client before exiting.
+ * @param {string} signal - Signal name for logging
+ */
+async function gracefulShutdown(signal) {
+  log.info(`Received ${signal} — shutting down gracefully...`);
+  if (manager) {
+    try {
+      await manager.shutdown();
+    } catch (err) {
+      log.error('Shutdown error', { error: err.message });
+    }
+  }
   process.exit(0);
-});
+}
 
-process.on('SIGTERM', () => {
-  log.info('Received SIGTERM — shutting down gracefully...');
-  process.exit(0);
-});
+// Centralized shutdown handlers (single source of truth)
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 
 process.on('uncaughtException', (err) => {
   log.fatal('Uncaught exception', { error: err.message, stack: err.stack });

@@ -13,6 +13,7 @@ const { startsWithCommand, splitArgs, isWizardTrigger, stripMentions, truncate }
 const { classifyIntent, INTENTS } = require('./nlp/intentClassifier');
 const { extractEntities, extractIdentifier } = require('./nlp/entityExtractor');
 const contextMemory = require('./nlp/contextMemory');
+const { sanitizeInput, checkRateLimit } = require('../services/security');
 
 const log = createLogger('bot:handler');
 
@@ -351,10 +352,18 @@ async function handleMessage(msg, client) {
       if (!mentioned && !isCommand) return;
     }
 
-    // Clean text (remove mentions)
-    const cleanText = stripMentions(body);
+    // Clean text (remove mentions + sanitize)
+    const cleanText = sanitizeInput(stripMentions(body));
 
-    // 4. Cooldown check (skip for commands that are status checks)
+    // 4a. Rate limit check (30 msg/min window)
+    const rateCheck = checkRateLimit(userId);
+    if (!rateCheck.allowed) {
+      log.warn(`Rate limited: ${userId}`);
+      await msg.reply('⚠️ Kamu mengirim pesan terlalu cepat. Tunggu sebentar ya...');
+      return;
+    }
+
+    // 4b. Cooldown check (skip for commands that are status checks)
     if (!startsWithCommand(cleanText)) {
       const cooldown = checkCooldown(userId);
       if (!cooldown.allowed) {

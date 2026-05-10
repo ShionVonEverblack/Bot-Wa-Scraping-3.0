@@ -7,6 +7,7 @@
 
 const providerRegistry = require('./providers');
 const { createLogger } = require('../services/monitor/logger');
+const circuitBreaker = require('../services/resilience/circuitBreaker');
 
 const log = createLogger('engine:router');
 
@@ -64,18 +65,26 @@ async function route({ type, provider, keyword, limit = 10, page = 1, cursor, sa
       return { items: [], meta: { hasMore: false, message: 'Cancelled' }, providerUsed: 'none' };
     }
 
+    // Skip providers with open circuit
+    if (circuitBreaker.isOpen(prov.id)) {
+      log.debug(`Skipping ${prov.id} — circuit open`);
+      continue;
+    }
+
     try {
       log.debug(`Trying provider: ${prov.id} (priority=${prov.priority})`);
       const result = await prov.scrape({ keyword, limit, page, cursor, safeMode, signal });
 
       if (result.items && result.items.length > 0) {
         log.info(`Provider ${prov.id} returned ${result.items.length} items`);
+        circuitBreaker.recordSuccess(prov.id);
         return { ...result, providerUsed: prov.id };
       }
 
       log.debug(`Provider ${prov.id} returned empty results, trying next`);
     } catch (err) {
       log.warn(`Provider ${prov.id} failed: ${err.message}`);
+      circuitBreaker.recordFailure(prov.id);
       errors.push({ provider: prov.id, error: err.message });
     }
   }
@@ -111,11 +120,18 @@ async function routeMulti({ type, keyword, limit = 10, page = 1, safeMode = true
   const perProviderLimit = Math.ceil(limit / providers.length);
 
   const promises = providers.map(async (prov) => {
+    if (circuitBreaker.isOpen(prov.id)) {
+      log.debug(`Multi-route: skipping ${prov.id} — circuit open`);
+      return { providerId: prov.id, items: [], meta: {} };
+    }
+
     try {
       const result = await prov.scrape({ keyword, limit: perProviderLimit, page, safeMode, signal });
+      circuitBreaker.recordSuccess(prov.id);
       return { providerId: prov.id, ...result };
     } catch (err) {
       log.warn(`Multi-route: ${prov.id} failed`, { error: err.message });
+      circuitBreaker.recordFailure(prov.id);
       return { providerId: prov.id, items: [], meta: {} };
     }
   });

@@ -51,6 +51,7 @@ async function deepScrape(url, options = {}) {
   } = options;
 
   let page = null;
+  let browser = null;
 
   try {
     const puppeteer = require('puppeteer-core');
@@ -74,7 +75,7 @@ async function deepScrape(url, options = {}) {
       throw new Error('Brave browser not found');
     }
 
-    const browser = await puppeteer.launch({
+    browser = await puppeteer.launch({
       executablePath,
       headless: config.puppeteer.headless,
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-blink-features=AutomationControlled'],
@@ -262,6 +263,11 @@ async function deepScrape(url, options = {}) {
         });
       } catch { /* ignore */ }
       try { await page.close(); } catch { /* ignore */ }
+    }
+
+    // Close browser to prevent memory leak
+    if (browser) {
+      try { await browser.close(); } catch { /* ignore */ }
     }
 
     throw err;
