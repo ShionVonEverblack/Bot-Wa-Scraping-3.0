@@ -1,13 +1,13 @@
 'use strict';
 
 /**
- * @fileoverview Status command handler.
+ * @fileoverview Status command handler — uses rich job card template.
  * Command: !status <jobId>
  * @module commands/handlers/status
  */
 
 const { createLogger } = require('../../services/monitor/logger');
-const { formatDuration } = require('../../utils/time');
+const { formatJobCard } = require('../../bot/templates/jobCard');
 
 const log = createLogger('cmd:status');
 
@@ -33,25 +33,23 @@ async function handle(msg, args) {
       return;
     }
 
-    const statusEmoji = {
-      PENDING: '⏳', RUNNING: '🔄', COMPLETED: '✅', FAILED: '❌', CANCELLED: '🚫',
-    };
+    // Use the rich job card template
+    let response = formatJobCard(job);
 
-    const elapsed = job.startedAt
-      ? formatDuration(new Date(job.completedAt || Date.now()) - new Date(job.startedAt))
-      : '-';
+    // Add file delivery info
+    if (job.result?.files && job.result.files.length > 0) {
+      response += `\n📎 Files: ${job.result.files.length} file terkirim`;
+    }
 
-    const response = [
-      `${statusEmoji[job.status] || '❓'} *Job: ${job.jobId}*\n`,
-      `📋 Status: *${job.status}*`,
-      `📝 Keyword: ${job.request?.keyword || '-'}`,
-      `📂 Type: ${job.request?.scrapeType || '-'}`,
-      `⏱️ Durasi: ${elapsed}`,
-      job.progress ? `📊 Progress: ${job.progress.message || job.progress.phase}` : '',
-      job.result?.itemCount ? `📦 Hasil: ${job.result.itemCount} item` : '',
-      job.result?.providerUsed ? `🔧 Provider: ${job.result.providerUsed}` : '',
-      job.error ? `\n❌ Error: ${job.error}` : '',
-    ].filter(Boolean).join('\n');
+    // Add action hints based on status
+    if (job.status === 'COMPLETED' && job.result?.itemCount > 0) {
+      response += `\n\n💡 *Actions:*`;
+      response += `\n\`!send ${jobId} --format excel\` — kirim ulang`;
+      response += `\n\`!compress ${jobId}\` — download ZIP`;
+      response += `\n\`!next ${jobId}\` — halaman berikutnya`;
+    } else if (job.status === 'RUNNING') {
+      response += `\n\n⏳ Job masih berjalan...`;
+    }
 
     await msg.reply(response);
   } catch (err) {
@@ -61,3 +59,4 @@ async function handle(msg, args) {
 }
 
 module.exports = { handle, command: 'status', description: 'Check job status' };
+

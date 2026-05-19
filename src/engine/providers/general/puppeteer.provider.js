@@ -2,140 +2,23 @@
 
 /**
  * @fileoverview Puppeteer-based general scraping provider using Brave browser.
- * Inspired by Scrapling framework — anti-bot bypass, smart waiting, stealth mode.
+ * Uses shared browserPool for efficient singleton browser management.
  * @module engine/providers/general/puppeteer
  */
 
-const path = require('path');
-const fs = require('fs');
 const config = require('../../../config');
 const { createLogger } = require('../../../services/monitor/logger');
 const { sleep } = require('../../../utils/httpClient');
 const { ensureDir } = require('../../../utils/fsUtil');
+const browserPool = require('../../browserPool');
+const path = require('path');
 
 const log = createLogger('provider:puppeteer');
-
-/** Pool of user agents for rotation. */
-const USER_AGENTS = [
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0',
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15',
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0',
-];
-
-/** Pool of viewport sizes. */
-const VIEWPORTS = [
-  { width: 1920, height: 1080 },
-  { width: 1366, height: 768 },
-  { width: 1536, height: 864 },
-  { width: 1440, height: 900 },
-  { width: 1280, height: 720 },
-];
-
-/** Singleton browser instance. */
-let browserInstance = null;
-let activePagesCount = 0;
-
-/**
- * Auto-detect Brave browser executable path.
- * @returns {string|null}
- */
-function detectBravePath() {
-  if (config.puppeteer.braveExecutable) {
-    return config.puppeteer.braveExecutable;
-  }
-
-  const isWindows = process.platform === 'win32';
-  const paths = isWindows
-    ? [
-        'C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe',
-        'C:\\Program Files (x86)\\BraveSoftware\\Brave-Browser\\Application\\brave.exe',
-        `${process.env.LOCALAPPDATA}\\BraveSoftware\\Brave-Browser\\Application\\brave.exe`,
-      ]
-    : [
-        '/usr/bin/brave-browser',
-        '/usr/bin/brave',
-        '/opt/brave.com/brave/brave-browser',
-        '/snap/bin/brave',
-      ];
-
-  for (const p of paths) {
-    try {
-      if (fs.existsSync(p)) return p;
-    } catch { /* ignore */ }
-  }
-
-  log.warn('Brave browser not found — Puppeteer provider will be unavailable');
-  return null;
-}
-
-/**
- * Get or create the singleton browser instance.
- * @returns {Promise<import('puppeteer-core').Browser>}
- */
-async function getBrowser() {
-  if (browserInstance && browserInstance.isConnected()) {
-    return browserInstance;
-  }
-
-  const puppeteer = require('puppeteer-core');
-  const executablePath = detectBravePath();
-
-  if (!executablePath) {
-    throw new Error('Brave browser not found. Set BRAVE_EXECUTABLE in .env');
-  }
-
-  browserInstance = await puppeteer.launch({
-    executablePath,
-    headless: config.puppeteer.headless,
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-blink-features=AutomationControlled',
-      '--disable-infobars',
-      '--window-size=1920,1080',
-    ],
-    defaultViewport: null,
-  });
-
-  browserInstance.on('disconnected', () => {
-    log.warn('Browser disconnected');
-    browserInstance = null;
-    activePagesCount = 0;
-  });
-
-  log.info('Brave browser launched');
-  return browserInstance;
-}
-
-/**
- * Apply stealth settings to a page.
- * @param {import('puppeteer-core').Page} page
- */
-async function applyStealthMode(page) {
-  // Override navigator.webdriver
-  await page.evaluateOnNewDocument(() => {
-    Object.defineProperty(navigator, 'webdriver', { get: () => false });
-    // Override plugins
-    Object.defineProperty(navigator, 'plugins', {
-      get: () => [1, 2, 3, 4, 5],
-    });
-    // Override languages
-    Object.defineProperty(navigator, 'languages', {
-      get: () => ['en-US', 'en'],
-    });
-    // Override chrome runtime
-    window.chrome = { runtime: {} };
-  });
-}
 
 /**
  * Random delay to simulate human-like behavior.
  * @param {number} [min=800] - Minimum delay ms
  * @param {number} [max=2500] - Maximum delay ms
- * @returns {Promise<void>}
  */
 async function humanDelay(min = 800, max = 2500) {
   const delay = Math.floor(Math.random() * (max - min + 1)) + min;
@@ -154,14 +37,12 @@ async function autoScroll(page, maxScrolls = 5) {
     });
     await humanDelay(500, 1500);
 
-    // Check if we've reached the bottom
     const atBottom = await page.evaluate(() => {
       return window.scrollY + window.innerHeight >= document.body.scrollHeight - 100;
     });
     if (atBottom) break;
   }
 
-  // Scroll back to top
   await page.evaluate(() => window.scrollTo(0, 0));
 }
 
@@ -189,6 +70,7 @@ module.exports = {
 
   /**
    * Scrape search results using Puppeteer + Brave browser.
+   * Uses shared browser pool — no per-call browser launch.
    * @param {Object} params
    * @param {string} params.keyword - Search keyword
    * @param {number} [params.limit=10] - Max results
@@ -198,34 +80,13 @@ module.exports = {
    * @returns {Promise<{items:Array, meta:Object}>}
    */
   async scrape({ keyword, limit = 10, page: pageNum = 1, safeMode = true, signal }) {
-    const maxPages = config.puppeteer.maxPages;
-    if (activePagesCount >= maxPages) {
-      log.warn('Max concurrent pages reached');
-      return { items: [], meta: { hasMore: false, message: 'Max concurrent pages reached' } };
-    }
-
-    let browserPage = null;
-    activePagesCount++;
+    let release = null;
 
     try {
-      const browser = await getBrowser();
-      browserPage = await browser.newPage();
-
-      // Random viewport
-      const viewport = VIEWPORTS[Math.floor(Math.random() * VIEWPORTS.length)];
-      await browserPage.setViewport(viewport);
-
-      // Random user agent
-      const ua = USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
-      await browserPage.setUserAgent(ua);
-
-      // Stealth
-      await applyStealthMode(browserPage);
-
-      // Extra headers
-      await browserPage.setExtraHTTPHeaders({
-        'Accept-Language': 'en-US,en;q=0.9,id;q=0.8',
-      });
+      // Acquire a page from the shared browser pool
+      const acquired = await browserPool.acquirePage();
+      const browserPage = acquired.page;
+      release = acquired.release;
 
       // Navigate to DuckDuckGo search
       const start = (pageNum - 1) * limit;
@@ -302,22 +163,13 @@ module.exports = {
       };
     } catch (err) {
       log.error('Puppeteer scrape failed', { error: err.message });
-      if (browserPage) {
-        await screenshotOnError(browserPage, 'scrape');
-      }
       return { items: [], meta: { hasMore: false, message: err.message } };
     } finally {
-      activePagesCount--;
-      if (browserPage) {
-        try { await browserPage.close(); } catch { /* ignore */ }
+      // Always release the page back to the pool
+      if (release) {
+        try { await release(); } catch { /* ignore */ }
       }
     }
   },
 };
 
-// Cleanup on process exit
-process.on('exit', () => {
-  if (browserInstance) {
-    try { browserInstance.close(); } catch { /* ignore */ }
-  }
-});

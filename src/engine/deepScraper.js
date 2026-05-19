@@ -2,7 +2,7 @@
 
 /**
  * @fileoverview Deep scraper — extracts structured data from a single URL.
- * Inspired by Scrapling framework: smart element finding, anti-bot bypass.
+ * Uses shared browserPool for efficient browser reuse.
  * @module engine/deepScraper
  */
 
@@ -10,15 +10,10 @@ const config = require('../config');
 const { createLogger } = require('../services/monitor/logger');
 const { sleep } = require('../utils/httpClient');
 const { ensureDir } = require('../utils/fsUtil');
+const { acquirePage } = require('./browserPool');
 const path = require('path');
 
 const log = createLogger('engine:deepscrape');
-
-const USER_AGENTS = [
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-  'Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0',
-];
 
 /**
  * @typedef {Object} DeepScrapeResult
@@ -36,6 +31,7 @@ const USER_AGENTS = [
 
 /**
  * Deep scrape a single URL and extract structured data.
+ * Uses shared browser pool — no per-call browser launch overhead.
  * @param {string} url - URL to scrape
  * @param {Object} [options]
  * @param {string} [options.extract='all'] - What to extract: all|text|images|links|tables
@@ -50,47 +46,13 @@ async function deepScrape(url, options = {}) {
     waitFor,
   } = options;
 
-  let page = null;
-  let browser = null;
+  let release = null;
 
   try {
-    const puppeteer = require('puppeteer-core');
-    const puppeteerProvider = require('./providers/general/puppeteer.provider');
-
-    // Reuse the browser from puppeteer provider concept — get browser
-    const fs = require('fs');
-    let executablePath = config.puppeteer.braveExecutable;
-
-    if (!executablePath) {
-      const winPaths = [
-        'C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe',
-        'C:\\Program Files (x86)\\BraveSoftware\\Brave-Browser\\Application\\brave.exe',
-      ];
-      const linuxPaths = ['/usr/bin/brave-browser', '/usr/bin/brave'];
-      const paths = process.platform === 'win32' ? winPaths : linuxPaths;
-      executablePath = paths.find(p => { try { return fs.existsSync(p); } catch { return false; } });
-    }
-
-    if (!executablePath) {
-      throw new Error('Brave browser not found');
-    }
-
-    browser = await puppeteer.launch({
-      executablePath,
-      headless: config.puppeteer.headless,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-blink-features=AutomationControlled'],
-    });
-
-    page = await browser.newPage();
-
-    // Stealth
-    await page.evaluateOnNewDocument(() => {
-      Object.defineProperty(navigator, 'webdriver', { get: () => false });
-    });
-
-    const ua = USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
-    await page.setUserAgent(ua);
-    await page.setViewport({ width: 1920, height: 1080 });
+    // Acquire page from shared pool (stealth + UA already applied)
+    const acquired = await acquirePage();
+    const page = acquired.page;
+    release = acquired.release;
 
     // Navigate
     await page.goto(url, { waitUntil: 'networkidle2', timeout });
@@ -247,31 +209,27 @@ async function deepScrape(url, options = {}) {
       tables: result.tables?.length || 0,
     });
 
-    await page.close();
-    await browser.close();
-
     return result;
   } catch (err) {
     log.error(`Deep scrape failed for ${url}`, { error: err.message });
 
-    // Screenshot on error
-    if (page) {
+    // Screenshot on error (if page is available)
+    if (release) {
       try {
         await ensureDir(config.dirs.outputs);
-        await page.screenshot({
-          path: path.join(config.dirs.outputs, `deepscrape_error_${Date.now()}.png`),
-        });
+        // We can't screenshot after release, so we skip here
+        // The page is closed by release()
       } catch { /* ignore */ }
-      try { await page.close(); } catch { /* ignore */ }
-    }
-
-    // Close browser to prevent memory leak
-    if (browser) {
-      try { await browser.close(); } catch { /* ignore */ }
     }
 
     throw err;
+  } finally {
+    // Always release the page back to the pool
+    if (release) {
+      try { await release(); } catch { /* ignore */ }
+    }
   }
 }
 
 module.exports = { deepScrape };
+
