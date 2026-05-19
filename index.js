@@ -91,6 +91,27 @@ async function main() {
         throw err;
       }
     }
+
+    // 4. Schedule automatic job cleanup (daily at 3:00 AM)
+    try {
+      const cron = require('node-cron');
+      const jobStore = require('./src/jobs/jobStore');
+
+      cron.schedule('0 3 * * *', async () => {
+        log.info('Running scheduled job cleanup...');
+        const result = await jobStore.purgeExpiredJobs({
+          maxAgeMs: 7 * 24 * 60 * 60 * 1000, // 7 days
+          deleteFiles: true,
+        });
+        if (result.purged > 0) {
+          log.info(`Cleanup: ${result.purged} expired jobs purged, ${result.filesDeleted} files deleted`);
+        }
+      });
+
+      log.info('Job cleanup scheduled (daily at 03:00)');
+    } catch (err) {
+      log.warn('Job cleanup scheduler failed to initialize', { error: err.message });
+    }
   } catch (err) {
     log.fatal('Failed to start bot', { error: err.message, stack: err.stack });
     process.exit(1);
@@ -125,6 +146,12 @@ async function gracefulShutdown(signal) {
       log.error('Client shutdown error', { error: err.message });
     }
   }
+
+  // 4. Close browser pool
+  try {
+    const browserPool = require('./src/engine/browserPool');
+    await browserPool.closeBrowser();
+  } catch { /* not loaded */ }
 
   log.info('Shutdown complete');
   process.exit(0);

@@ -18,6 +18,20 @@ const { friendlyError } = require('../utils/errorMessages');
 
 const log = createLogger('bot:handler');
 
+/**
+ * Send typing indicator to the current chat.
+ * Shows "typing..." status to the user while the bot processes.
+ * @param {Object} chatOrMsg - Chat object or message (will get chat)
+ */
+async function sendTyping(chatOrMsg) {
+  try {
+    const chat = chatOrMsg.sendStateTyping
+      ? chatOrMsg
+      : (typeof chatOrMsg.getChat === 'function' ? await chatOrMsg.getChat() : null);
+    if (chat && chat.sendStateTyping) await chat.sendStateTyping();
+  } catch { /* ignore */ }
+}
+
 /** Cooldown tracker: userId → last message timestamp. */
 const cooldowns = new Map();
 
@@ -145,6 +159,9 @@ async function routeCommand(msg, client) {
  * @param {string} text - Cleaned message text
  */
 async function handleNlpIntent(msg, client, userId, text) {
+  // Show typing while classifying intent
+  await sendTyping(msg);
+
   // Get user context
   const userContext = contextMemory.get(userId);
 
@@ -237,7 +254,9 @@ async function handleNlpIntent(msg, client, userId, text) {
     case INTENTS.AI_CHAT: {
       try {
         const aiService = require('../services/ai/aiService');
+        await sendTyping(msg);
         await msg.reply('🤔 Sedang berpikir...');
+        await sendTyping(msg);
 
         // Build multi-turn history from context (max 6 messages)
         const history = (userContext?.messages || []).slice(-6)
@@ -267,6 +286,7 @@ async function handleNlpIntent(msg, client, userId, text) {
 
       try {
         const mediaMsg = msg.hasMedia ? msg : quotedMsg;
+        await sendTyping(msg);
         const media = await mediaMsg.downloadMedia();
 
         if (!media) {
@@ -275,6 +295,7 @@ async function handleNlpIntent(msg, client, userId, text) {
         }
 
         await msg.reply('🔍 Menganalisa gambar...');
+        await sendTyping(msg);
 
         const aiService = require('../services/ai/aiService');
         const analysis = await aiService.analyzeImage({
@@ -304,6 +325,7 @@ async function handleNlpIntent(msg, client, userId, text) {
       // Fallback to AI chat in DM or when mentioned in group
       try {
         const aiService = require('../services/ai/aiService');
+        await sendTyping(msg);
 
         // Include conversation history for multi-turn context
         const history = (userContext?.messages || []).slice(-6)

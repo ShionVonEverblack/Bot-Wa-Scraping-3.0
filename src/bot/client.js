@@ -106,7 +106,7 @@ function createClient() {
     log.error('Authentication failed', { message: msg });
   });
 
-  client.on('ready', () => {
+  client.on('ready', async () => {
     log.info('═══════════════════════════════════════════');
     log.info(`  ${config.botName} is READY! ✅`);
     log.info('═══════════════════════════════════════════');
@@ -117,6 +117,28 @@ function createClient() {
       setReady(true, client);
     } catch (err) {
       log.warn('messageHandler setReady failed', { error: err.message });
+    }
+
+    // Resume pending/running jobs from before restart
+    try {
+      const jobManager = require('../jobs/jobManager');
+      const resumed = await jobManager.resumePending(client);
+      if (resumed > 0) {
+        log.info(`Resumed ${resumed} pending job(s) from previous session`);
+      }
+    } catch (err) {
+      log.warn('Job resume failed', { error: err.message });
+    }
+
+    // Restore scheduled watches (cron jobs)
+    try {
+      const watchService = require('../services/watch');
+      const restored = await watchService.restoreWatches(client);
+      if (restored > 0) {
+        log.info(`Restored ${restored} active watch schedule(s)`);
+      }
+    } catch (err) {
+      log.warn('Watch restore failed', { error: err.message });
     }
   });
 
