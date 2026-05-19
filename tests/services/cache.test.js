@@ -52,4 +52,48 @@ describe('cache', () => {
     expect(s.size).toBe(2);
     expect(s.maxSize).toBe(500);
   });
+
+  test('stats cleans expired entries', async () => {
+    cache.set('fast', 'val', 30);
+    cache.set('slow', 'val', 5000);
+
+    await new Promise(r => setTimeout(r, 50));
+
+    const s = cache.stats();
+    // 'fast' should be cleaned up, only 'slow' remains
+    expect(s.size).toBe(1);
+  });
+
+  test('clear removes all entries', () => {
+    cache.set('x', 1);
+    cache.set('y', 2);
+    cache.set('z', 3);
+    cache.clear();
+    expect(cache.stats().size).toBe(0);
+    expect(cache.get('x')).toBeNull();
+  });
+
+  test('overwrite existing key', () => {
+    cache.set('dup', 'first');
+    cache.set('dup', 'second');
+    expect(cache.get('dup')).toBe('second');
+  });
+
+  test('stores objects and arrays', () => {
+    const data = { items: [1, 2, 3], meta: { total: 3 } };
+    cache.set('complex', data);
+    expect(cache.get('complex')).toEqual(data);
+  });
+
+  test('has returns false for expired key', async () => {
+    cache.set('willExpire', 'val', 30);
+    await new Promise(r => setTimeout(r, 50));
+    expect(cache.has('willExpire')).toBe(false);
+  });
+
+  test('makeKey with different prefixes produces different keys', () => {
+    const key1 = cache.makeKey('scrape', { keyword: 'test' });
+    const key2 = cache.makeKey('paper', { keyword: 'test' });
+    expect(key1).not.toBe(key2);
+  });
 });
