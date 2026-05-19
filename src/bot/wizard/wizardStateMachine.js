@@ -90,20 +90,12 @@ function processInput(userId, input) {
   session.step++;
   resetTimeout(userId);
 
-  // Generate next prompt
-  if (session.step >= STEPS.length) {
-    // Should not happen — confirm handles this
-    const data = { ...session.data };
-    destroy(userId);
-    return { done: true, prompt: '', data };
-  }
-
   const nextStep = STEPS[session.step];
   if (nextStep === 'confirm') {
     const typeEmoji = { images: '🖼️', papers: '📄', datasets: '📊', general: '🔍' };
     const summary = [
       `📝 Keyword: *${session.data.keyword}*`,
-      `📂 Type: ${typeEmoji[session.data.type] || '🔍'} ${session.data.type}`,
+      `📂 Type: ${typeEmoji[session.data.type]} ${session.data.type}`,
       `📋 Limit: ${session.data.limit}`,
     ].join('\n');
     return { done: false, prompt: PROMPTS.confirm.ask(summary), data: null };

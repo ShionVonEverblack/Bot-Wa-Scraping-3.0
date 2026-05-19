@@ -99,6 +99,19 @@ describe('toExcel', () => {
     expect(basename).not.toMatch(/[@#$%^&*()]/);
     expect(basename).toContain('test');
   });
+
+  test('handles null values and empty meta', async () => {
+    const itemsWithNull = [{ title: null, url: undefined, authors: '', year: 2020 }];
+    const filepath = await toExcel(itemsWithNull, undefined, TEST_OUTPUT_DIR);
+    expect(filepath).toContain('results_'); // Default keyword
+    
+    const ExcelJS = require('exceljs');
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(filepath);
+    const sheet = workbook.getWorksheet('Results');
+    const dataRow = sheet.getRow(2);
+    expect(dataRow.getCell(1).value).toBeFalsy(); // null -> empty string
+  });
 });
 
 describe('formatAndSave', () => {
@@ -175,5 +188,11 @@ describe('formatAndSave', () => {
     const result = await formatAndSave(SAMPLE_ITEMS, 'csv', { keyword: 'test <data> 123' });
     const basename = path.basename(result.filepath);
     expect(basename).not.toMatch(/[<>]/);
+  });
+
+  test('handles empty meta defaults', async () => {
+    const result = await formatAndSave(SAMPLE_ITEMS, 'json', undefined);
+    expect(result.filepath).toContain('results_'); // Default keyword
+    expect(result.content).toBeDefined();
   });
 });

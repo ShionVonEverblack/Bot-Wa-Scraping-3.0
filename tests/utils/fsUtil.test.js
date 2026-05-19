@@ -156,4 +156,32 @@ describe('fsUtil', () => {
       expect(size).toBe(0);
     });
   });
+  describe('error handling', () => {
+    test('ensureDir throws on error', async () => {
+      const spy = jest.spyOn(fs.promises, 'mkdir').mockRejectedValueOnce(new Error('mkdir error'));
+      await expect(ensureDir('test')).rejects.toThrow('mkdir error');
+      spy.mockRestore();
+    });
+
+    test('writeJson throws on error', async () => {
+      const spy = jest.spyOn(fs.promises, 'writeFile').mockRejectedValueOnce(new Error('write error'));
+      await expect(writeJson(path.join(TEST_DIR, 'err.json'), {})).rejects.toThrow('write error');
+      spy.mockRestore();
+    });
+
+    test('writeFile throws on error', async () => {
+      const spy = jest.spyOn(fs.promises, 'writeFile').mockRejectedValueOnce(new Error('write error'));
+      await expect(writeFile(path.join(TEST_DIR, 'err.txt'), 'data')).rejects.toThrow('write error');
+      spy.mockRestore();
+    });
+
+    test('dirSize catches non-ENOENT errors', async () => {
+      const dir = path.join(TEST_DIR, 'err_dir');
+      await ensureDir(dir);
+      const spy = jest.spyOn(fs.promises, 'readdir').mockRejectedValueOnce(new Error('readdir error'));
+      const size = await dirSize(dir);
+      expect(size).toBe(0); // Should catch and return accumulated total (0)
+      spy.mockRestore();
+    });
+  });
 });

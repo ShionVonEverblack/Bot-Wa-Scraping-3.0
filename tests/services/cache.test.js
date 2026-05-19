@@ -96,4 +96,45 @@ describe('cache', () => {
     const key2 = cache.makeKey('paper', { keyword: 'test' });
     expect(key1).not.toBe(key2);
   });
+
+  test('evicts oldest when MAX_SIZE is exceeded', () => {
+    const s = cache.stats();
+    for (let i = 0; i < s.maxSize; i++) {
+      cache.set(`key${i}`, i);
+    }
+    
+    // Size is max now
+    expect(cache.stats().size).toBe(s.maxSize);
+    expect(cache.has('key0')).toBe(true);
+
+    // Add one more
+    cache.set('overflow', 'val');
+
+    // Size is still max
+    expect(cache.stats().size).toBe(s.maxSize);
+    
+    // key0 (oldest) should be evicted
+    expect(cache.has('key0')).toBe(false);
+    expect(cache.has('overflow')).toBe(true);
+  });
+
+  test('interval auto-cleanup removes expired entries', () => {
+    jest.useFakeTimers();
+    
+    // We isolate modules so the setInterval runs in our fake timer context
+    let isolatedCache;
+    jest.isolateModules(() => {
+      isolatedCache = require('../../src/services/cache');
+    });
+
+    isolatedCache.set('cleanup-test', 'val', 30);
+    
+    // Advance time past the 5 minute interval + 30ms TTL
+    jest.advanceTimersByTime(5 * 60 * 1000 + 1000);
+
+    // Check size directly since getting also triggers cleanup
+    expect(isolatedCache.stats().size).toBe(0);
+
+    jest.useRealTimers();
+  });
 });

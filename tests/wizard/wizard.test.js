@@ -72,4 +72,63 @@ describe('wizardStateMachine', () => {
     // Should move to confirm step
     expect(result.prompt).toContain('Step 4');
   });
+
+  test('handles invalid type', () => {
+    wizard.start(userId);
+    wizard.processInput(userId, 'test keyword');
+    const result = wizard.processInput(userId, 'invalid_type_abc');
+    expect(result.done).toBe(false);
+    expect(result.prompt).toContain('Pilihan tidak valid');
+  });
+
+  test('handles invalid confirm', () => {
+    wizard.start(userId);
+    wizard.processInput(userId, 'test keyword');
+    wizard.processInput(userId, '2');
+    wizard.processInput(userId, '20');
+    
+    const result = wizard.processInput(userId, 'apa aja');
+    expect(result.done).toBe(false);
+    expect(result.prompt).toContain('Ketik "ya"');
+  });
+
+  test('processInput without active session returns done', () => {
+    const result = wizard.processInput('unknown-user', 'hello');
+    expect(result.done).toBe(true);
+    expect(result.data).toBeNull();
+  });
+
+  test('handles invalid limit', () => {
+    wizard.start(userId);
+    wizard.processInput(userId, 'keyword');
+    wizard.processInput(userId, '1'); // type
+    const result = wizard.processInput(userId, '100'); // limit > 50
+    expect(result.done).toBe(false);
+    expect(result.prompt).toContain('Masukkan angka 1-50');
+  });
+
+  test('handles negative confirm (no/tidak)', () => {
+    wizard.start(userId);
+    wizard.processInput(userId, 'test keyword');
+    wizard.processInput(userId, '2');
+    wizard.processInput(userId, '20');
+    
+    const result = wizard.processInput(userId, 'tidak');
+    expect(result.done).toBe(true);
+    expect(result.prompt).toContain('dibatalkan');
+    expect(result.data).toBeNull();
+  });
+
+  test('expires session after timeout', () => {
+    jest.useFakeTimers();
+    wizard.start(userId);
+    
+    expect(wizard.isActive(userId)).toBe(true);
+    
+    // Advance time by > 2 minutes (120001 ms)
+    jest.advanceTimersByTime(120001);
+    
+    expect(wizard.isActive(userId)).toBe(false);
+    jest.useRealTimers();
+  });
 });

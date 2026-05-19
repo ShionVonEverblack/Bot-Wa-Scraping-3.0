@@ -38,6 +38,11 @@ describe('formatters', () => {
     test('handles empty array', () => {
       expect(toCsv([])).toBe('');
     });
+
+    test('handles null/undefined values', () => {
+      const result = toCsv([{ a: null, b: undefined, c: 'text' }]);
+      expect(result.split('\n')[1]).toBe(',,text');
+    });
   });
 
   describe('toTsv', () => {
@@ -45,6 +50,15 @@ describe('formatters', () => {
       const result = toTsv(SAMPLE_ITEMS);
       const lines = result.split('\n');
       expect(lines[0]).toContain('\t');
+    });
+
+    test('handles empty array', () => {
+      expect(toTsv([])).toBe('');
+    });
+
+    test('handles null/undefined and replaces tabs/newlines', () => {
+      const result = toTsv([{ a: null, b: 'multi\nline\ttext' }]);
+      expect(result.split('\n')[1]).toBe('\tmulti line text');
     });
   });
 
@@ -58,6 +72,12 @@ describe('formatters', () => {
 
     test('handles empty items', () => {
       expect(toHtml([])).toBe('<p>No data</p>');
+    });
+
+    test('handles null values and escapes HTML', () => {
+      const result = toHtml([{ a: null, b: '<script>' }]);
+      expect(result).toContain('<td></td>');
+      expect(result).toContain('<td>&lt;script&gt;</td>');
     });
   });
 
@@ -73,6 +93,16 @@ describe('formatters', () => {
       const result = toSql(items);
       expect(result).toContain("O''Brien");
     });
+
+    test('handles empty array', () => {
+      expect(toSql([])).toBe('');
+    });
+
+    test('handles null, numbers, and booleans', () => {
+      const items = [{ a: null, b: 123, c: true, d: false }];
+      const result = toSql(items);
+      expect(result).toContain('VALUES (NULL, 123, 1, 0)');
+    });
   });
 
   describe('toTxt', () => {
@@ -81,6 +111,17 @@ describe('formatters', () => {
       expect(result).toContain('=== test ===');
       expect(result).toContain('[1] Test 1');
       expect(result).toContain('[2] Test 2');
+    });
+
+    test('handles missing title', () => {
+      const result = toTxt([{ url: 'example.com' }]);
+      expect(result).toContain('Untitled');
+    });
+
+    test('handles empty meta', () => {
+      const result = toTxt(SAMPLE_ITEMS); // No meta argument
+      expect(result).toContain('=== Results ===');
+      expect(result).toContain('Provider: -');
     });
   });
 });

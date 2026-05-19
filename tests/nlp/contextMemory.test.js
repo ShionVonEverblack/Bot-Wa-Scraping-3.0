@@ -153,5 +153,34 @@ describe('contextMemory', () => {
       expect(() => contextMemory.startCleanup()).not.toThrow();
       contextMemory.stopCleanup();
     });
+
+    test('cleanup timer evicts expired entries', () => {
+      jest.useFakeTimers();
+      
+      // Stop any existing cleanup timer from beforeEach
+      contextMemory.stopCleanup();
+
+      const baseSize = contextMemory.size();
+
+      // Store an entry
+      contextMemory.store('user-cleanup', { lastKeyword: 'cleanup' });
+      const ctx = contextMemory.get('user-cleanup');
+      expect(ctx).not.toBeNull();
+      expect(contextMemory.size()).toBe(baseSize + 1);
+
+      // Make it expired
+      ctx.updatedAt = Date.now() - (31 * 60 * 1000); // 31 mins old
+
+      // Start cleanup and advance time past the interval
+      contextMemory.startCleanup();
+      jest.advanceTimersByTime(5 * 60 * 1000 + 1000); // 5 min 1 sec
+
+      // Should be deleted
+      // Can't use get() because get() itself checks TTL. We check size() to ensure cleanup deleted it.
+      expect(contextMemory.size()).toBe(baseSize);
+
+      contextMemory.stopCleanup();
+      jest.useRealTimers();
+    });
   });
 });

@@ -64,4 +64,27 @@ describe('validators', () => {
       expect(parseLimit('abc')).toBe(10);
     });
   });
+
+  describe('normalizeDelivery', () => {
+    const { normalizeDelivery } = require('../src/utils/validators');
+    
+    test('normalizes dm variants', () => {
+      expect(normalizeDelivery('dm')).toBe('dm');
+      expect(normalizeDelivery('private')).toBe('dm');
+      expect(normalizeDelivery('pribadi')).toBe('dm');
+    });
+
+    test('normalizes here variants', () => {
+      expect(normalizeDelivery('here')).toBe('here');
+      expect(normalizeDelivery('group')).toBe('here');
+      expect(normalizeDelivery('sini')).toBe('here');
+    });
+
+    test('defaults to here', () => {
+      expect(normalizeDelivery('unknown')).toBe('here');
+      expect(normalizeDelivery(null)).toBe('here');
+      expect(normalizeDelivery('')).toBe('here');
+      expect(normalizeDelivery(123)).toBe('here');
+    });
+  });
 });
