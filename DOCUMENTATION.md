@@ -408,14 +408,14 @@ docker-compose logs -f
 ## 11. Testing
 
 ```bash
-# Run semua test
-node ./node_modules/jest/bin/jest.js --verbose
+# Run semua test (dengan coverage)
+npx jest --coverage
 
 # Run test spesifik
-node ./node_modules/jest/bin/jest.js tests/utils/errorMessages.test.js
+npx jest tests/wizard/wizard.test.js
 ```
 
-**Test coverage saat ini:** 11 suites, 73 tests — mencakup utils, NLP, validators, cache, circuit breaker, formatters, wizard, job schemas, dan error messages.
+**Test coverage saat ini:** 15 suites, 192 tests (99.18% Line Coverage, 91.91% Branch Coverage) — mencakup keseluruhan fungsi inti, utilitas, NLP, memori konteks, formatter, wizard, timeout, circuit breaker, hingga edge cases seperti file system error dan input tidak valid.
 
 ---
 
@@ -447,4 +447,4 @@ node ./node_modules/jest/bin/jest.js tests/utils/errorMessages.test.js
 
 ---
 
-*Dokumentasi ini dibuat pada 2026-05-10. Untuk perubahan terbaru, lihat commit history.*
+*Dokumentasi ini dibuat pada 2026-05-19. Untuk perubahan terbaru, lihat commit history.*
