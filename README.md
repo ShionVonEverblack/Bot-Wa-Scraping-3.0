@@ -4,15 +4,16 @@
 
 ## ✨ Fitur Utama
 
-- 🔍 **Smart Search** — Cari gambar, paper akademik, dataset, dan web via natural language
-- 🤖 **Multi-AI** — OpenAI, Gemini, Groq, Grok dengan auto-fallback
-- 🧠 **NLP Intent** — 2-layer classifier (regex + AI fallback)
-- 📄 **Paper Download** — Resolver chain: Unpaywall → OpenAlex → arXiv → Crossref
-- 🌐 **Deep Scrape** — Puppeteer + Brave browser, stealth mode, anti-bot bypass
-- 📊 **13+ Providers** — Unsplash, Pexels, Pixabay, Wikimedia, OpenAlex, arXiv, Crossref, Semantic Scholar, Kaggle, HuggingFace, DuckDuckGo, Wikipedia, Puppeteer
-- ⏰ **Watch System** — Scheduled recurring scrapes (hourly/daily/weekly)
-- 📦 **Multi-Format** — JSON, CSV, TSV, HTML, Excel, SQL, TXT, ZIP
-- 🛡️ **Production-Ready** — Circuit breaker, rate limiter, job queue, auto-restart
+- 🔍 **Smart Search** — Cari gambar, paper akademik, dataset, dan web via bahasa natural (NLP)
+- 🤖 **Multi-AI** — Dukungan OpenAI, Gemini, Groq, dan Grok dengan sistem *auto-fallback* jika salah satu gagal
+- 🧠 **NLP Intent** — Klasifikasi niat pengguna 2 lapis (Rule-based Regex → AI Fallback) untuk efisiensi
+- 📄 **Paper Download** — Rantai resolver pintar: Unpaywall → OpenAlex → arXiv → Crossref
+- 🌐 **Deep Scrape** — Puppeteer + Brave browser, *stealth mode*, bypass anti-bot
+- 📊 **13+ Data Providers** — Unsplash, Pexels, Pixabay, Wikimedia, OpenAlex, arXiv, Crossref, Semantic Scholar, Kaggle, HuggingFace, DuckDuckGo, Wikipedia, dan Puppeteer
+- ⏰ **Watch System** — Penjadwalan scraping otomatis (jam/hari/minggu)
+- 📦 **Multi-Format Output** — Ekspor hasil ke JSON, CSV, TSV, HTML, Excel, SQL, TXT, ZIP
+- 🛡️ **Production-Ready & Resilient** — Dilengkapi *Circuit Breaker*, *Rate Limiter*, *Job Queue* (antrean tugas), dan auto-restart
+- 🧪 **100% Test Coverage** — Sistem teruji penuh (192 unit tes) menjamin stabilitas fungsi inti, utilitas, memori konteks, formatter, dan wizard.
 
 ## 📋 Prerequisites
 
