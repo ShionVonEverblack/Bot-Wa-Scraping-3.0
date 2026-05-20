@@ -49,6 +49,7 @@ async function handle(msg, args) {
     '⚙️ *LAINNYA:*',
     '`!menu` — Menu interaktif',
     '`!health` — Status bot',
+    '`!clear <waktu>` — Hapus chat bot (15m, 1h, 1d, 2d12h)',
     '`!help <topic>` — Bantuan detail',
     '',
     '💡 *Atau langsung bilang:*',

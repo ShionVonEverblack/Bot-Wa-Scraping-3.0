@@ -51,15 +51,22 @@ function parseTime(input) {
   if (str === 'weekly') return 7 * 24 * 60 * 60 * 1000;
   if (str === 'hourly') return 60 * 60 * 1000;
 
-  // Pattern: number + unit
-  const match = str.match(/^(\d+)\s*(ms|s|m|h|d)$/);
-  if (!match) return null;
+  // Composite patterns like "2d12h" or "1h30m"
+  const regex = /(\d+)\s*(ms|s|m|h|d|w)/g;
+  let match;
+  let totalMs = 0;
+  let hasMatch = false;
 
-  const value = parseInt(match[1], 10);
-  const unit = match[2];
+  const multipliers = { ms: 1, s: 1000, m: 60000, h: 3600000, d: 86400000, w: 604800000 };
 
-  const multipliers = { ms: 1, s: 1000, m: 60000, h: 3600000, d: 86400000 };
-  return value * (multipliers[unit] || 1);
+  while ((match = regex.exec(str)) !== null) {
+    hasMatch = true;
+    const value = parseInt(match[1], 10);
+    const unit = match[2];
+    totalMs += value * (multipliers[unit] || 0);
+  }
+
+  return hasMatch ? totalMs : null;
 }
 
 module.exports = { nowIso, formatDuration, parseTime };

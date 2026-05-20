@@ -122,6 +122,8 @@ async function routeCommand(msg, client) {
       analyse: 'analyze',
       how: 'help',
       bantuan: 'help',
+      hapus: 'clear',
+      bersihkan: 'clear',
     };
 
     const handlerName = handlerMap[command] || command;
