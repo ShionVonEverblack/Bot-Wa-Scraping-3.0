@@ -11,6 +11,7 @@ const path = require('path');
 const fs = require('fs');
 const config = require('../config');
 const { createLogger } = require('../services/monitor/logger');
+const dashboard = require('../services/monitor/dashboard');
 
 const log = createLogger('bot:client');
 
@@ -92,6 +93,7 @@ function createClient() {
   client.on('qr', (qr) => {
     log.info('QR Code received — scan with WhatsApp:');
     qrcode.generate(qr, { small: true });
+    dashboard.setQR(qr);
   });
 
   client.on('loading_screen', (percent, message) => {
@@ -100,6 +102,7 @@ function createClient() {
 
   client.on('authenticated', () => {
     log.info('Authentication successful');
+    dashboard.setAuthenticated();
   });
 
   client.on('auth_failure', (msg) => {
@@ -110,6 +113,13 @@ function createClient() {
     log.info('═══════════════════════════════════════════');
     log.info(`  ${config.botName} is READY! ✅`);
     log.info('═══════════════════════════════════════════');
+
+    // Update dashboard status
+    try {
+      const info = client.info;
+      const userName = info ? (info.pushname || info.wid?.user || 'Unknown') : 'Unknown';
+      dashboard.setReady(userName);
+    } catch { dashboard.setReady(); }
 
     // Set ready gate in message handler
     try {
@@ -144,6 +154,7 @@ function createClient() {
 
   client.on('disconnected', (reason) => {
     log.warn('Client disconnected', { reason });
+    dashboard.setDisconnected(reason);
   });
 
   // ─── Message Handler ──────────────────────────────────────────────

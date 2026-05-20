@@ -14,6 +14,7 @@
 - 📦 **Multi-Format Output** — Ekspor hasil ke JSON, CSV, TSV, HTML, Excel, SQL, TXT, ZIP
 - 🛡️ **Production-Ready & Resilient** — Dilengkapi *Circuit Breaker*, *Rate Limiter*, *Job Queue* (antrean tugas), dan auto-restart
 - 🧪 **100% Test Coverage** — Sistem teruji penuh (192 unit tes) menjamin stabilitas fungsi inti, utilitas, memori konteks, formatter, dan wizard.
+- 📊 **Web Dashboard** — Monitor status bot & scan QR code via browser (`http://localhost:3000`)
 
 ## 📋 Prerequisites
 
@@ -90,6 +91,20 @@ src/
 │                   # resilience, security, identity, watch, templates
 └── utils/          # HTTP client, file system, validators, logger
 ```
+
+## 📊 Web Dashboard
+
+Setelah bot berjalan, buka `http://localhost:3000` untuk:
+- 📱 Scan QR code WhatsApp dari browser (tidak perlu akses terminal)
+- 🟢 Monitor status koneksi real-time (auto-refresh 5 detik)
+- 📈 Lihat metrik: uptime, memori, Node.js version
+
+**API Endpoints:**
+| Endpoint | Fungsi |
+|----------|--------|
+| `GET /api/status` | Status bot (JSON) |
+| `GET /api/qr` | QR code (base64 data URL) |
+| `GET /api/qr.png` | QR code (gambar PNG) |
 
 ## 🐳 Docker
 

@@ -76,7 +76,15 @@ async function main() {
     // 2. Ensure directories
     await ensureDirectories();
 
-    // 3. Create client manager and start bot
+    // 3. Start QR Code Web Dashboard
+    try {
+      const { startDashboard } = require('./src/services/monitor/dashboard');
+      startDashboard();
+    } catch (err) {
+      log.warn('Dashboard failed to start', { error: err.message });
+    }
+
+    // 4. Create client manager and start bot
     log.info('Foundation loaded — ready to initialize WhatsApp client');
 
     // Lazy-load to avoid circular deps and allow graceful error if module missing
@@ -92,7 +100,7 @@ async function main() {
       }
     }
 
-    // 4. Schedule automatic job cleanup (daily at 3:00 AM)
+    // 5. Schedule automatic job cleanup (daily at 3:00 AM)
     try {
       const cron = require('node-cron');
       const jobStore = require('./src/jobs/jobStore');
@@ -132,13 +140,19 @@ async function gracefulShutdown(signal) {
     watchService.stopAll();
   } catch { /* not loaded */ }
 
-  // 2. Drain job queue (wait for running jobs)
+  // 2. Stop dashboard server
+  try {
+    const { stopDashboard } = require('./src/services/monitor/dashboard');
+    await stopDashboard();
+  } catch { /* not loaded */ }
+
+  // 3. Drain job queue (wait for running jobs)
   try {
     const jobQueue = require('./src/jobs/jobQueue');
     await jobQueue.shutdown();
   } catch { /* not loaded */ }
 
-  // 3. Shutdown WhatsApp client (closes browser)
+  // 4. Shutdown WhatsApp client (closes browser)
   if (manager) {
     try {
       await manager.shutdown();
@@ -147,7 +161,7 @@ async function gracefulShutdown(signal) {
     }
   }
 
-  // 4. Close browser pool
+  // 5. Close browser pool
   try {
     const browserPool = require('./src/engine/browserPool');
     await browserPool.closeBrowser();

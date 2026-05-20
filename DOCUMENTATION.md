@@ -419,7 +419,41 @@ npx jest tests/wizard/wizard.test.js
 
 ---
 
-## 12. Limitasi & Catatan
+## 12. QR Code Web Dashboard
+
+Rima menyediakan **web dashboard** untuk memonitor status bot dan men-scan QR code WhatsApp dari browser — sangat berguna saat bot di-deploy ke VPS atau Docker di mana akses terminal terbatas.
+
+### Akses Dashboard
+Setelah menjalankan `node index.js`, buka browser dan akses:
+```
+http://localhost:3000
+```
+
+Port dapat diubah via `.env`:
+```env
+DASHBOARD_PORT=3000
+```
+
+### Fitur Dashboard
+| Fitur | Deskripsi |
+|-------|-----------|
+| **QR Code Visual** | Tampilan QR code besar dan jelas untuk di-scan via HP |
+| **Status Real-time** | Menunjukkan status koneksi (Menunggu Scan / Terautentikasi / Online / Terputus) |
+| **Metrik Sistem** | Uptime, penggunaan memori, versi Node.js, dan environment |
+| **Auto-refresh** | Halaman otomatis refresh setiap 5 detik |
+| **REST API** | Endpoint JSON untuk integrasi monitoring eksternal |
+
+### API Endpoints
+| Endpoint | Deskripsi |
+|----------|-----------|
+| `GET /` | Halaman dashboard HTML |
+| `GET /api/status` | Status bot dalam format JSON |
+| `GET /api/qr` | QR code sebagai data URL (base64) |
+| `GET /api/qr.png` | QR code sebagai gambar PNG langsung |
+
+---
+
+## 13. Limitasi & Catatan
 
 | Item | Status |
 |------|--------|
@@ -432,7 +466,7 @@ npx jest tests/wizard/wizard.test.js
 
 ---
 
-## 13. Glossary
+## 14. Glossary
 
 | Term | Definisi |
 |------|---------|
