@@ -84,7 +84,15 @@ async function main() {
       log.warn('Dashboard failed to start', { error: err.message });
     }
 
-    // 4. Create client manager and start bot
+    // 4. Train NLP Model
+    try {
+      const nlpManager = require('./src/bot/nlp/nlpManager');
+      await nlpManager.trainModel();
+    } catch (err) {
+      log.warn('NLP model training failed', { error: err.message });
+    }
+
+    // 5. Create client manager and start bot
     log.info('Foundation loaded — ready to initialize WhatsApp client');
 
     // Lazy-load to avoid circular deps and allow graceful error if module missing

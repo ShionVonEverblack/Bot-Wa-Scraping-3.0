@@ -122,7 +122,28 @@ function ruleBasedClassify(text) {
  * @returns {Promise<{intent:string, confidence:number, entities:Object}>}
  */
 async function classifyIntent(text, context) {
-  // Layer 1: Rule-based
+  let nodeNlpResult = null;
+  try {
+    const nlpManager = require('./nlpManager');
+    nodeNlpResult = await nlpManager.processText(text);
+  } catch (err) {
+    log.warn('node-nlp failed', { error: err.message });
+  }
+
+  // If node-nlp is confident
+  if (nodeNlpResult && nodeNlpResult.intent !== 'None' && nodeNlpResult.score >= 0.75) {
+    log.debug('node-nlp classification', {
+      intent: nodeNlpResult.intent,
+      score: nodeNlpResult.score,
+    });
+    return {
+      intent: nodeNlpResult.intent,
+      confidence: nodeNlpResult.score,
+      entities: nodeNlpResult.entities || {},
+    };
+  }
+
+  // Layer 2: Rule-based fallback
   const ruleResult = ruleBasedClassify(text);
 
   if (ruleResult.confidence >= 0.8) {
@@ -147,7 +168,7 @@ async function classifyIntent(text, context) {
     }
   }
 
-  // Layer 2: AI-based fallback (only if rule-based is ambiguous)
+  // Layer 3: AI-based fallback (only if rule-based is ambiguous)
   if (ruleResult.confidence < 0.8) {
     try {
       const aiService = require('../../services/ai/aiService');

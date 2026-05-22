@@ -203,6 +203,7 @@ async function handleNlpIntent(msg, client, userId, text) {
             scrapeType: type,
             limit,
             format: extracted.format || config.output.formatDefault,
+            useAI: extracted.useAI || false,
             chatId: chat.id._serialized,
             userId,
           },
