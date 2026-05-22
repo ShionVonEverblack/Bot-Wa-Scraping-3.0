@@ -47,7 +47,7 @@ async function handle(msg, args, client) {
   const contact = await msg.getContact();
   const userId = contact.id._serialized;
 
-  const typeEmoji = { images: '🖼️', papers: '📄', datasets: '📊', general: '🔍' };
+  const typeEmoji = { images: '🖼️', papers: '📄', datasets: '📊', forums: '💬', books: '📚', general: '🔍' };
 
   try {
     const jobManager = require('../../jobs/jobManager');

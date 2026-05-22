@@ -13,8 +13,8 @@ const PROMPTS = {
     invalid: '❌ Keyword tidak boleh kosong. Coba lagi:',
   },
   type: {
-    ask: '📂 *Pilih Jenis Data:*\n1️⃣ `images` (Gambar)\n2️⃣ `papers` (Paper Akademik)\n3️⃣ `datasets` (Dataset)\n4️⃣ `general` (Web Umum)\n\n_Ketik angka 1-4 atau namanya:_',
-    invalid: '❌ Ketik angka 1-4 atau nama jenis data:',
+    ask: '📂 *Pilih Jenis Data:*\n1️⃣ `images` (Gambar)\n2️⃣ `papers` (Paper Akademik)\n3️⃣ `datasets` (Dataset)\n4️⃣ `forums` (Diskusi/Reddit)\n5️⃣ `books` (Buku)\n6️⃣ `general` (Web Umum)\n\n_Ketik angka 1-6 atau namanya:_',
+    invalid: '❌ Ketik angka 1-6 atau nama jenis data:',
   },
   limit: {
     ask: '📋 *Berapa Banyak Hasil?*\nKetik angka antara 1 sampai 50.\n\n_Ketik `skip` untuk membiarkan default (10)._',

@@ -13,6 +13,8 @@ const TYPE_MAP = {
   paper: 'papers', papers: 'papers', jurnal: 'papers', journal: 'papers', artikel: 'papers', article: 'papers',
   dataset: 'datasets', datasets: 'datasets', data: 'datasets',
   general: 'general', web: 'general', website: 'general', umum: 'general',
+  forum: 'forums', forums: 'forums', diskusi: 'forums', opini: 'forums', reddit: 'forums',
+  book: 'books', books: 'books', buku: 'books', literatur: 'books',
 };
 
 /** Map of format aliases → canonical format names. */

@@ -23,7 +23,7 @@ const disabledProviders = new Set();
  * Load all providers from subdirectories (images/, papers/, datasets/, general/).
  */
 function loadProviders() {
-  const dirs = ['images', 'papers', 'datasets', 'general'];
+  const dirs = ['images', 'papers', 'datasets', 'general', 'forums', 'books'];
 
   for (const dir of dirs) {
     const dirPath = path.join(__dirname, dir);

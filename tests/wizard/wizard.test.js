@@ -78,7 +78,7 @@ describe('wizardStateMachine', () => {
     wizard.processInput(userId, 'test keyword');
     const result = wizard.processInput(userId, 'invalid_type_abc');
     expect(result.done).toBe(false);
-    expect(result.prompt).toContain('angka 1-4');
+    expect(result.prompt).toContain('angka 1-6');
   });
 
   test('handles invalid confirm', () => {

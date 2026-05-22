@@ -25,11 +25,11 @@ function validateKeyword(input) {
  */
 function validateType(input) {
   const trimmed = (input || '').trim().toLowerCase();
-  const map = { '1': 'images', '2': 'papers', '3': 'datasets', '4': 'general' };
+  const map = { '1': 'images', '2': 'papers', '3': 'datasets', '4': 'forums', '5': 'books', '6': 'general' };
   
   if (map[trimmed]) return { valid: true, value: map[trimmed] };
   
-  const validTypes = ['images', 'papers', 'datasets', 'general'];
+  const validTypes = ['images', 'papers', 'datasets', 'forums', 'books', 'general'];
   if (validTypes.includes(trimmed)) return { valid: true, value: trimmed };
   
   // Also check aliases from normalizeType without defaulting to general
@@ -46,7 +46,9 @@ function validateType(input) {
   const extendedMap = {
     'image': 'images', 'gambar': 'images', 'foto': 'images', 'photo': 'images',
     'paper': 'papers', 'jurnal': 'papers', 'journal': 'papers', 'artikel': 'papers', 'article': 'papers',
-    'dataset': 'datasets', 'data': 'datasets'
+    'dataset': 'datasets', 'data': 'datasets',
+    'forum': 'forums', 'diskusi': 'forums', 'opini': 'forums', 'reddit': 'forums',
+    'book': 'books', 'buku': 'books', 'literatur': 'books'
   };
 
   if (extendedMap[trimmed]) return { valid: true, value: extendedMap[trimmed] };

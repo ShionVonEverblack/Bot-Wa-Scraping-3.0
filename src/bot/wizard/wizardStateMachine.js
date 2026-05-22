@@ -92,7 +92,7 @@ function processInput(userId, input) {
 
   const nextStep = STEPS[session.step];
   if (nextStep === 'confirm') {
-    const typeEmoji = { images: '🖼️', papers: '📄', datasets: '📊', general: '🔍' };
+    const typeEmoji = { images: '🖼️', papers: '📄', datasets: '📊', forums: '💬', books: '📚', general: '🔍' };
     const summary = [
       `📝 Keyword: *${session.data.keyword}*`,
       `📂 Type: ${typeEmoji[session.data.type]} ${session.data.type}`,

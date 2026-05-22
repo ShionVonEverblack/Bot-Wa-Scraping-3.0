@@ -88,6 +88,8 @@ function getFullMenu() {
     '  ├ `--type images` — Gambar',
     '  ├ `--type papers` — Paper',
     '  ├ `--type datasets` — Dataset',
+    '  ├ `--type forums` — Diskusi/Reddit',
+    '  ├ `--type books` — Buku',
     '  ├ `--type general` — Web',
     '  ├ `--format json|csv|excel|txt|html`',
     '  └ `--limit N` (1-50)\n',
