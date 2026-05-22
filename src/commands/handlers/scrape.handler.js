@@ -78,15 +78,9 @@ async function handle(msg, args, client) {
     } catch { /* ignore */ }
 
     await msg.reply([
-      `${typeEmoji[type] || '🔍'} *Pencarian dimulai!*`,
-      '',
-      `📝 Keyword: *${keyword}*`,
-      `📂 Type: ${type}`,
-      `📋 Limit: ${limit}`,
-      `📄 Format: ${format}`,
-      `🆔 Job: \`${job.jobId}\``,
-      '',
-      `Tunggu sebentar... Ketik \`!status ${job.jobId}\` untuk cek progress.`,
+      `${typeEmoji[type] || '🔍'} *Pencarian Dimulai*`,
+      `Topik: *${keyword}*`,
+      `Status: ⏳ Sedang memproses... (\`!status ${job.jobId}\`)`,
     ].join('\n'));
   } catch (err) {
     log.error('Scrape command failed', { error: err.message });

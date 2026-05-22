@@ -15,7 +15,7 @@ describe('wizardStateMachine', () => {
 
   test('start creates session', () => {
     const prompt = wizard.start(userId);
-    expect(prompt).toContain('Step 1');
+    expect(prompt).toContain('Mau cari apa?');
     expect(wizard.isActive(userId)).toBe(true);
   });
 
@@ -25,17 +25,17 @@ describe('wizardStateMachine', () => {
     // Step 1: keyword
     let result = wizard.processInput(userId, 'machine learning');
     expect(result.done).toBe(false);
-    expect(result.prompt).toContain('Step 2');
+    expect(result.prompt).toContain('Jenis Data');
 
     // Step 2: type
     result = wizard.processInput(userId, '2'); // papers
     expect(result.done).toBe(false);
-    expect(result.prompt).toContain('Step 3');
+    expect(result.prompt).toContain('Berapa Banyak');
 
     // Step 3: limit
     result = wizard.processInput(userId, '20');
     expect(result.done).toBe(false);
-    expect(result.prompt).toContain('Step 4');
+    expect(result.prompt).toContain('Konfirmasi');
 
     // Step 4: confirm
     result = wizard.processInput(userId, 'ya');
@@ -70,7 +70,7 @@ describe('wizardStateMachine', () => {
     const result = wizard.processInput(userId, 'skip');
     expect(result.done).toBe(false);
     // Should move to confirm step
-    expect(result.prompt).toContain('Step 4');
+    expect(result.prompt).toContain('Konfirmasi');
   });
 
   test('handles invalid type', () => {
@@ -78,7 +78,7 @@ describe('wizardStateMachine', () => {
     wizard.processInput(userId, 'test keyword');
     const result = wizard.processInput(userId, 'invalid_type_abc');
     expect(result.done).toBe(false);
-    expect(result.prompt).toContain('Pilihan tidak valid');
+    expect(result.prompt).toContain('angka 1-4');
   });
 
   test('handles invalid confirm', () => {
@@ -89,7 +89,7 @@ describe('wizardStateMachine', () => {
     
     const result = wizard.processInput(userId, 'apa aja');
     expect(result.done).toBe(false);
-    expect(result.prompt).toContain('Ketik "ya"');
+    expect(result.prompt).toContain('Ketik *ya*');
   });
 
   test('processInput without active session returns done', () => {
@@ -104,7 +104,7 @@ describe('wizardStateMachine', () => {
     wizard.processInput(userId, '1'); // type
     const result = wizard.processInput(userId, '100'); // limit > 50
     expect(result.done).toBe(false);
-    expect(result.prompt).toContain('Masukkan angka 1-50');
+    expect(result.prompt).toContain('antara 1-50');
   });
 
   test('handles negative confirm (no/tidak)', () => {
