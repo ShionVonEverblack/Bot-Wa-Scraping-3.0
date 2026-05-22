@@ -78,9 +78,10 @@ function getTopicHelp(topic) {
       '',
       '`--limit <N>` — Jumlah hasil (1-50, default: 10)',
       '`--provider <id>` — Provider spesifik',
+      '`--ai` — Buat ringkasan AI untuk hasil pencarian',
       '',
       '*Contoh:*',
-      '`!scrape machine learning --type papers --limit 20`',
+      '`!scrape machine learning --type papers --ai`',
       '`!scrape kucing lucu --type images --format csv`',
     ].join('\n'),
 

@@ -92,6 +92,7 @@ function getFullMenu() {
     '  ├ `--type books` — Buku',
     '  ├ `--type general` — Web',
     '  ├ `--format json|csv|excel|txt|html`',
+    '  ├ `--ai` — Rangkuman AI',
     '  └ `--limit N` (1-50)\n',
     '📄 *PAPER & PDF*',
     '`!paper <DOI/arXiv/PMID>` — Download paper OA',

@@ -150,6 +150,13 @@ function extractEntities(text, intent) {
   const format = formatResult.format;
   cleanText = formatResult.cleanText;
 
+  // Extract AI flag
+  const useAIMatch = cleanText.match(/(?:--|\+)ai\b/i);
+  const useAI = !!useAIMatch;
+  if (useAIMatch) {
+    cleanText = cleanText.replace(useAIMatch[0], '').trim();
+  }
+
   // Tokenize
   const words = cleanText.split(/\s+/).filter(Boolean);
 
@@ -168,9 +175,9 @@ function extractEntities(text, intent) {
 
   const keyword = keywordWords.join(' ').trim();
 
-  log.debug('Entities extracted', { keyword, type, limit, format, identifier });
+  log.debug('Entities extracted', { keyword, type, limit, format, identifier, useAI });
 
-  return { keyword, type, limit, format, provider: null, identifier };
+  return { keyword, type, limit, format, provider: null, identifier, useAI };
 }
 
 module.exports = { extractEntities, extractIdentifier };

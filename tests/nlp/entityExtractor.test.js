@@ -41,6 +41,12 @@ describe('entityExtractor', () => {
       expect(result.keyword).toBe('ai');
     });
 
+    test('extracts "--ai" syntax', () => {
+      const result = extractEntities('scrape google lucu --ai', 'SCRAPE');
+      expect(result.useAI).toBe(true);
+      expect(result.keyword).toBe('google lucu');
+    });
+
     test('defaults to general type when no type keyword found', () => {
       const result = extractEntities('cari resep masakan', 'SCRAPE');
       expect(result.type).toBe('general');

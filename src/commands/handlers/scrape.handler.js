@@ -42,6 +42,7 @@ async function handle(msg, args, client) {
   const format = normalizeFormat(parsed.format || parsed.f);
   const limit = parseLimit(parsed.limit || parsed.l);
   const provider = parsed.provider || parsed.p || null;
+  const useAI = parsed.ai === true || parsed.ai === 'true';
 
   const chat = await msg.getChat();
   const contact = await msg.getContact();
@@ -60,6 +61,7 @@ async function handle(msg, args, client) {
         limit,
         format,
         provider,
+        useAI,
         chatId: chat.id._serialized,
         userId,
       },
