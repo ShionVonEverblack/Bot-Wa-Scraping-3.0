@@ -120,8 +120,10 @@ async function routeCommand(msg, client) {
       template: 'template',
       analisa: 'analyze',
       analyse: 'analyze',
-      how: 'help',
-      bantuan: 'help',
+      how: 'menu',
+      bantuan: 'menu',
+      help: 'menu',
+      menu: 'menu',
       hapus: 'clear',
       bersihkan: 'clear',
     };
@@ -400,6 +402,16 @@ async function handleMessage(msg, client) {
 
     // Clean text (remove mentions + sanitize)
     let cleanText = sanitizeInput(stripMentions(body));
+
+    // 3a. Interactive UI Response (List / Buttons)
+    if (msg.type === 'list_response' || msg.type === 'buttons_response') {
+      const selectedId = msg.selectedRowId || msg.selectedButtonId || '';
+      if (selectedId === 'menu_jurnal') cleanText = 'cari jurnal AI terbaru';
+      else if (selectedId === 'menu_gambar') cleanText = 'cari gambar kucing';
+      else if (selectedId === 'menu_dataset') cleanText = 'cari dataset covid';
+      else if (selectedId === 'menu_admin') cleanText = '!admin stats';
+      log.info(`UI Interaction: ${selectedId} -> Mapped to: ${cleanText}`);
+    }
 
     // 3b. Voice Note Audio Transcription
     if (msg.hasMedia && (msg.type === 'ptt' || msg.type === 'audio')) {
