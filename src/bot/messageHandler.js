@@ -266,7 +266,12 @@ async function handleNlpIntent(msg, client, userId, text) {
         const history = (userContext?.messages || []).slice(-6)
           .map(m => ({ role: m.role, content: m.content }));
 
-        const response = await aiService.chat(text, { history });
+        let systemPromptOverride = undefined;
+        if (userContext?.lastDocumentText) {
+          systemPromptOverride = `Anda adalah Asisten Analitik Dokumen. Pengguna sedang bertanya mengenai dokumen / paper berjudul "${userContext.lastDocumentTitle || 'Dokumen'}" yang baru saja mereka baca.\n\n---\n[ISI DOKUMEN]\n${userContext.lastDocumentText}\n---\n\nJawablah pertanyaan pengguna SECARA DETAIL dan AKURAT HANYA berdasarkan teks dokumen di atas. Jika jawabannya tidak ada di dalam dokumen, katakan bahwa informasi tersebut tidak tercantum.`;
+        }
+
+        const response = await aiService.chat(text, { history, systemPrompt: systemPromptOverride });
         await msg.reply(response);
 
         contextMemory.store(userId, {
