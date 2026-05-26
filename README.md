@@ -1,15 +1,21 @@
 # 🤖 Rima — Bot Scraping WhatsApp 3.0
 
-> Asisten pencari data all-in-one berbasis WhatsApp dengan NLP, multi-AI provider, dan 13+ data source.
+> Asisten pencari data all-in-one berbasis WhatsApp dengan NLP, multi-AI provider, dan 19 data source.
 
 ## ✨ Fitur Utama
 
-- 🔍 **Smart Search** — Cari gambar, paper akademik, dataset, dan web via bahasa natural (NLP)
-- 🤖 **Multi-AI** — Dukungan OpenAI, Gemini, Groq, dan Grok dengan sistem *auto-fallback* jika salah satu gagal
-- 🧠 **NLP Intent** — Klasifikasi niat pengguna 2 lapis (Rule-based Regex → AI Fallback) untuk efisiensi
-- 📄 **Paper Download** — Rantai resolver pintar: Unpaywall → OpenAlex → arXiv → Crossref
+- 🔍 **Smart Search** — Cari gambar, anime art, paper akademik, dataset, dan web via bahasa natural (NLP)
+- 🤖 **Multi-AI & Auto-Summary** — Dukungan OpenAI, Gemini, Groq, dan Grok dengan sistem *auto-fallback* jika salah satu gagal, dan fitur peringkasan instan (`--ai` atau `+ai`)
+- 🧠 **3-Layer NLP Intent** — Klasifikasi niat pengguna 3 lapis super cerdas (Local Neural Network `node-nlp` → Rule-based Regex → AI Fallback) toleran terhadap *typo* dan singkatan
+- 📄 **Paper Download** — Rantai resolver pintar: Europe PMC → Unpaywall → OpenAlex → arXiv → Crossref
 - 🌐 **Deep Scrape** — Puppeteer + Brave browser, *stealth mode*, bypass anti-bot
-- 📊 **13+ Data Providers** — Unsplash, Pexels, Pixabay, Wikimedia, OpenAlex, arXiv, Crossref, Semantic Scholar, Kaggle, HuggingFace, DuckDuckGo, Wikipedia, dan Puppeteer
+- 📊 **19 Data Providers** —
+  - **Images**: Unsplash, Pexels, Pixabay, RedditImages, Safebooru (Anime art), Wikimedia
+  - **Papers**: OpenAlex, arXiv, Europe PMC, Crossref, Semantic Scholar
+  - **Datasets**: Kaggle, HuggingFace, Zenodo (Scientific datasets)
+  - **Forums**: Reddit
+  - **Books**: Google Books
+  - **General**: DuckDuckGo, Wikipedia, Puppeteer
 - ⏰ **Watch System** — Penjadwalan scraping otomatis (jam/hari/minggu)
 - 📦 **Multi-Format Output** — Ekspor hasil ke JSON, CSV, TSV, HTML, Excel, SQL, TXT, ZIP
 - 🛡️ **Production-Ready & Resilient** — Dilengkapi *Circuit Breaker*, *Rate Limiter*, *Job Queue* (antrean tugas), dan auto-restart
@@ -37,7 +43,7 @@ cp .env.example .env
 
 # 3. Run
 node index.js
-# Scan QR code di terminal dengan WhatsApp
+# Scan QR code di terminal atau via Web Dashboard dengan WhatsApp Anda
 ```
 
 ## ⚙️ Konfigurasi
@@ -48,6 +54,8 @@ Copy `.env.example` ke `.env` dan isi:
 |----------|----------|-----------|
 | `OPENAI_API_KEY` | ✅* | OpenAI API key |
 | `GEMINI_API_KEY` | ✅* | Google Gemini API key |
+| `GROQ_API_KEY` | ❌ | Groq Cloud API key |
+| `GROK_API_KEY` | ❌ | Grok (xAI) API key |
 | `UNSPLASH_ACCESS_KEY` | ❌ | Unsplash image API |
 | `PEXELS_API_KEY` | ❌ | Pexels image API |
 | `PIXABAY_API_KEY` | ❌ | Pixabay image API |
@@ -61,6 +69,8 @@ Copy `.env.example` ke `.env` dan isi:
 ### Command
 ```
 !scrape <keyword> --type images --limit 20
+!scrape anime --type images --provider safebooru --limit 10
+!scrape covid --type datasets --provider zenodo --ai
 !paper 10.1038/s41586-020-2649-2
 !deepscrape https://example.com
 !ai apa itu machine learning?
@@ -70,10 +80,13 @@ Copy `.env.example` ke `.env` dan isi:
 !menu | !help | !health | !history
 ```
 
-### Natural Language
+### Natural Language (NLP)
+Bot memahami bahasa percakapan sehari-hari secara fleksibel:
 ```
 "cari gambar kucing lucu"
-"carikan paper tentang deep learning"
+"carikan anime art naruto dari safebooru"
+"tolong cari dataset covid di zenodo --ai"
+"carikan paper tentang deep learning dan ringkas"
 "apa itu neural network?"
 "download paper arXiv 2301.07041"
 ```
@@ -82,10 +95,10 @@ Copy `.env.example` ke `.env` dan isi:
 
 ```
 src/
-├── bot/            # WhatsApp client, message handler, NLP, wizard
+├── bot/            # WhatsApp client, message handler, NLP (Neural Network), wizard
 ├── commands/       # 20+ command handlers
 ├── engine/         # Provider router, deep scraper, scrape engine
-│   └── providers/  # 13 data providers (images/papers/datasets/general)
+│   └── providers/  # 19 data providers (images/papers/datasets/forums/books/general)
 ├── jobs/           # Bottleneck job queue + workers
 ├── services/       # AI, cache, formatters, i18n, images, packaging,
 │                   # resilience, security, identity, watch, templates
@@ -115,3 +128,4 @@ docker-compose up -d
 ## 📄 License
 
 MIT
+

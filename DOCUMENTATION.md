@@ -1,6 +1,6 @@
 # 📖 Rima — Dokumentasi Lengkap Bot Scraping WhatsApp 3.0
 
-> **Rima** adalah bot WhatsApp all-in-one untuk pencarian data (gambar, paper akademik, dataset, web) dengan Natural Language Processing, multi-AI provider, dan 13 data source. Dibangun dengan Node.js, whatsapp-web.js, dan Puppeteer.
+> **Rima** adalah bot WhatsApp all-in-one untuk pencarian data (gambar, paper akademik, dataset, buku, forum, web) dengan 3-Layer NLP, multi-AI provider, dan 19 data source. Dibangun dengan Node.js, whatsapp-web.js, dan Puppeteer.
 
 ---
 
@@ -8,9 +8,9 @@
 
 ### Apa itu Rima?
 Bot asisten WhatsApp yang bisa:
-- **Mencari data** dari 13+ sumber (Unsplash, arXiv, Kaggle, Wikipedia, dll)
+- **Mencari data** dari 19+ sumber (Unsplash, Zenodo, Reddit, Safebooru, arXiv, Kaggle, Wikipedia, dll)
 - **Chat dengan AI** (OpenAI, Gemini, Groq, Grok) dengan konteks multi-turn
-- **Download paper akademik** via DOI/arXiv ID
+- **Download paper akademik** via DOI/arXiv ID/PMID dengan smart resolver (Europe PMC, Sci-Hub fallback)
 - **Deep scrape** halaman web dengan Puppeteer + Brave browser
 - **Analisa gambar** menggunakan AI vision
 - **Jadwalkan pencarian** otomatis (hourly/daily/weekly)
@@ -22,7 +22,7 @@ Bot asisten WhatsApp yang bisa:
 | WhatsApp | whatsapp-web.js + Puppeteer |
 | Browser | Brave Browser (auto-detect) |
 | AI | OpenAI, Gemini, Groq, Grok (auto-fallback) |
-| NLP | 2-layer: regex rules → AI fallback |
+| NLP | 3-Layer: Neural Network (`node-nlp`) → Regex rules → AI fallback |
 | Job Queue | Bottleneck (concurrency limiter) |
 | Scheduling | node-cron |
 | HTTP | Axios |
@@ -41,14 +41,17 @@ User mengirim pesan WhatsApp
   │ client.js   │  ← whatsapp-web.js event listener
   └──────┬──────┘
          ▼
-  ┌──────────────────┐
-  │ messageHandler   │  ← Central router
-  │  1. Sanitize     │  ← sanitizeInput()
-  │  2. Rate limit   │  ← checkRateLimit()
-  │  3. Cooldown     │  ← 3s per user
-  │  4. Command?     │  ── Yes ──▶ commands/handlers/*.handler.js
-  │  5. NLP classify │  ── Intent detected ──▼
-  └──────────────────┘
+  ┌──────────────────────────────┐
+  │ messageHandler               │  ← Central router
+  │  1. Sanitize                 │  ← sanitizeInput()
+  │  2. Rate limit               │  ← checkRateLimit()
+  │  3. Cooldown                 │  ← 3s per user
+  │  4. Command?                 │  ── Yes ──▶ commands/handlers/*.handler.js
+  │  5. 3-Layer NLP Classifier:  │  ── Intent detected ──▼
+  │     a. Local Neural Network  │
+  │     b. Regex Fallback        │
+  │     c. AI Fallback           │
+  └──────────────────────────────┘
          │
     ┌────┴─────────────────────────┐
     │  INTENTS:                    │
@@ -74,20 +77,9 @@ scrapeEngine.scrape()
     ├── 1. Cache check (hit? return cached)
     ├── 2. providerRouter.route()
     │       ├── Circuit breaker check (skip if OPEN)
-    │       ├── Try provider by priority (highest first)
-    │       ├── Record success/failure → circuit breaker
-    │       └── Fallback to next provider on failure
-    ├── 3. Normalize items (consistent fields)
-    ├── 4. Deduplicate (by URL)
-    ├── 5. Rank by relevance (keyword matching + metadata)
-    ├── 6. Cache result for future requests
-    └── 7. Return to jobWorker → send to WhatsApp
-```
-
-### Struktur Direktori
-```
-Bot scraping 3.0/
+    │       ├�Bot scraping 3.0/
 ├── index.js                    # Entry point, bootstrap, shutdown
+├── model.nlp                   # Model biner hasil training NLP offline
 ├── .env / .env.example         # Konfigurasi environment
 ├── package.json                # Dependencies & scripts
 ├── Dockerfile                  # Docker support
@@ -101,16 +93,17 @@ Bot scraping 3.0/
 │   │   ├── clientManager.js    # Start/restart/shutdown lifecycle
 │   │   ├── messageHandler.js   # Central message router (sanitize → rate limit → NLP)
 │   │   ├── nlp/
-│   │   │   ├── intentClassifier.js  # 2-layer: regex → AI fallback
-│   │   │   ├── entityExtractor.js   # Extract keyword, type, limit, DOI
+│   │   │   ├── nlpManager.js        # node-nlp manager (training & classification offline)
+│   │   │   ├── intentClassifier.js  # 3-layer: Neural Network → regex → AI fallback
+│   │   │   ├── entityExtractor.js   # Extract keyword, type, limit, DOI, --ai flag
 │   │   │   └── contextMemory.js     # Per-user conversation memory (TTL 30min)
 │   │   ├── wizard/             # Step-by-step guided wizard
 │   │   ├── menu/               # Menu templates
 │   │   └── templates/          # Message templates
 │   │
 │   ├── commands/handlers/      # 23 Command Handlers
-│   │   ├── scrape.handler.js   # !scrape <keyword> --type --limit
-│   │   ├── paper.handler.js    # !paper <DOI/arXiv>
+│   │   ├── scrape.handler.js   # !scrape <keyword> --type --limit [--ai]
+│   │   ├── paper.handler.js    # !paper <DOI/arXiv/PMID>
 │   │   ├── deepscrape.handler.js  # !deepscrape <URL>
 │   │   ├── ai.handler.js       # !ai <question>
 │   │   ├── analyze.handler.js  # !analyze (reply to image)
@@ -129,6 +122,23 @@ Bot scraping 3.0/
 │   │   ├── compress.handler.js # !compress (ZIP files)
 │   │   ├── resolve.handler.js  # !resolve <DOI> (metadata lookup)
 │   │   ├── watches.handler.js  # !watches (list active watches)
+│   │   ├── unwatch.handler.js  # !unwatch <id>
+│   │   ├── settings.handler.js # !settings
+│   │   └── lang.handler.js     # !lang <id|en>
+│   │
+│   ├── engine/                 # Scraping Engine
+│   │   ├── scrapeEngine.js     # Pipeline orchestrator (cache→route→norm→dedup→rank)
+│   │   ├── providerRouter.js   # Multi-provider routing + circuit breaker
+│   │   ├── deepScraper.js      # Full-page scraping with Puppeteer
+│   │   └── providers/          # 19 Data Providers
+│   │       ├── index.js        # Auto-discovery registry
+│   │       ├── books/          # Google Books
+│   │       ├── datasets/       # Kaggle, HuggingFace, Zenodo
+│   │       ├── forums/         # Reddit
+│   │       ├── images/         # Unsplash, Pexels, Pixabay, Wikimedia, RedditImages, Safebooru
+│   │       ├── papers/         # OpenAlex, arXiv, Crossref, Semantic Scholar, Europe PMC
+│   │       └── general/        # DuckDuckGo, Wikipedia, Puppeteer
+es.handler.js  # !watches (list active watches)
 │   │   ├── unwatch.handler.js  # !unwatch <id>
 │   │   ├── settings.handler.js # !settings
 │   │   └── lang.handler.js     # !lang <id|en>
@@ -183,29 +193,43 @@ Bot scraping 3.0/
 
 ---
 
-## 3. Data Providers (13 Total)
+## 3. Data Providers (19 Total)
 
-### Images (4 providers)
+### Images (6 providers)
 | Provider | API Key? | Priority | Source |
 |----------|----------|----------|--------|
 | Unsplash | ✅ `UNSPLASH_ACCESS_KEY` | 90 | High-quality photos |
 | Pexels | ✅ `PEXELS_API_KEY` | 85 | Stock photos |
 | Pixabay | ✅ `PIXABAY_API_KEY` | 80 | Free images |
-| Wikimedia | ❌ | 70 | Wikipedia commons |
+| RedditImages | ❌ | 75 | Subreddit images (r/pics, etc.) |
+| Safebooru | ❌ | 70 | Anime art & illustration database |
+| Wikimedia | ❌ | 65 | Wikipedia commons |
 
-### Papers (4 providers)
+### Papers (5 providers)
 | Provider | API Key? | Priority | Source |
 |----------|----------|----------|--------|
 | OpenAlex | ❌ (email recommended) | 90 | 250M+ academic works |
 | arXiv | ❌ | 85 | Preprints |
-| Crossref | ❌ (email recommended) | 80 | DOI metadata |
-| Semantic Scholar | Optional `S2_API_KEY` | 75 | AI-powered citations |
+| Europe PMC | ❌ | 80 | Life science & biomedical literature |
+| Crossref | ❌ (email recommended) | 75 | DOI metadata |
+| Semantic Scholar | Optional `S2_API_KEY` | 70 | AI-powered citations |
 
-### Datasets (2 providers)
+### Datasets (3 providers)
 | Provider | API Key? | Priority | Source |
 |----------|----------|----------|--------|
 | Kaggle | ✅ `KAGGLE_USERNAME` + `KAGGLE_KEY` | 90 | ML datasets |
 | HuggingFace | ❌ | 85 | AI/ML models & datasets |
+| Zenodo | ❌ | 80 | Open scientific datasets & publications |
+
+### Forums (1 provider)
+| Provider | API Key? | Priority | Source |
+|----------|----------|----------|--------|
+| Reddit | ❌ | 80 | Reddit posts & discussions |
+
+### Books (1 provider)
+| Provider | API Key? | Priority | Source |
+|----------|----------|----------|--------|
+| Google Books | ❌ | 80 | Google Books metadata & search |
 
 ### General (3 providers)
 | Provider | API Key? | Priority | Source |
@@ -234,6 +258,11 @@ Urutan default: **OpenAI → Gemini → Groq → Grok**. Jika provider pertama g
 ### Multi-Turn Conversation
 Bot menyimpan **6 pesan terakhir** per user di `contextMemory` (TTL 30 menit). Setiap pesan AI baru menyertakan history ini, sehingga AI "ingat" konteks percakapan.
 
+### On-Demand AI Summary
+Fitur baru yang memungkinkan peringkasan instan pada data hasil scraping.
+- **Cara Kerja**: Jika opsi `--ai` ditambahkan pada command atau terdeteksi oleh NLP, bot akan mengarahkan data mentah hasil scraping ke `aiService.summarizeResults()`.
+- **Provider AI**: Summarization diproses oleh AI provider utama (atau fallback) untuk menghasilkan poin-poin ringkasan yang ringkas dan padat langsung di WhatsApp, disertai bonus lampiran file mentah.
+
 ### Safety
 - **System prompt** membatasi perilaku AI
 - **Output filter** menyaring konten berbahaya
@@ -243,27 +272,30 @@ Bot menyimpan **6 pesan terakhir** per user di `contextMemory` (TTL 30 menit). S
 
 ## 5. NLP (Natural Language Processing)
 
-### 2-Layer Classification
-1. **Layer 1 — Regex Rules**: Pattern matching cepat untuk intent yang jelas
-2. **Layer 2 — AI Fallback**: Jika regex tidak cocok, gunakan AI untuk klasifikasi
+### 3-Layer Classification
+Klasifikasi intent sekarang sangat andal dan cerdas dengan 3 lapis keamanan:
+1. **Layer 1 — Local Neural Network (node-nlp)**: Klasifikasi super cepat secara offline yang toleran terhadap typo, mendukung multibahasa (ID/EN), dan dilatih langsung pada dataset intensif. Menggunakan file model binary `model.nlp` lokal.
+2. **Layer 2 — Regex Rules (Fallback)**: Pattern matching langsung untuk intent yang memiliki pola tegas (seperti format DOI, tautan arXiv, atau explicit command).
+3. **Layer 3 — AI Fallback (LLM API)**: Jika Neural Network lokal dan Regex tidak yakin, pesan dikirim ke LLM API untuk diklasifikasi secara semantik agar tidak salah dalam merespons pesan pengguna.
 
 ### Intents
 | Intent | Contoh Pesan | Aksi |
 |--------|-------------|------|
 | `COMMAND` | `!scrape kucing` | Route ke command handler |
-| `SCRAPE` | "cari gambar kucing" | Buat scrape job |
+| `SCRAPE` | "cari gambar kucing", "tolong scrape zenodo covid" | Buat scrape job |
 | `PAPER_DOWNLOAD` | "download 10.1038/s41586" | Download paper PDF |
-| `IMAGE_ANALYZE` | "analisa gambar ini" | AI vision analysis |
+| `IMAGE_ANALYZE` | "analisa gambar ini" | AI vision analysis (vision api) |
 | `AI_CHAT` | "apa itu neural network?" | Chat dengan AI |
-| `GREETING` | "halo", "hi" | Salam + menu |
+| `GREETING` | "halo", "hi" | Salam + menu utama |
 | `UNKNOWN` | (lainnya) | Fallback ke AI chat |
 
 ### Entity Extraction
-Dari teks natural language, bot mengekstrak:
+Dari teks natural language, bot mengekstrak entities berikut secara otomatis:
 - **Keyword**: "cari gambar `kucing lucu`" → keyword = "kucing lucu"
 - **Type**: "cari `paper` deep learning" → type = "papers"
 - **Limit**: "cari 20 gambar" → limit = 20
-- **Identifier**: DOI, arXiv ID, PMID dari teks
+- **Identifier**: DOI, arXiv ID, PMID, PMC dari teks
+- **AI Summary Flag**: "cari paper AI --ai" atau "cari gambar kucing +ai" → useAI = true
 
 ---
 
@@ -311,9 +343,9 @@ node index.js
 ```
 
 ### Commands
-| Command | Deskripsi | Contoh |
-|---------|-----------|--------|
-| `!scrape` | Cari data | `!scrape kucing --type images --limit 20` |
+| Command | Deskripsi | Contoh / Opsi Baru |
+|---------|-----------|--------------------|
+| `!scrape` | Cari data dari 19+ provider | `!scrape machine learning --type papers --ai` (dengan summary AI)<br>`!scrape anime --type images --provider safebooru` |
 | `!paper` | Download paper | `!paper 10.1038/s41586-020-2649-2` |
 | `!deepscrape` | Scrape halaman web | `!deepscrape https://example.com` |
 | `!ai` | Tanya AI | `!ai apa itu machine learning?` |
@@ -337,13 +369,14 @@ node index.js
 | `!help` | Bantuan | `!help` |
 
 ### Natural Language (Tanpa Command)
-Bot memahami bahasa natural (Indonesia & English):
+Bot memahami bahasa natural (Indonesia & English) dengan sangat cerdas & toleran terhadap salah ketik:
 ```
-"cari gambar kucing lucu 20"       → Scrape 20 images "kucing lucu"
-"carikan paper machine learning"   → Scrape papers "machine learning"
-"download paper arXiv 2301.07041"  → Download paper
-"apa itu deep learning?"           → AI chat
-"analisa gambar ini"               → Image analysis (reply to image)
+"cari gambar kucing lucu 20 --ai"     → Scrape 20 images + ringkas dengan AI
+"tolong cari dataset covid di zenodo"  → Scrape dataset spesifik di Zenodo
+"carikan paper machine learning +ai"   → Scrape papers + ringkas hasil dengan AI
+"download paper arXiv 2301.07041"      → Mengunduh paper secara otomatis
+"apa itu deep learning?"               → Chat multi-turn dengan AI
+"analisa gambar ini"                   → Image analysis (vision AI)
 ```
 
 ### Grup vs DM
