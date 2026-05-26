@@ -2,25 +2,21 @@
 
 > Asisten pencari data all-in-one berbasis WhatsApp dengan NLP, multi-AI provider, dan 19 data source.
 
-## ✨ Fitur Utama
+## ✨ Fitur Utama (Ultimate 3.0)
 
-- 🔍 **Smart Search** — Cari gambar, anime art, paper akademik, dataset, dan web via bahasa natural (NLP)
-- 🤖 **Multi-AI & Auto-Summary** — Dukungan OpenAI, Gemini, Groq, dan Grok dengan sistem *auto-fallback* jika salah satu gagal, dan fitur peringkasan instan (`--ai` atau `+ai`)
-- 🧠 **3-Layer NLP Intent** — Klasifikasi niat pengguna 3 lapis super cerdas (Local Neural Network `node-nlp` → Rule-based Regex → AI Fallback) toleran terhadap *typo* dan singkatan
-- 📄 **Paper Download** — Rantai resolver pintar: Europe PMC → Unpaywall → OpenAlex → arXiv → Crossref
-- 🌐 **Deep Scrape** — Puppeteer + Brave browser, *stealth mode*, bypass anti-bot
-- 📊 **19 Data Providers** —
-  - **Images**: Unsplash, Pexels, Pixabay, RedditImages, Safebooru (Anime art), Wikimedia
-  - **Papers**: OpenAlex, arXiv, Europe PMC, Crossref, Semantic Scholar
-  - **Datasets**: Kaggle, HuggingFace, Zenodo (Scientific datasets)
-  - **Forums**: Reddit
-  - **Books**: Google Books
-  - **General**: DuckDuckGo, Wikipedia, Puppeteer
-- ⏰ **Watch System** — Penjadwalan scraping otomatis (jam/hari/minggu)
-- 📦 **Multi-Format Output** — Ekspor hasil ke JSON, CSV, TSV, HTML, Excel, SQL, TXT, ZIP
-- 🛡️ **Production-Ready & Resilient** — Dilengkapi *Circuit Breaker*, *Rate Limiter*, *Job Queue* (antrean tugas), dan auto-restart
-- 🧪 **100% Test Coverage** — Sistem teruji penuh (192 unit tes) menjamin stabilitas fungsi inti, utilitas, memori konteks, formatter, dan wizard.
-- 📊 **Web Dashboard** — Monitor status bot & scan QR code via browser (`http://localhost:3000`)
+- 🎙️ **Voice Note AI** — Anda tidak perlu mengetik! Kirim pesan suara (PTT/Audio) dan bot akan otomatis mentranskripsikannya menggunakan model *Speech-to-Text* (Whisper/OpenAI) dan memrosesnya layaknya teks.
+- 🧠 **Chat dengan Dokumen (RAG)** — Setelah mengunduh jurnal/paper (PDF), AI akan secara instan membaca isinya ke dalam memori. Anda bisa bertanya spesifik tentang metodologi, kesimpulan, atau isi dari jurnal tersebut!
+- 🗄️ **Multi-Provider Aggregation (`--multi`)** — Tarik data dari seluruh sumber API sekaligus secara paralel! Bot akan menggabungkan, mendeduplikasi, dan merangking hasilnya.
+- 🔘 **Interactive UI Menu** — Tekan tombol `!menu` untuk memunculkan antarmuka *List* visual interaktif langsung dari antarmuka obrolan WhatsApp, tanpa perlu menghafal _command_.
+- 🔍 **Smart Search (NLP)** — Cari gambar, anime art, paper akademik, dataset, dan web via bahasa natural. Paham *typo* dan terklasifikasi dalam *3-Layer NLP Intent*.
+- 🤖 **Multi-AI & Auto-Summary** — Dukungan OpenAI, Gemini, Groq, dan Grok dengan sistem *auto-fallback* dan peringkasan instan (`--ai` atau `+ai`).
+- 📄 **Paper Download** — Rantai resolver pintar: Europe PMC → Unpaywall → OpenAlex → arXiv → Crossref.
+- 🌐 **Deep Scrape & Custom Scrape** — Puppeteer + Brave browser. Kini dilengkapi `!customscrape` yang bisa menargetkan CSS Selector spesifik dari web apa pun.
+- 🛡️ **Admin Dashboard (`!admin`)** — Kontrol penuh khusus nomor pemilik bot: pantau RAM, _uptime_, pembersihan _cache_, hingga menghentikan proses paksa (`cancel-all`).
+- ⏰ **Watch System** — Penjadwalan scraping otomatis (jam/hari/minggu).
+- 📦 **Multi-Format Output** — Ekspor hasil ke JSON, CSV, TSV, HTML, Excel, SQL, TXT, ZIP.
+- 🧪 **100% Test Coverage** — Sistem teruji penuh (193 Unit Test) menjamin stabilitas fungsi inti.
+- 📊 **Web Dashboard** — Monitor status bot & scan QR code via browser (`http://localhost:3000`).
 
 ## 📋 Prerequisites
 
@@ -66,29 +62,31 @@ Copy `.env.example` ke `.env` dan isi:
 
 ## 💬 Cara Pakai
 
-### Command
+### Command Terstruktur
 ```
 !scrape <keyword> --type images --limit 20
-!scrape anime --type images --provider safebooru --limit 10
+!scrape anime --type images --provider safebooru --multi
 !scrape covid --type datasets --provider zenodo --ai
 !paper 10.1038/s41586-020-2649-2
 !deepscrape https://example.com
+!customscrape https://news.ycombinator.com/ --selector "span.titleline > a"
 !ai apa itu machine learning?
 !analyze                          (reply ke gambar)
 !watch keyword --every daily
 !wizard                           (guided step-by-step)
-!menu | !help | !health | !history
+!menu | !help | !bantuan          (Memunculkan UI List Interaktif)
+!admin stats | !admin flush       (Khusus Admin)
 ```
 
-### Natural Language (NLP)
-Bot memahami bahasa percakapan sehari-hari secara fleksibel:
+### Bahasa Natural (NLP) & Voice Note
+Anda bisa merekam _Voice Note_ (Pesan Suara) atau mengetik kalimat percakapan sehari-hari secara fleksibel:
 ```
 "cari gambar kucing lucu"
 "carikan anime art naruto dari safebooru"
 "tolong cari dataset covid di zenodo --ai"
-"carikan paper tentang deep learning dan ringkas"
-"apa itu neural network?"
+"carikan paper tentang deep learning dari semua tempat --multi"
 "download paper arXiv 2301.07041"
+(Setelah PDF terdownload): "Tolong rangkum metodologinya!"
 ```
 
 ## 🏗️ Arsitektur
