@@ -8,6 +8,7 @@
 const config = require('../../config');
 const { createLogger } = require('../monitor/logger');
 const { getSystemPrompt, filterOutput, redactSecrets } = require('./safety/aiSafety');
+const axios = require('axios');
 
 const log = createLogger('ai:service');
 
@@ -220,4 +221,48 @@ async function classifyIntent(text) {
   }
 }
 
-module.exports = { generate, chat, summarizeResults, analyzeImage, classifyIntent };
+/**
+ * Transcribe audio using Whisper (Groq or OpenAI).
+ * @param {Object} params
+ * @param {string} params.audioBase64 - Base64 encoded audio data
+ * @param {string} params.mimeType - Audio MIME type
+ * @returns {Promise<string>} Transcribed text
+ */
+async function transcribeAudio({ audioBase64, mimeType }) {
+  const isGroq = !!config.ai.groq.apiKey;
+  const isOpenAI = !!config.ai.openai.apiKey;
+  
+  if (!isGroq && !isOpenAI) {
+    throw new Error('No API key configured for audio transcription (Groq or OpenAI required)');
+  }
+
+  const apiKey = isGroq ? config.ai.groq.apiKey : config.ai.openai.apiKey;
+  const url = isGroq ? 'https://api.groq.com/openai/v1/audio/transcriptions' : 'https://api.openai.com/v1/audio/transcriptions';
+  const model = isGroq ? 'whisper-large-v3' : 'whisper-1';
+
+  try {
+    const buffer = Buffer.from(audioBase64, 'base64');
+    
+    // Convert to Blob for Node 18+ native FormData
+    const blob = new Blob([buffer], { type: mimeType });
+    const form = new FormData();
+    form.append('file', blob, 'audio.ogg');
+    form.append('model', model);
+
+    log.debug(`Transcribing audio via ${isGroq ? 'Groq' : 'OpenAI'} (${buffer.length} bytes)`);
+
+    const response = await axios.post(url, form, {
+      headers: {
+        'Authorization': `Bearer ${apiKey}`
+      },
+      timeout: 30000,
+    });
+
+    return response.data.text;
+  } catch (err) {
+    log.error('Audio transcription failed', { error: err.response?.data?.error?.message || err.message });
+    throw new Error('Gagal mentranskripsi pesan suara');
+  }
+}
+
+module.exports = { generate, chat, summarizeResults, analyzeImage, classifyIntent, transcribeAudio };

@@ -204,6 +204,7 @@ async function handleNlpIntent(msg, client, userId, text) {
             limit,
             format: extracted.format || config.output.formatDefault,
             useAI: extracted.useAI || false,
+            multi: extracted.multi || false,
             chatId: chat.id._serialized,
             userId,
           },
@@ -393,7 +394,33 @@ async function handleMessage(msg, client) {
     }
 
     // Clean text (remove mentions + sanitize)
-    const cleanText = sanitizeInput(stripMentions(body));
+    let cleanText = sanitizeInput(stripMentions(body));
+
+    // 3b. Voice Note Audio Transcription
+    if (msg.hasMedia && (msg.type === 'ptt' || msg.type === 'audio')) {
+      try {
+        await sendTyping(msg);
+        const media = await msg.downloadMedia();
+        if (media && media.data) {
+          const aiService = require('../services/ai/aiService');
+          const transcribed = await aiService.transcribeAudio({
+            audioBase64: media.data,
+            mimeType: media.mimetype
+          });
+          if (transcribed) {
+            cleanText = sanitizeInput(stripMentions(transcribed));
+            log.info(`Transcribed audio to text: ${cleanText}`);
+            await msg.reply(`🎤 _Terdengar:_ "${cleanText}"`);
+          }
+        }
+      } catch (err) {
+        log.error('Audio transcription failed in handler', { error: err.message });
+        await msg.reply('❌ Maaf, sistem gagal menerjemahkan pesan suara Anda. Pastikan API key Groq atau OpenAI terkonfigurasi.');
+        return;
+      }
+    }
+
+    if (!cleanText) return; // If still empty after all processing
 
     // 4a. Rate limit check (30 msg/min window)
     const rateCheck = checkRateLimit(userId);

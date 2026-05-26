@@ -157,6 +157,13 @@ function extractEntities(text, intent) {
     cleanText = cleanText.replace(useAIMatch[0], '').trim();
   }
 
+  // Extract multi flag
+  const multiMatch = cleanText.match(/(?:--|\+)multi\b/i);
+  const multi = !!multiMatch;
+  if (multiMatch) {
+    cleanText = cleanText.replace(multiMatch[0], '').trim();
+  }
+
   // Tokenize
   const words = cleanText.split(/\s+/).filter(Boolean);
 
@@ -175,9 +182,9 @@ function extractEntities(text, intent) {
 
   const keyword = keywordWords.join(' ').trim();
 
-  log.debug('Entities extracted', { keyword, type, limit, format, identifier, useAI });
+  log.debug('Entities extracted', { keyword, type, limit, format, identifier, useAI, multi });
 
-  return { keyword, type, limit, format, provider: null, identifier, useAI };
+  return { keyword, type, limit, format, provider: null, identifier, useAI, multi };
 }
 
 module.exports = { extractEntities, extractIdentifier };

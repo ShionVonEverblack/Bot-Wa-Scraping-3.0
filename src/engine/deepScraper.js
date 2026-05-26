@@ -229,7 +229,45 @@ async function deepScrape(url, options = {}) {
       try { await release(); } catch { /* ignore */ }
     }
   }
+/**
+ * Scrape arbitrary text using a custom CSS selector.
+ * @param {string} url - Target URL
+ * @param {string} selector - CSS Selector
+ * @param {number} [timeout=30000] - Timeout
+ * @returns {Promise<string[]>} List of matched texts
+ */
+async function evaluateSelector(url, selector, timeout = 30000) {
+  let release = null;
+  try {
+    const acquired = await acquirePage();
+    const page = acquired.page;
+    release = acquired.release;
+
+    await page.goto(url, { waitUntil: 'networkidle2', timeout });
+    
+    // Wait for the selector specifically
+    await page.waitForSelector(selector, { timeout: 10000 }).catch(() => log.warn(`Selector ${selector} timeout`));
+    
+    const result = await page.evaluate((sel) => {
+      const texts = [];
+      document.querySelectorAll(sel).forEach(el => {
+        const text = (el.textContent || '').trim();
+        if (text) texts.push(text);
+      });
+      return texts;
+    }, selector);
+    
+    log.info(`Custom scrape for ${url} with selector "${selector}" yielded ${result.length} results.`);
+    return result;
+  } catch (err) {
+    log.error(`Custom scrape failed for ${url} / ${selector}`, { error: err.message });
+    throw err;
+  } finally {
+    if (release) {
+      try { await release(); } catch { /* ignore */ }
+    }
+  }
 }
 
-module.exports = { deepScrape };
+module.exports = { deepScrape, evaluateSelector };
 

@@ -31,11 +31,12 @@ async function scrape(params) {
   const {
     type, keyword, limit = 10, page = 1, cursor,
     provider, safeMode = true, useCache = true, signal,
+    multi = false,
   } = params;
 
   // 1. Cache check
   if (useCache) {
-    const cacheKey = cache.makeKey('scrape', { type, keyword, limit, page, provider });
+    const cacheKey = cache.makeKey('scrape', { type, keyword, limit, page, provider, multi });
     const cached = cache.get(cacheKey);
     if (cached) {
       log.debug(`Cache hit: ${cacheKey}`);
@@ -43,10 +44,16 @@ async function scrape(params) {
     }
   }
 
-  // 2. Route to provider(s) — circuit breaker is handled inside providerRouter
-  const result = await providerRouter.route({
-    type, provider, keyword, limit, page, cursor, safeMode, signal,
-  });
+  // 2. Route to provider(s)
+  let result;
+  if (multi) {
+    result = await providerRouter.routeMulti({ type, keyword, limit, page, safeMode, signal });
+    result.providerUsed = result.providersUsed.join(', ') || 'none';
+  } else {
+    result = await providerRouter.route({
+      type, provider, keyword, limit, page, cursor, safeMode, signal,
+    });
+  }
 
   // 4. Normalize items
   result.items = normalizeItems(result.items, type);
@@ -62,7 +69,7 @@ async function scrape(params) {
 
   // 6. Cache result
   if (useCache && result.items.length > 0) {
-    const cacheKey = cache.makeKey('scrape', { type, keyword, limit, page, provider });
+    const cacheKey = cache.makeKey('scrape', { type, keyword, limit, page, provider, multi });
     cache.set(cacheKey, result);
   }
 
