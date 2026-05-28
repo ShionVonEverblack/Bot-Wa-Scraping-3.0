@@ -53,36 +53,14 @@ function buildTextMenu() {
  * @param {Object} client - WhatsApp client
  */
 async function handle(msg, args, client) {
-  // Try sending a WhatsApp List message first
   try {
-    const { List } = require('whatsapp-web.js');
-
-    const sections = [{
-      title: 'Pencarian Data',
-      rows: [
-        { title: 'Cari Jurnal / Paper', id: 'menu_jurnal', description: 'Pencarian paper akademik' },
-        { title: 'Cari Gambar', id: 'menu_gambar', description: 'Cari aset gambar dari berbagai sumber' },
-        { title: 'Cari Dataset', id: 'menu_dataset', description: 'Cari dataset CSV dari Kaggle, Zenodo, dll' },
-      ]
-    }, {
-      title: 'AI dan Utilitas',
-      rows: [
-        { title: 'Tanya AI', id: 'menu_ai', description: 'Chat langsung dengan AI' },
-        { title: 'Admin Dashboard', id: 'menu_admin', description: 'Statistik dan kontrol sistem' },
-      ]
-    }];
-
-    const list = new List(
-      'Pilih fitur yang ingin Anda gunakan.',
-      'Pilih Fitur',
-      sections
-    );
-
-    await msg.reply(list);
-    log.debug('Interactive List Menu sent successfully.');
-  } catch (err) {
-    log.warn('List message not supported, sending text fallback', { error: err.message });
+    // WhatsApp Multi-Device has completely deprecated List messages for non-business accounts,
+    // causing silent crashes or disconnects in whatsapp-web.js.
+    // We bypass the List UI and directly send the rich text menu.
     await msg.reply(buildTextMenu());
+    log.debug('Text Menu sent successfully.');
+  } catch (err) {
+    log.error('Failed to send menu', { error: err.message });
   }
 }
 
