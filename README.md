@@ -13,7 +13,9 @@
 - 🤖 **Multi-AI & Auto-Summary** — Dukungan OpenAI, Gemini, Groq, dan Grok dengan sistem *auto-fallback* dan peringkasan instan (`--ai` atau `+ai`).
 - 📄 **Paper Download** — Rantai resolver pintar: Europe PMC → Unpaywall → OpenAlex → arXiv → Crossref.
 - 🌐 **Deep Scrape & Custom Scrape** — Puppeteer + Brave browser. Kini dilengkapi `!customscrape` yang bisa menargetkan CSS Selector spesifik dari web apa pun.
-- 🛡️ **Admin Dashboard (`!admin`)** — Kontrol penuh khusus nomor pemilik bot: pantau RAM, _uptime_, pembersihan _cache_, hingga menghentikan proses paksa (`cancel-all`).
+- 🛡️ **Anti-Spam & Rate Limiting** — Melindungi bot dari _banned_ WhatsApp dan pembengkakan tagihan API dengan sistem *Cooldown* cerdas (10 detik) per pengguna.
+- ✨ **Rich UI Formatting** — Balasan bot menggunakan kutipan *(Blockquote)* dan pembatas elegan ala *Markdown* yang membuat output tampak sangat rapi dan berkelas.
+- 🛠️ **Admin Dashboard (`!admin`)** — Kontrol penuh khusus nomor pemilik bot: pantau RAM, _uptime_, pembersihan _cache_, hingga menghentikan proses paksa (`cancel-all`).
 - ⏰ **Watch System** — Penjadwalan scraping otomatis (jam/hari/minggu).
 - 📦 **Multi-Format Output** — Ekspor hasil ke JSON, CSV, TSV, HTML, Excel, SQL, TXT, ZIP.
 - 🧪 **100% Test Coverage** — Sistem teruji penuh (193 Unit Test) menjamin stabilitas fungsi inti.
