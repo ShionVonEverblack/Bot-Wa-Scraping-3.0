@@ -5,6 +5,7 @@
 ## ✨ Fitur Utama (Ultimate 3.0)
 
 - 🎙️ **Voice Note AI** — Anda tidak perlu mengetik! Kirim pesan suara (PTT/Audio) dan bot akan otomatis mentranskripsikannya menggunakan model *Speech-to-Text* (Whisper/OpenAI) dan memrosesnya layaknya teks.
+- 👁️ **AI OCR (Ekstraksi Teks Gambar)** — Kirim atau _reply_ gambar (buku, jurnal, tabel) dengan `!ocr`. AI Vision (Gemini/GPT-4o) akan mengekstrak **seluruh teks** secara mutlak dan presisi (mendukung tulisan tangan & bahasa asing).
 - 🧠 **Chat dengan Dokumen (RAG)** — Setelah mengunduh jurnal/paper (PDF), AI akan secara instan membaca isinya ke dalam memori. Anda bisa bertanya spesifik tentang metodologi, kesimpulan, atau isi dari jurnal tersebut!
 - 🗄️ **Multi-Provider Aggregation (`--multi`)** — Tarik data dari seluruh sumber API sekaligus secara paralel! Bot akan menggabungkan, mendeduplikasi, dan merangking hasilnya.
 - 🔍 **Smart Search (NLP)** — Cari gambar, anime art, paper akademik, dataset, dan web via bahasa natural. Paham *typo* dan terklasifikasi dalam *3-Layer NLP Intent*.
@@ -70,7 +71,8 @@ Copy `.env.example` ke `.env` dan isi:
 !deepscrape https://example.com
 !customscrape https://news.ycombinator.com/ --selector "span.titleline > a"
 !ai apa itu machine learning?
-!analyze                          (reply ke gambar)
+!analyze                          (reply ke gambar, AI mendeskripsikan gambar)
+!ocr | !baca                      (reply ke gambar, AI mengekstrak Teks/OCR)
 !watch keyword --every daily
 !wizard                           (guided step-by-step)
 !help | !bantuan                  (Memunculkan menu bantuan teks)
