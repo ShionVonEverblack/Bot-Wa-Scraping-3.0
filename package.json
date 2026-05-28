@@ -33,7 +33,7 @@
     "qrcode": "^1.5.4",
     "qrcode-terminal": "^0.12.0",
     "sharp": "^0.33.5",
-    "whatsapp-web.js": "^1.34.5-alpha.3",
+    "whatsapp-web.js": "^1.26.1-alpha.3",
     "xml2js": "^0.6.2",
     "yargs-parser": "^21.1.1"
   },
