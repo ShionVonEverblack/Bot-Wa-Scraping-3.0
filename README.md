@@ -7,7 +7,6 @@
 - 🎙️ **Voice Note AI** — Anda tidak perlu mengetik! Kirim pesan suara (PTT/Audio) dan bot akan otomatis mentranskripsikannya menggunakan model *Speech-to-Text* (Whisper/OpenAI) dan memrosesnya layaknya teks.
 - 🧠 **Chat dengan Dokumen (RAG)** — Setelah mengunduh jurnal/paper (PDF), AI akan secara instan membaca isinya ke dalam memori. Anda bisa bertanya spesifik tentang metodologi, kesimpulan, atau isi dari jurnal tersebut!
 - 🗄️ **Multi-Provider Aggregation (`--multi`)** — Tarik data dari seluruh sumber API sekaligus secara paralel! Bot akan menggabungkan, mendeduplikasi, dan merangking hasilnya.
-- 🔘 **Interactive UI Menu** — Tekan tombol `!menu` untuk memunculkan antarmuka *List* visual interaktif langsung dari antarmuka obrolan WhatsApp, tanpa perlu menghafal _command_.
 - 🔍 **Smart Search (NLP)** — Cari gambar, anime art, paper akademik, dataset, dan web via bahasa natural. Paham *typo* dan terklasifikasi dalam *3-Layer NLP Intent*.
 - 🤖 **Multi-AI & Auto-Summary** — Dukungan OpenAI, Gemini, Groq, dan Grok dengan sistem *auto-fallback* dan peringkasan instan (`--ai` atau `+ai`).
 - 📄 **Paper Download** — Rantai resolver pintar: Europe PMC → Unpaywall → OpenAlex → arXiv → Crossref.
@@ -74,7 +73,7 @@ Copy `.env.example` ke `.env` dan isi:
 !analyze                          (reply ke gambar)
 !watch keyword --every daily
 !wizard                           (guided step-by-step)
-!menu | !help | !bantuan          (Memunculkan UI List Interaktif)
+!help | !bantuan                  (Memunculkan menu bantuan teks)
 !admin stats | !admin flush       (Khusus Admin)
 ```
 
