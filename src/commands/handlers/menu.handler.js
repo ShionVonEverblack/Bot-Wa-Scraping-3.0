@@ -2,13 +2,49 @@
 
 /**
  * @fileoverview Menu handler (!menu) - Displays interactive UI list.
+ * Falls back to rich text menu if List messages are not supported.
  * @module commands/handlers/menu.handler
  */
 
-const { List } = require('whatsapp-web.js');
 const { createLogger } = require('../../services/monitor/logger');
 
 const log = createLogger('cmd:menu');
+
+/**
+ * Build the fallback text menu (always works on all WA versions).
+ * @returns {string}
+ */
+function buildTextMenu() {
+  return (
+    '🤖 *RIMA BOT v3.0 — DASHBOARD*\n' +
+    '━━━━━━━━━━━━━━━━━━━━━━━━\n\n' +
+    '📄 *Pencarian & Scraping*\n' +
+    '  • `cari jurnal [topik]`\n' +
+    '  • `cari gambar [keyword]`\n' +
+    '  • `cari dataset [topik]`\n' +
+    '  • `cari jurnal [topik] --multi`\n\n' +
+    '📥 *Download & Analisa*\n' +
+    '  • `!paper [DOI / arXiv ID]`\n' +
+    '  • `!deepscrape [URL]`\n' +
+    '  • `!customscrape [URL] --selector "[css]"`\n' +
+    '  • `!analyze` _(reply ke gambar)_\n\n' +
+    '🧠 *AI & Dokumen*\n' +
+    '  • `!ai [pertanyaan]`\n' +
+    '  • Kirim *Voice Note* → otomatis diproses\n' +
+    '  • Download paper → lalu tanya isi dokumennya\n\n' +
+    '⚙️ *Utilitas*\n' +
+    '  • `!wizard` — Panduan langkah demi langkah\n' +
+    '  • `!watch [keyword] --every daily`\n' +
+    '  • `!history` — Riwayat pencarian\n' +
+    '  • `!health` — Cek status sistem\n\n' +
+    '🛡️ *Admin Only*\n' +
+    '  • `!admin stats` — Statistik sistem\n' +
+    '  • `!admin flush` — Bersihkan cache\n' +
+    '  • `!admin cancel-all` — Hentikan semua job\n\n' +
+    '━━━━━━━━━━━━━━━━━━━━━━━━\n' +
+    '_Ketik perintah di atas atau kirim pesan suara!_'
+  );
+}
 
 /**
  * Handle !menu command.
@@ -17,40 +53,38 @@ const log = createLogger('cmd:menu');
  * @param {Object} client - WhatsApp client
  */
 async function handle(msg, args, client) {
+  // Try sending a WhatsApp List message first
   try {
+    const { List } = require('whatsapp-web.js');
+
     const sections = [{
-      title: 'Kategori Fitur Utama',
+      title: 'Pencarian Data',
       rows: [
-        { title: 'Cari Jurnal & PDF', id: 'menu_jurnal', description: 'Kirim kalimat seperti "Cari jurnal AI"' },
-        { title: 'Cari Aset Gambar', id: 'menu_gambar', description: 'Kirim kalimat seperti "Cari gambar tata surya"' },
-        { title: 'Cari Dataset (CSV)', id: 'menu_dataset', description: 'Kirim kalimat seperti "Cari dataset covid 19"' },
-        { title: 'Fitur Admin (Dev)', id: 'menu_admin', description: 'Gunakan perintah !admin' }
+        { title: 'Cari Jurnal / Paper', id: 'menu_jurnal', description: 'Pencarian paper akademik' },
+        { title: 'Cari Gambar', id: 'menu_gambar', description: 'Cari aset gambar dari berbagai sumber' },
+        { title: 'Cari Dataset', id: 'menu_dataset', description: 'Cari dataset CSV dari Kaggle, Zenodo, dll' },
+      ]
+    }, {
+      title: 'AI dan Utilitas',
+      rows: [
+        { title: 'Tanya AI', id: 'menu_ai', description: 'Chat langsung dengan AI' },
+        { title: 'Admin Dashboard', id: 'menu_admin', description: 'Statistik dan kontrol sistem' },
       ]
     }];
 
     const list = new List(
-      '🌟 *Selamat datang di Rima Bot v3.0 Ultimate!*\n\nSaya adalah asisten AI super untuk keperluan pencarian data, pengumpulan referensi, dan chat dokumen (RAG).\n\n👇 Klik tombol di bawah untuk melihat fitur-fitur yang tersedia.\n_(Jika tombol tidak muncul, Anda bisa langsung mengetikkan perintah Anda di obrolan)._',
-      'Pilih Fitur 🔘',
+      'Selamat datang di Rima Bot v3.0 Ultimate! Pilih fitur yang ingin Anda gunakan dari daftar di bawah ini.',
+      'Pilih Fitur',
       sections,
-      '🤖 RIMA DASHBOARD',
-      '© Rima AI Scraping Bot'
+      'RIMA DASHBOARD',
+      'Rima AI Scraping Bot'
     );
 
     await msg.reply(list);
     log.debug('Interactive List Menu sent successfully.');
   } catch (err) {
-    log.error('Failed to send interactive menu list, sending fallback', { error: err.message });
-    // Fallback text if List is blocked by WA Multi-Device
-    const fallbackText = 
-      '🌟 *Rima Bot v3.0 Ultimate*\n\n' +
-      'Perangkat Anda tampaknya tidak mendukung Tombol Interaktif. Berikut adalah panduan cepat:\n\n' +
-      '1️⃣ *Cari Jurnal*: `cari jurnal tentang [topik]`\n' +
-      '2️⃣ *Cari Gambar*: `cari gambar [kata kunci]`\n' +
-      '3️⃣ *Cari Dataset*: `cari dataset [topik]`\n' +
-      '4️⃣ *Chat PDF / RAG*: `!download-paper [DOI/URL]`, lalu tanya AI\n' +
-      '5️⃣ *Admin Area*: `!admin stats` atau `!admin flush`';
-      
-    await msg.reply(fallbackText);
+    log.warn('List message not supported, sending text fallback', { error: err.message });
+    await msg.reply(buildTextMenu());
   }
 }
 

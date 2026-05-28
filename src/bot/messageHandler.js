@@ -406,11 +406,17 @@ async function handleMessage(msg, client) {
     // 3a. Interactive UI Response (List / Buttons)
     if (msg.type === 'list_response' || msg.type === 'buttons_response') {
       const selectedId = msg.selectedRowId || msg.selectedButtonId || '';
-      if (selectedId === 'menu_jurnal') cleanText = 'cari jurnal AI terbaru';
-      else if (selectedId === 'menu_gambar') cleanText = 'cari gambar kucing';
-      else if (selectedId === 'menu_dataset') cleanText = 'cari dataset covid';
-      else if (selectedId === 'menu_admin') cleanText = '!admin stats';
-      log.info(`UI Interaction: ${selectedId} -> Mapped to: ${cleanText}`);
+      const menuMap = {
+        menu_jurnal: 'cari jurnal AI terbaru',
+        menu_gambar: 'cari gambar kucing',
+        menu_dataset: 'cari dataset covid',
+        menu_admin: '!admin stats',
+        menu_ai: 'halo, apa yang bisa kamu lakukan?',
+      };
+      if (menuMap[selectedId]) {
+        cleanText = menuMap[selectedId];
+        log.info(`UI Interaction: ${selectedId} -> Mapped to: ${cleanText}`);
+      }
     }
 
     // 3b. Voice Note Audio Transcription
