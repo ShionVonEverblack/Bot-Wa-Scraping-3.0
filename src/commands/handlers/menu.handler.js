@@ -73,11 +73,10 @@ async function handle(msg, args, client) {
     }];
 
     const list = new List(
-      'Selamat datang di Rima Bot v3.0 Ultimate! Pilih fitur yang ingin Anda gunakan dari daftar di bawah ini.',
+      'Pilih fitur yang ingin Anda gunakan.',
       'Pilih Fitur',
       sections,
-      'RIMA DASHBOARD',
-      'Rima AI Scraping Bot'
+      'Menu Rima'
     );
 
     await msg.reply(list);
