@@ -77,7 +77,7 @@ scrapeEngine.scrape()
     ├── 1. Cache check (hit? return cached)
     ├── 2. providerRouter.route()
     │       ├── Circuit breaker check (skip if OPEN)
-    │       ├�Bot scraping 3.0/
+    │       ├�Bot scraping 3.0/
 ├── index.js                    # Entry point, bootstrap, shutdown
 ├── model.nlp                   # Model biner hasil training NLP offline
 ├── .env / .env.example         # Konfigurasi environment
