@@ -75,8 +75,7 @@ async function handle(msg, args, client) {
     const list = new List(
       'Pilih fitur yang ingin Anda gunakan.',
       'Pilih Fitur',
-      sections,
-      'Menu Rima'
+      sections
     );
 
     await msg.reply(list);
