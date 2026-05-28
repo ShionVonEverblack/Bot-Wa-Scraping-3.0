@@ -84,7 +84,7 @@ const config = {
 
   // --- Limits ---
   limits: {
-    userCooldownMs: toInt(env.USER_COOLDOWN_MS, 3000),
+    userCooldownMs: toInt(env.USER_COOLDOWN_MS, 10000),
     maxConcurrency: toInt(env.MAX_CONCURRENCY, 3),
     jobTimeoutMs: toInt(env.JOB_TIMEOUT_MS, 120000),
     resultLimitDefault: toInt(env.RESULT_LIMIT_DEFAULT, 10),

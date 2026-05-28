@@ -50,7 +50,8 @@ async function handle(msg) {
       prompt,
     });
 
-    await msg.reply(`📄 *Hasil OCR:*\n\n${extractedText.trim()}`);
+    const formattedText = extractedText.trim().split('\n').map(line => `> ${line}`).join('\n');
+    await msg.reply(`📄 *Hasil Ekstraksi OCR:*\n━━━━━━━━━━━━━━━━━━━━━━\n\n${formattedText}`);
   } catch (err) {
     log.error('OCR command failed', { error: err.message });
     await msg.reply(`❌ Gagal membaca teks: ${err.message}`);

@@ -49,7 +49,7 @@ async function handle(msg, args) {
       prompt,
     });
 
-    await msg.reply(`🖼️ *Analisis Gambar:*\n\n${analysis}`);
+    await msg.reply(`🖼️ *Analisis Gambar AI:*\n━━━━━━━━━━━━━━━━━━━━━━\n\n${analysis.trim()}`);
   } catch (err) {
     log.error('Analyze command failed', { error: err.message });
     await msg.reply(`❌ Gagal menganalisa: ${err.message}`);
