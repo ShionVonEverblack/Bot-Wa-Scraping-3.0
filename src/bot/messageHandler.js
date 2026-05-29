@@ -106,8 +106,8 @@ function checkCooldown(userId) {
  * @param {Object} client - WhatsApp client
  * @returns {Promise<boolean>} true if command was handled
  */
-async function routeCommand(msg, client) {
-  const { command, args, raw } = splitArgs(msg.body);
+async function routeCommand(msg, client, cleanText) {
+  const { command, args, raw } = splitArgs(cleanText);
   if (!command) return false;
 
   // Try to load command handler
@@ -454,7 +454,7 @@ async function handleMessage(msg, client) {
 
     // 5. Command check (prefix ! or /)
     if (startsWithCommand(cleanText)) {
-      const handled = await routeCommand(msg, client);
+      const handled = await routeCommand(msg, client, cleanText);
       if (handled) return;
     }
 
