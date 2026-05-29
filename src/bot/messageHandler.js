@@ -128,6 +128,7 @@ async function routeCommand(msg, client) {
       rangkumyt: 'youtube',
       how: 'help',
       bantuan: 'help',
+      menu: 'help',
       hapus: 'clear',
       bersihkan: 'clear',
     };
