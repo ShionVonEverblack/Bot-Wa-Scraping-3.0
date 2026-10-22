@@ -1,0 +1,4924 @@
+{
+  "settings": {
+    "languages": [
+      "id",
+      "en"
+    ],
+    "forceNER": true,
+    "autoSave": false,
+    "tag": "nlp",
+    "threshold": 0.5,
+    "autoLoad": true,
+    "modelFileName": "model.nlp",
+    "executeActionsBeforeAnswers": false,
+    "calculateSentiment": true
+  },
+  "nluManager": {
+    "settings": {
+      "tag": "nlu-manager"
+    },
+    "locales": [
+      "id",
+      "en"
+    ],
+    "languageNames": {},
+    "domainManagers": {
+      "id": {
+        "settings": {
+          "locale": "id",
+          "trainByDomain": false,
+          "tag": "domain-manager-id",
+          "nluByDomain": {
+            "default": {
+              "className": "NeuralNlu",
+              "settings": {}
+            }
+          },
+          "useStemDict": true
+        },
+        "stemDict": {
+          "cari": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "carin": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "cari,tolong": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "bantu,cari": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "scrape": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "scraping": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "nyari": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "cari,mau": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "mau,nyari": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "search": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "find": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "cariin,tolong": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "cari,coba": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "cari,data": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "cari,gambar": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "cari,jurnal": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "cari,paper": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "find,me": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "for,search": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "can,find,you": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "data,scrape": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "download,paper": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "download,jurnal": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "paper,unduh": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "jurnal,unduh": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "artikel,download": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "downloadin,ini,paper": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "download,jurnal,tolong": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "bantu,paper,unduh": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "buka,paper": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "get,pdf": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "article,download,this": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "fetch,journal": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "analisa,gambar": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "analyze,foto": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "gambar,jelas": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "angkan,foto": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "apa,gambar,ini,isi": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "foto,ini,jelasin": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "apa,gambar,ini": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "analisa,gambar,tolong": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "bantu,foto,jelasin": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "deskripsi,gambar": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "analyze,image": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "analyze,photo": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "describe,picture,this": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "explain,image,this": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "in,is,photo,this,what": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "hai": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "halo": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "helo": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "hey": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "hei": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "yo": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "oi": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "p": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "assalamualaikum": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "pagi,selamat": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "selamat,siang": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "selamat,sore": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "malam,selamat": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "bot": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "min": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "ping": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "test": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "hello": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "hi": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "good,morning": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "afternoon,good": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "evening,good": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "apa,itu": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "itu,siapa": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "siapa,yang": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "bagaimana,cara": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "cara,gimana": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "napa": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "apa": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "kapan": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "mana": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "di,mana": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "jelas,tolong": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "dong,jelasin": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "cerita": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "apa,maksud": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "apa,ini": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "is,what": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "is,who": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "how,to": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "is,why": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "did,when": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "is,where": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "explain,me,to": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "about,me,tell": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "describe": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          }
+        },
+        "intentDict": {
+          "SCRAPE": "default",
+          "PAPER_DOWNLOAD": "default",
+          "IMAGE_ANALYZE": "default",
+          "GREETING": "default",
+          "AI_CHAT": "default"
+        },
+        "sentences": [
+          {
+            "domain": "default",
+            "utterance": "cari",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "carikan",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "carin",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "tolong cari",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "bantu cari",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "scrape",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "scraping",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "nyari",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "mau cari",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "mau nyari",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "search",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "find",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "tolong cariin",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "coba cari",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "carikan data",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "cari gambar",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "cari jurnal",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "cari paper",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "find me",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "search for",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "can you find",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "scrape data",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "download paper",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "download jurnal",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "unduh paper",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "unduh jurnal",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "download artikel",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "downloadin paper ini",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "tolong download jurnal",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "bantu unduh paper",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "buka paper",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "download paper",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "get pdf",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "download this article",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "fetch journal",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "analisa gambar",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "analyze foto",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "jelaskan gambar",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "terangkan foto",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "apa isi gambar ini",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "jelasin foto ini",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "gambar apa ini",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "tolong analisa gambar",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "bantu jelasin foto",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "deskripsikan gambar",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "analyze image",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "analyze photo",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "describe this picture",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "explain this image",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "what is in this photo",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "hai",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "halo",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "helo",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "hey",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "hei",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "yo",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "oi",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "p",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "assalamualaikum",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "selamat pagi",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "selamat siang",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "selamat sore",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "selamat malam",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "bot",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "min",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "ping",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "test",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "hello",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "hi",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "good morning",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "good afternoon",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "good evening",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "apa itu",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "siapa itu",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "siapa yang",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "bagaimana cara",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "gimana cara",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "kenapa",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "mengapa",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "kapan",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "dimana",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "di mana",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "tolong jelaskan",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "jelasin dong",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "ceritakan",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "apa maksudnya",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "ini apa",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "what is",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "who is",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "how to",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "why is",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "when did",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "where is",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "explain to me",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "tell me about",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "describe",
+            "intent": "AI_CHAT"
+          }
+        ],
+        "domains": {
+          "master_domain": {
+            "settings": {
+              "locale": "id",
+              "tag": "nlu-id",
+              "keepStopwords": true,
+              "nonefeatureValue": 1,
+              "nonedeltaMultiplier": 1.2,
+              "spellCheck": false,
+              "spellCheckDistance": 1,
+              "filterZeros": true,
+              "log": true
+            },
+            "features": {
+              "cari": 1,
+              "carin": 1,
+              "tolong": 1,
+              "bantu": 1,
+              "scrape": 1,
+              "scraping": 1,
+              "nyari": 1,
+              "mau": 1,
+              "search": 1,
+              "find": 1,
+              "cariin": 1,
+              "coba": 1,
+              "data": 1,
+              "gambar": 1,
+              "jurnal": 1,
+              "paper": 1,
+              "me": 1,
+              "for": 1,
+              "can": 1,
+              "you": 1,
+              "download": 1,
+              "unduh": 1,
+              "artikel": 1,
+              "downloadin": 1,
+              "ini": 1,
+              "buka": 1,
+              "get": 1,
+              "pdf": 1,
+              "this": 1,
+              "article": 1,
+              "fetch": 1,
+              "journal": 1,
+              "analisa": 1,
+              "analyze": 1,
+              "foto": 1,
+              "jelas": 1,
+              "angkan": 1,
+              "apa": 1,
+              "isi": 1,
+              "jelasin": 1,
+              "deskripsi": 1,
+              "image": 1,
+              "photo": 1,
+              "describe": 1,
+              "picture": 1,
+              "explain": 1,
+              "what": 1,
+              "is": 1,
+              "in": 1,
+              "hai": 1,
+              "halo": 1,
+              "helo": 1,
+              "hey": 1,
+              "hei": 1,
+              "yo": 1,
+              "oi": 1,
+              "p": 1,
+              "assalamualaikum": 1,
+              "selamat": 1,
+              "pagi": 1,
+              "siang": 1,
+              "sore": 1,
+              "malam": 1,
+              "bot": 1,
+              "min": 1,
+              "ping": 1,
+              "test": 1,
+              "hello": 1,
+              "hi": 1,
+              "good": 1,
+              "morning": 1,
+              "afternoon": 1,
+              "evening": 1,
+              "itu": 1,
+              "siapa": 1,
+              "yang": 1,
+              "bagaimana": 1,
+              "cara": 1,
+              "gimana": 1,
+              "napa": 1,
+              "kapan": 1,
+              "mana": 1,
+              "di": 1,
+              "dong": 1,
+              "cerita": 1,
+              "maksud": 1,
+              "who": 1,
+              "how": 1,
+              "to": 1,
+              "why": 1,
+              "when": 1,
+              "did": 1,
+              "where": 1,
+              "tell": 1,
+              "about": 1
+            },
+            "intents": {
+              "SCRAPE": 1,
+              "PAPER_DOWNLOAD": 1,
+              "IMAGE_ANALYZE": 1,
+              "GREETING": 1,
+              "AI_CHAT": 1
+            },
+            "intentFeatures": {
+              "SCRAPE": {
+                "cari": 1,
+                "carin": 1,
+                "tolong": 1,
+                "bantu": 1,
+                "scrape": 1,
+                "scraping": 1,
+                "nyari": 1,
+                "mau": 1,
+                "search": 1,
+                "find": 1,
+                "cariin": 1,
+                "coba": 1,
+                "data": 1,
+                "gambar": 1,
+                "jurnal": 1,
+                "paper": 1,
+                "me": 1,
+                "for": 1,
+                "can": 1,
+                "you": 1
+              },
+              "PAPER_DOWNLOAD": {
+                "download": 1,
+                "paper": 1,
+                "jurnal": 1,
+                "unduh": 1,
+                "artikel": 1,
+                "downloadin": 1,
+                "ini": 1,
+                "tolong": 1,
+                "bantu": 1,
+                "buka": 1,
+                "get": 1,
+                "pdf": 1,
+                "this": 1,
+                "article": 1,
+                "fetch": 1,
+                "journal": 1
+              },
+              "IMAGE_ANALYZE": {
+                "analisa": 1,
+                "gambar": 1,
+                "analyze": 1,
+                "foto": 1,
+                "jelas": 1,
+                "angkan": 1,
+                "apa": 1,
+                "isi": 1,
+                "ini": 1,
+                "jelasin": 1,
+                "tolong": 1,
+                "bantu": 1,
+                "deskripsi": 1,
+                "image": 1,
+                "photo": 1,
+                "describe": 1,
+                "this": 1,
+                "picture": 1,
+                "explain": 1,
+                "what": 1,
+                "is": 1,
+                "in": 1
+              },
+              "GREETING": {
+                "hai": 1,
+                "halo": 1,
+                "helo": 1,
+                "hey": 1,
+                "hei": 1,
+                "yo": 1,
+                "oi": 1,
+                "p": 1,
+                "assalamualaikum": 1,
+                "selamat": 1,
+                "pagi": 1,
+                "siang": 1,
+                "sore": 1,
+                "malam": 1,
+                "bot": 1,
+                "min": 1,
+                "ping": 1,
+                "test": 1,
+                "hello": 1,
+                "hi": 1,
+                "good": 1,
+                "morning": 1,
+                "afternoon": 1,
+                "evening": 1
+              },
+              "AI_CHAT": {
+                "apa": 1,
+                "itu": 1,
+                "siapa": 1,
+                "yang": 1,
+                "bagaimana": 1,
+                "cara": 1,
+                "gimana": 1,
+                "napa": 1,
+                "kapan": 1,
+                "mana": 1,
+                "di": 1,
+                "tolong": 1,
+                "jelas": 1,
+                "jelasin": 1,
+                "dong": 1,
+                "cerita": 1,
+                "maksud": 1,
+                "ini": 1,
+                "what": 1,
+                "is": 1,
+                "who": 1,
+                "how": 1,
+                "to": 1,
+                "why": 1,
+                "when": 1,
+                "did": 1,
+                "where": 1,
+                "explain": 1,
+                "me": 1,
+                "tell": 1,
+                "about": 1,
+                "describe": 1
+              }
+            },
+            "featuresToIntent": {
+              "cari": [
+                "SCRAPE"
+              ],
+              "carin": [
+                "SCRAPE"
+              ],
+              "tolong": [
+                "SCRAPE",
+                "PAPER_DOWNLOAD",
+                "IMAGE_ANALYZE",
+                "AI_CHAT"
+              ],
+              "bantu": [
+                "SCRAPE",
+                "PAPER_DOWNLOAD",
+                "IMAGE_ANALYZE"
+              ],
+              "scrape": [
+                "SCRAPE"
+              ],
+              "scraping": [
+                "SCRAPE"
+              ],
+              "nyari": [
+                "SCRAPE"
+              ],
+              "mau": [
+                "SCRAPE"
+              ],
+              "search": [
+                "SCRAPE"
+              ],
+              "find": [
+                "SCRAPE"
+              ],
+              "cariin": [
+                "SCRAPE"
+              ],
+              "coba": [
+                "SCRAPE"
+              ],
+              "data": [
+                "SCRAPE"
+              ],
+              "gambar": [
+                "SCRAPE",
+                "IMAGE_ANALYZE"
+              ],
+              "jurnal": [
+                "SCRAPE",
+                "PAPER_DOWNLOAD"
+              ],
+              "paper": [
+                "SCRAPE",
+                "PAPER_DOWNLOAD"
+              ],
+              "me": [
+                "SCRAPE",
+                "AI_CHAT"
+              ],
+              "for": [
+                "SCRAPE"
+              ],
+              "can": [
+                "SCRAPE"
+              ],
+              "you": [
+                "SCRAPE"
+              ],
+              "download": [
+                "PAPER_DOWNLOAD"
+              ],
+              "unduh": [
+                "PAPER_DOWNLOAD"
+              ],
+              "artikel": [
+                "PAPER_DOWNLOAD"
+              ],
+              "downloadin": [
+                "PAPER_DOWNLOAD"
+              ],
+              "ini": [
+                "PAPER_DOWNLOAD",
+                "IMAGE_ANALYZE",
+                "AI_CHAT"
+              ],
+              "buka": [
+                "PAPER_DOWNLOAD"
+              ],
+              "get": [
+                "PAPER_DOWNLOAD"
+              ],
+              "pdf": [
+                "PAPER_DOWNLOAD"
+              ],
+              "this": [
+                "PAPER_DOWNLOAD",
+                "IMAGE_ANALYZE"
+              ],
+              "article": [
+                "PAPER_DOWNLOAD"
+              ],
+              "fetch": [
+                "PAPER_DOWNLOAD"
+              ],
+              "journal": [
+                "PAPER_DOWNLOAD"
+              ],
+              "analisa": [
+                "IMAGE_ANALYZE"
+              ],
+              "analyze": [
+                "IMAGE_ANALYZE"
+              ],
+              "foto": [
+                "IMAGE_ANALYZE"
+              ],
+              "jelas": [
+                "IMAGE_ANALYZE",
+                "AI_CHAT"
+              ],
+              "angkan": [
+                "IMAGE_ANALYZE"
+              ],
+              "apa": [
+                "IMAGE_ANALYZE",
+                "AI_CHAT"
+              ],
+              "isi": [
+                "IMAGE_ANALYZE"
+              ],
+              "jelasin": [
+                "IMAGE_ANALYZE",
+                "AI_CHAT"
+              ],
+              "deskripsi": [
+                "IMAGE_ANALYZE"
+              ],
+              "image": [
+                "IMAGE_ANALYZE"
+              ],
+              "photo": [
+                "IMAGE_ANALYZE"
+              ],
+              "describe": [
+                "IMAGE_ANALYZE",
+                "AI_CHAT"
+              ],
+              "picture": [
+                "IMAGE_ANALYZE"
+              ],
+              "explain": [
+                "IMAGE_ANALYZE",
+                "AI_CHAT"
+              ],
+              "what": [
+                "IMAGE_ANALYZE",
+                "AI_CHAT"
+              ],
+              "is": [
+                "IMAGE_ANALYZE",
+                "AI_CHAT"
+              ],
+              "in": [
+                "IMAGE_ANALYZE"
+              ],
+              "hai": [
+                "GREETING"
+              ],
+              "halo": [
+                "GREETING"
+              ],
+              "helo": [
+                "GREETING"
+              ],
+              "hey": [
+                "GREETING"
+              ],
+              "hei": [
+                "GREETING"
+              ],
+              "yo": [
+                "GREETING"
+              ],
+              "oi": [
+                "GREETING"
+              ],
+              "p": [
+                "GREETING"
+              ],
+              "assalamualaikum": [
+                "GREETING"
+              ],
+              "selamat": [
+                "GREETING"
+              ],
+              "pagi": [
+                "GREETING"
+              ],
+              "siang": [
+                "GREETING"
+              ],
+              "sore": [
+                "GREETING"
+              ],
+              "malam": [
+                "GREETING"
+              ],
+              "bot": [
+                "GREETING"
+              ],
+              "min": [
+                "GREETING"
+              ],
+              "ping": [
+                "GREETING"
+              ],
+              "test": [
+                "GREETING"
+              ],
+              "hello": [
+                "GREETING"
+              ],
+              "hi": [
+                "GREETING"
+              ],
+              "good": [
+                "GREETING"
+              ],
+              "morning": [
+                "GREETING"
+              ],
+              "afternoon": [
+                "GREETING"
+              ],
+              "evening": [
+                "GREETING"
+              ],
+              "itu": [
+                "AI_CHAT"
+              ],
+              "siapa": [
+                "AI_CHAT"
+              ],
+              "yang": [
+                "AI_CHAT"
+              ],
+              "bagaimana": [
+                "AI_CHAT"
+              ],
+              "cara": [
+                "AI_CHAT"
+              ],
+              "gimana": [
+                "AI_CHAT"
+              ],
+              "napa": [
+                "AI_CHAT"
+              ],
+              "kapan": [
+                "AI_CHAT"
+              ],
+              "mana": [
+                "AI_CHAT"
+              ],
+              "di": [
+                "AI_CHAT"
+              ],
+              "dong": [
+                "AI_CHAT"
+              ],
+              "cerita": [
+                "AI_CHAT"
+              ],
+              "maksud": [
+                "AI_CHAT"
+              ],
+              "who": [
+                "AI_CHAT"
+              ],
+              "how": [
+                "AI_CHAT"
+              ],
+              "to": [
+                "AI_CHAT"
+              ],
+              "why": [
+                "AI_CHAT"
+              ],
+              "when": [
+                "AI_CHAT"
+              ],
+              "did": [
+                "AI_CHAT"
+              ],
+              "where": [
+                "AI_CHAT"
+              ],
+              "tell": [
+                "AI_CHAT"
+              ],
+              "about": [
+                "AI_CHAT"
+              ]
+            },
+            "neuralNetwork": {
+              "settings": {
+                "locale": "id",
+                "tag": "nlu-id",
+                "keepStopwords": true,
+                "nonefeatureValue": 1,
+                "nonedeltaMultiplier": 1.2,
+                "spellCheck": false,
+                "spellCheckDistance": 1,
+                "filterZeros": true,
+                "log": true
+              },
+              "features": [
+                "cari",
+                "carin",
+                "tolong",
+                "bantu",
+                "scrape",
+                "scraping",
+                "nyari",
+                "mau",
+                "search",
+                "find",
+                "cariin",
+                "coba",
+                "data",
+                "gambar",
+                "jurnal",
+                "paper",
+                "me",
+                "for",
+                "can",
+                "you",
+                "download",
+                "unduh",
+                "artikel",
+                "downloadin",
+                "ini",
+                "buka",
+                "get",
+                "pdf",
+                "this",
+                "article",
+                "fetch",
+                "journal",
+                "analisa",
+                "analyze",
+                "foto",
+                "jelas",
+                "angkan",
+                "apa",
+                "isi",
+                "jelasin",
+                "deskripsi",
+                "image",
+                "photo",
+                "describe",
+                "picture",
+                "explain",
+                "what",
+                "is",
+                "in",
+                "hai",
+                "halo",
+                "helo",
+                "hey",
+                "hei",
+                "yo",
+                "oi",
+                "p",
+                "assalamualaikum",
+                "selamat",
+                "pagi",
+                "siang",
+                "sore",
+                "malam",
+                "bot",
+                "min",
+                "ping",
+                "test",
+                "hello",
+                "hi",
+                "good",
+                "morning",
+                "afternoon",
+                "evening",
+                "itu",
+                "siapa",
+                "yang",
+                "bagaimana",
+                "cara",
+                "gimana",
+                "napa",
+                "kapan",
+                "mana",
+                "di",
+                "dong",
+                "cerita",
+                "maksud",
+                "who",
+                "how",
+                "to",
+                "why",
+                "when",
+                "did",
+                "where",
+                "tell",
+                "about"
+              ],
+              "intents": [
+                "SCRAPE",
+                "PAPER_DOWNLOAD",
+                "IMAGE_ANALYZE",
+                "GREETING",
+                "AI_CHAT"
+              ],
+              "perceptrons": [
+                [
+                  11.90087890625,
+                  11.933575630187988,
+                  0.42275744676589966,
+                  0.07785707712173462,
+                  11.920814514160156,
+                  11.9529390335083,
+                  11.915306091308594,
+                  0.05662674829363823,
+                  11.674301147460938,
+                  11.72406005859375,
+                  11.281587600708008,
+                  0.044875916093587875,
+                  0.019972244277596474,
+                  -0.1617542803287506,
+                  0.021973377093672752,
+                  -0.14747747778892517,
+                  0.27007484436035156,
+                  0.388063907623291,
+                  0.11185477674007416,
+                  0.11185477674007416,
+                  -3.9313433170318604,
+                  -2.3959739208221436,
+                  -0.7476845383644104,
+                  -0.6246124505996704,
+                  -1.6054725646972656,
+                  -2.128018379211426,
+                  -1.646670937538147,
+                  -1.646670937538147,
+                  -1.924524188041687,
+                  -0.2382047027349472,
+                  -1.604416847229004,
+                  -1.604416847229004,
+                  -2.985896587371826,
+                  -2.3121230602264404,
+                  -2.7852015495300293,
+                  -3.794713258743286,
+                  -0.8767536282539368,
+                  -2.3459081649780273,
+                  -0.2611881196498871,
+                  -1.7265866994857788,
+                  -2.0880448818206787,
+                  -1.258710503578186,
+                  -1.073744535446167,
+                  -2.3352413177490234,
+                  -0.721612811088562,
+                  -1.5125192403793335,
+                  -0.5066953897476196,
+                  -1.8917044401168823,
+                  -0.267086386680603,
+                  -2.4031834602355957,
+                  -2.3847501277923584,
+                  -2.371469020843506,
+                  -2.361253261566162,
+                  -2.3570826053619385,
+                  -2.3564300537109375,
+                  -2.3559324741363525,
+                  -2.3553578853607178,
+                  -2.3547017574310303,
+                  -2.1154708862304688,
+                  -0.5789059400558472,
+                  -0.5253250598907471,
+                  -0.4881454110145569,
+                  -0.4496631920337677,
+                  -2.353793144226074,
+                  -2.352919101715088,
+                  -2.3519487380981445,
+                  -2.3508780002593994,
+                  -2.3497025966644287,
+                  -2.348419427871704,
+                  -1.7681411504745483,
+                  -0.5909298658370972,
+                  -0.5879238247871399,
+                  -0.5874485969543457,
+                  -0.90366131067276,
+                  -1.4737637042999268,
+                  -0.8809983730316162,
+                  -0.7854185700416565,
+                  -1.5704165697097778,
+                  -0.7848546504974365,
+                  -2.3458640575408936,
+                  -2.3429694175720215,
+                  -2.342175006866455,
+                  -0.5513266921043396,
+                  -0.6249667406082153,
+                  -2.3384246826171875,
+                  -0.19607888162136078,
+                  -0.46168699860572815,
+                  -0.6659786105155945,
+                  -1.6843003034591675,
+                  -0.46067169308662415,
+                  -1.174975872039795,
+                  -1.174975872039795,
+                  -0.4594232439994812,
+                  -1.5537320375442505,
+                  -1.5537320375442505,
+                  2.3526403744937388
+                ],
+                [
+                  -6.750132083892822,
+                  -0.6886752843856812,
+                  -0.09762725234031677,
+                  -0.021177522838115692,
+                  -0.6884365081787109,
+                  -0.6878922581672668,
+                  -0.6879247426986694,
+                  -0.1886308342218399,
+                  -0.6874514222145081,
+                  -0.6870574355125427,
+                  -0.557952344417572,
+                  -0.003011711174622178,
+                  -0.06180090829730034,
+                  -2.2962496280670166,
+                  5.957437992095947,
+                  5.94706916809082,
+                  -0.27152150869369507,
+                  -0.08037246018648148,
+                  -0.05986090749502182,
+                  -0.05986090749502182,
+                  7.6897478103637695,
+                  7.66014289855957,
+                  5.884737491607666,
+                  5.448514461517334,
+                  2.193985939025879,
+                  7.618110179901123,
+                  6.798784255981445,
+                  6.798784255981445,
+                  1.6961023807525635,
+                  4.197657585144043,
+                  6.798234939575195,
+                  6.798234939575195,
+                  -0.7409986257553101,
+                  -1.3771594762802124,
+                  -1.9877474308013916,
+                  -0.7862623929977417,
+                  -0.44752615690231323,
+                  -2.8713197708129883,
+                  -0.3031352758407593,
+                  -0.9205380082130432,
+                  -0.1685275435447693,
+                  -1.4011421203613281,
+                  -0.8337605595588684,
+                  -1.2232201099395752,
+                  -1.1574362516403198,
+                  -0.9795316457748413,
+                  -0.45486658811569214,
+                  -0.6789891123771667,
+                  -0.4150291383266449,
+                  -0.9007693529129028,
+                  -0.8840310573577881,
+                  -0.862296998500824,
+                  -0.8463584184646606,
+                  -0.8270252346992493,
+                  -0.8125980496406555,
+                  -0.7983518242835999,
+                  -0.7826548218727112,
+                  -0.7704311013221741,
+                  -1.101681113243103,
+                  -0.28741374611854553,
+                  -0.2580451965332031,
+                  -0.22920839488506317,
+                  -0.20226730406284332,
+                  -0.7466103434562683,
+                  -0.73671555519104,
+                  -0.7287552952766418,
+                  -0.7205845713615417,
+                  -0.7139698266983032,
+                  -0.7081496715545654,
+                  -0.7373755574226379,
+                  -0.2518930733203888,
+                  -0.22623643279075623,
+                  -0.20151542127132416,
+                  -0.3487991690635681,
+                  -0.5686859488487244,
+                  -0.2869735062122345,
+                  -0.29089993238449097,
+                  -0.578132152557373,
+                  -0.2701927423477173,
+                  -0.6985858678817749,
+                  -0.6967354416847229,
+                  -0.7062496542930603,
+                  -0.22694627940654755,
+                  -0.022692251950502396,
+                  -0.694385826587677,
+                  -0.0017040747916325927,
+                  -0.08930441737174988,
+                  -0.3242337107658386,
+                  -0.3738471269607544,
+                  -0.06950060278177261,
+                  -0.34753233194351196,
+                  -0.34753233194351196,
+                  -0.054936446249485016,
+                  -0.22191119194030762,
+                  -0.22191119194030762,
+                  0.6869213772479008
+                ],
+                [
+                  -11.09715747833252,
+                  -0.09259113669395447,
+                  -0.8762326836585999,
+                  3.204786777496338,
+                  -0.08610881119966507,
+                  -0.0775352343916893,
+                  -0.11723947525024414,
+                  -0.060601454228162766,
+                  -0.07688181102275848,
+                  -0.07504504173994064,
+                  -0.19347083568572998,
+                  -0.0034654843620955944,
+                  -0.007580101490020752,
+                  13.175451278686523,
+                  -0.0482865609228611,
+                  -1.1584826707839966,
+                  -0.740135133266449,
+                  -0.004548871424049139,
+                  -0.004048632457852364,
+                  -0.004048632457852364,
+                  -2.9141736030578613,
+                  -0.21390189230442047,
+                  -0.003462298307567835,
+                  -0.9283604025840759,
+                  3.2293782234191895,
+                  0,
+                  0,
+                  0,
+                  7.210475921630859,
+                  -2.8394510746002197,
+                  0,
+                  0,
+                  3.6115529537200928,
+                  7.9529128074646,
+                  8.770389556884766,
+                  2.9842591285705566,
+                  7.277340412139893,
+                  -0.7632238864898682,
+                  0.8066895008087158,
+                  4.186431407928467,
+                  3.146108865737915,
+                  8.00288200378418,
+                  8.068872451782227,
+                  1.9997520446777344,
+                  6.878163814544678,
+                  1.0605483055114746,
+                  0.20417605340480804,
+                  -0.6974069476127625,
+                  1.4244972467422485,
+                  -0.9880247116088867,
+                  -0.9523595571517944,
+                  -0.9179599285125732,
+                  -0.8847816586494446,
+                  -0.8527826070785522,
+                  -0.821921706199646,
+                  -0.7921592593193054,
+                  -0.7634571194648743,
+                  -0.7357781529426575,
+                  -1.6354368925094604,
+                  -0.40623459219932556,
+                  -0.36415308713912964,
+                  -0.3224002718925476,
+                  -0.28327667713165283,
+                  -0.6902908086776733,
+                  -0.6666522026062012,
+                  -0.6437976956367493,
+                  -0.6217024922370911,
+                  -0.6003424525260925,
+                  -0.5796941518783569,
+                  -0.9946235418319702,
+                  -0.3077288269996643,
+                  -0.27579426765441895,
+                  -0.24404940009117126,
+                  -0.8995980024337769,
+                  -0.5993020534515381,
+                  -0.3123141825199127,
+                  -0.3167403042316437,
+                  -0.6642336845397949,
+                  -0.28363052010536194,
+                  -0.461068332195282,
+                  -0.43723806738853455,
+                  -0.6078041195869446,
+                  -0.22819815576076508,
+                  -2.242227554321289,
+                  -0.2980843782424927,
+                  -0.45865941047668457,
+                  -0.3085702359676361,
+                  -0.095720075070858,
+                  -0.7941267490386963,
+                  -0.28222671151161194,
+                  -0.12987953424453735,
+                  -0.12987953424453735,
+                  -0.25207990407943726,
+                  -0.04478687420487404,
+                  -0.04478687420487404,
+                  -1.9412069355543098
+                ],
+                [
+                  -5.822444438934326,
+                  -5.761894226074219,
+                  -4.157113552093506,
+                  -0.7798138856887817,
+                  -5.7614970207214355,
+                  -5.757018566131592,
+                  -5.7564473152160645,
+                  -1.539834976196289,
+                  -5.753839015960693,
+                  -5.750225067138672,
+                  -1.605324149131775,
+                  -0.24571073055267334,
+                  -1.2185273170471191,
+                  -3.933548927307129,
+                  -2.890169858932495,
+                  -3.920598030090332,
+                  -2.707874298095703,
+                  -1.3161836862564087,
+                  -0.8708040714263916,
+                  -0.8708040714263916,
+                  -3.81026554107666,
+                  -2.872220039367676,
+                  -1.9520732164382935,
+                  -0.6269704699516296,
+                  -1.2939566373825073,
+                  -1.8416845798492432,
+                  -2.881110668182373,
+                  -2.881110668182373,
+                  -1.7989895343780518,
+                  -0.49613967537879944,
+                  -2.881077527999878,
+                  -2.881077527999878,
+                  -1.8352179527282715,
+                  -3.840104579925537,
+                  -3.2991793155670166,
+                  -2.442624807357788,
+                  -2.4629032611846924,
+                  -5.910686492919922,
+                  0,
+                  -3.0163092613220215,
+                  -1.8284528255462646,
+                  -2.1546971797943115,
+                  -1.9218153953552246,
+                  -5.764820575714111,
+                  -0.26084017753601074,
+                  -1.8086251020431519,
+                  -1.3409899473190308,
+                  -4.848714351654053,
+                  0,
+                  8.529573440551758,
+                  8.530716896057129,
+                  8.530316352844238,
+                  8.52967643737793,
+                  8.528775215148926,
+                  8.527604103088379,
+                  8.526143074035645,
+                  8.524378776550293,
+                  8.522297859191895,
+                  6.819887638092041,
+                  1.7051148414611816,
+                  1.7050875425338745,
+                  1.7050108909606934,
+                  1.7047892808914185,
+                  8.519635200500488,
+                  8.516756057739258,
+                  8.513504028320312,
+                  8.509868621826172,
+                  8.505833625793457,
+                  8.501386642456055,
+                  6.390690326690674,
+                  2.1311423778533936,
+                  2.1302616596221924,
+                  2.1291916370391846,
+                  -3.2082037925720215,
+                  -4.0947089195251465,
+                  -2.346590995788574,
+                  -2.245515823364258,
+                  -4.39967679977417,
+                  -2.101033926010132,
+                  -5.800516605377197,
+                  -5.784726142883301,
+                  -5.807821750640869,
+                  -1.7284554243087769,
+                  -2.968700647354126,
+                  -5.7703857421875,
+                  -0.8490544557571411,
+                  -1.264291763305664,
+                  -2.5621979236602783,
+                  -3.345747232437134,
+                  -1.1491612195968628,
+                  -2.94960880279541,
+                  -2.94960880279541,
+                  -1.0641452074050903,
+                  -1.6166326999664307,
+                  -1.6166326999664307,
+                  5.7643874867582685
+                ],
+                [
+                  -6.1823554039001465,
+                  -3.9150030612945557,
+                  2.7399823665618896,
+                  -2.3835554122924805,
+                  -4.129276752471924,
+                  -3.800323247909546,
+                  -4.106191158294678,
+                  -1.7978825569152832,
+                  -4.0107831954956055,
+                  -6.183280944824219,
+                  -6.146184921264648,
+                  -0.19634747505187988,
+                  -1.2386046648025513,
+                  -13.440848350524902,
+                  -2.642477035522461,
+                  -3.338101625442505,
+                  2.703676700592041,
+                  -1.2712302207946777,
+                  -0.6617902517318726,
+                  -0.6617902517318726,
+                  -3.5302071571350098,
+                  -2.057351589202881,
+                  -1.1071066856384277,
+                  -0.5042073726654053,
+                  0.010938195511698723,
+                  -0.9764508008956909,
+                  -2.0362119674682617,
+                  -2.0362119674682617,
+                  -8.979103088378906,
+                  -0.2325017899274826,
+                  -2.0243663787841797,
+                  -2.0243663787841797,
+                  -0.539049506187439,
+                  -2.2327687740325928,
+                  -6.345266819000244,
+                  8.182611465454102,
+                  -0.8956970572471619,
+                  10.327205657958984,
+                  -2.337440013885498,
+                  3.0752618312835693,
+                  -0.05953247845172882,
+                  -1.6054083108901978,
+                  -3.6619532108306885,
+                  10.616868019104004,
+                  -4.908869743347168,
+                  1.6279354095458984,
+                  2.1743977069854736,
+                  8.714173316955566,
+                  -3.1626367568969727,
+                  -3.368687868118286,
+                  -3.3673083782196045,
+                  -3.3657891750335693,
+                  -3.3641250133514404,
+                  -3.362309217453003,
+                  -3.3603358268737793,
+                  -3.358198881149292,
+                  -3.355894088745117,
+                  -3.353415012359619,
+                  -2.703683614730835,
+                  -0.6937471628189087,
+                  -0.6693791151046753,
+                  -0.668363094329834,
+                  -0.667487382888794,
+                  -3.3498308658599854,
+                  -3.3469114303588867,
+                  -3.3437983989715576,
+                  -3.3404879570007324,
+                  -3.336974859237671,
+                  -3.3332557678222656,
+                  -2.522386312484741,
+                  -0.841887354850769,
+                  -0.8405515551567078,
+                  -0.8391082286834717,
+                  1.4315123558044434,
+                  8.90954303741455,
+                  2.346963882446289,
+                  3.6492760181427,
+                  7.298983097076416,
+                  3.6504478454589844,
+                  10.967081069946289,
+                  10.935613632202148,
+                  10.654083251953125,
+                  0.41304144263267517,
+                  7.769099235534668,
+                  10.917759895324707,
+                  0.689630389213562,
+                  2.1804962158203125,
+                  4.33367919921875,
+                  6.560986518859863,
+                  2.180072784423828,
+                  5.448040008544922,
+                  5.448040008544922,
+                  2.179621458053589,
+                  4.095303058624268,
+                  4.095303058624268,
+                  3.4048333642706385
+                ]
+              ]
+            }
+          }
+        }
+      },
+      "en": {
+        "settings": {
+          "locale": "en",
+          "trainByDomain": false,
+          "tag": "domain-manager-en",
+          "nluByDomain": {
+            "default": {
+              "className": "NeuralNlu",
+              "settings": {}
+            }
+          },
+          "useStemDict": true
+        },
+        "stemDict": {
+          "cari": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "carikan": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "carin": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "cari,tolong": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "bantu,cari": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "scrape": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "nyari": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "cari,mau": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "mau,nyari": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "search": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "find": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "cariin,tolong": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "cari,coba": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "carikan,data": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "cari,gambar": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "cari,jurnal": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "cari,paper": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "find,me": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "for,search": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "can,find,you": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "data,scrape": {
+            "intent": "SCRAPE",
+            "domain": "default"
+          },
+          "download,paper": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "download,jurnal": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "paper,unduh": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "jurnal,unduh": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "artikel,download": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "downloadin,ini,paper": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "download,jurnal,tolong": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "bantu,paper,unduh": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "buka,paper": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "get,pdf": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "articl,download,this": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "fetch,journal": {
+            "intent": "PAPER_DOWNLOAD",
+            "domain": "default"
+          },
+          "analisa,gambar": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "analyz,foto": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "gambar,jelaskan": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "foto,terangkan": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "apa,gambar,ini,isi": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "foto,ini,jelasin": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "apa,gambar,ini": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "analisa,gambar,tolong": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "bantu,foto,jelasin": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "deskripsikan,gambar": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "analyz,imag": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "analyz,photo": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "describ,pictur,this": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "explain,imag,this": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "in,is,photo,this,what": {
+            "intent": "IMAGE_ANALYZE",
+            "domain": "default"
+          },
+          "hai": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "halo": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "helo": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "hey": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "hei": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "yo": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "oi": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "p": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "assalamualaikum": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "pagi,selamat": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "selamat,siang": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "selamat,sore": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "malam,selamat": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "bot": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "min": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "ping": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "test": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "hello": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "hi": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "good,morn": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "afternoon,good": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "even,good": {
+            "intent": "GREETING",
+            "domain": "default"
+          },
+          "apa,itu": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "itu,siapa": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "siapa,yang": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "bagaimana,cara": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "cara,gimana": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "kenapa": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "mengapa": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "kapan": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "dimana": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "di,mana": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "jelaskan,tolong": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "dong,jelasin": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "ceritakan": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "apa,maksudnya": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "apa,ini": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "is,what": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "is,who": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "how,to": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "is,whi": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "did,when": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "is,where": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "explain,me,to": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "about,me,tell": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          },
+          "describ": {
+            "intent": "AI_CHAT",
+            "domain": "default"
+          }
+        },
+        "intentDict": {
+          "SCRAPE": "default",
+          "PAPER_DOWNLOAD": "default",
+          "IMAGE_ANALYZE": "default",
+          "GREETING": "default",
+          "AI_CHAT": "default"
+        },
+        "sentences": [
+          {
+            "domain": "default",
+            "utterance": "cari",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "carikan",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "carin",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "tolong cari",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "bantu cari",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "scrape",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "scraping",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "nyari",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "mau cari",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "mau nyari",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "search",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "find",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "tolong cariin",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "coba cari",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "carikan data",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "cari gambar",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "cari jurnal",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "cari paper",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "find me",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "search for",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "can you find",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "scrape data",
+            "intent": "SCRAPE"
+          },
+          {
+            "domain": "default",
+            "utterance": "download paper",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "download jurnal",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "unduh paper",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "unduh jurnal",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "download artikel",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "downloadin paper ini",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "tolong download jurnal",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "bantu unduh paper",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "buka paper",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "download paper",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "get pdf",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "download this article",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "fetch journal",
+            "intent": "PAPER_DOWNLOAD"
+          },
+          {
+            "domain": "default",
+            "utterance": "analisa gambar",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "analyze foto",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "jelaskan gambar",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "terangkan foto",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "apa isi gambar ini",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "jelasin foto ini",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "gambar apa ini",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "tolong analisa gambar",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "bantu jelasin foto",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "deskripsikan gambar",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "analyze image",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "analyze photo",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "describe this picture",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "explain this image",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "what is in this photo",
+            "intent": "IMAGE_ANALYZE"
+          },
+          {
+            "domain": "default",
+            "utterance": "hai",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "halo",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "helo",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "hey",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "hei",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "yo",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "oi",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "p",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "assalamualaikum",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "selamat pagi",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "selamat siang",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "selamat sore",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "selamat malam",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "bot",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "min",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "ping",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "test",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "hello",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "hi",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "good morning",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "good afternoon",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "good evening",
+            "intent": "GREETING"
+          },
+          {
+            "domain": "default",
+            "utterance": "apa itu",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "siapa itu",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "siapa yang",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "bagaimana cara",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "gimana cara",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "kenapa",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "mengapa",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "kapan",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "dimana",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "di mana",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "tolong jelaskan",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "jelasin dong",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "ceritakan",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "apa maksudnya",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "ini apa",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "what is",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "who is",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "how to",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "why is",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "when did",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "where is",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "explain to me",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "tell me about",
+            "intent": "AI_CHAT"
+          },
+          {
+            "domain": "default",
+            "utterance": "describe",
+            "intent": "AI_CHAT"
+          }
+        ],
+        "domains": {
+          "master_domain": {
+            "settings": {
+              "locale": "en",
+              "tag": "nlu-en",
+              "keepStopwords": true,
+              "nonefeatureValue": 1,
+              "nonedeltaMultiplier": 1.2,
+              "spellCheck": false,
+              "spellCheckDistance": 1,
+              "filterZeros": true,
+              "log": true
+            },
+            "features": {
+              "cari": 1,
+              "carikan": 1,
+              "carin": 1,
+              "tolong": 1,
+              "bantu": 1,
+              "scrape": 1,
+              "nyari": 1,
+              "mau": 1,
+              "search": 1,
+              "find": 1,
+              "cariin": 1,
+              "coba": 1,
+              "data": 1,
+              "gambar": 1,
+              "jurnal": 1,
+              "paper": 1,
+              "me": 1,
+              "for": 1,
+              "can": 1,
+              "you": 1,
+              "download": 1,
+              "unduh": 1,
+              "artikel": 1,
+              "downloadin": 1,
+              "ini": 1,
+              "buka": 1,
+              "get": 1,
+              "pdf": 1,
+              "this": 1,
+              "articl": 1,
+              "fetch": 1,
+              "journal": 1,
+              "analisa": 1,
+              "analyz": 1,
+              "foto": 1,
+              "jelaskan": 1,
+              "terangkan": 1,
+              "apa": 1,
+              "isi": 1,
+              "jelasin": 1,
+              "deskripsikan": 1,
+              "imag": 1,
+              "photo": 1,
+              "describ": 1,
+              "pictur": 1,
+              "explain": 1,
+              "what": 1,
+              "is": 1,
+              "in": 1,
+              "hai": 1,
+              "halo": 1,
+              "helo": 1,
+              "hey": 1,
+              "hei": 1,
+              "yo": 1,
+              "oi": 1,
+              "p": 1,
+              "assalamualaikum": 1,
+              "selamat": 1,
+              "pagi": 1,
+              "siang": 1,
+              "sore": 1,
+              "malam": 1,
+              "bot": 1,
+              "min": 1,
+              "ping": 1,
+              "test": 1,
+              "hello": 1,
+              "hi": 1,
+              "good": 1,
+              "morn": 1,
+              "afternoon": 1,
+              "even": 1,
+              "itu": 1,
+              "siapa": 1,
+              "yang": 1,
+              "bagaimana": 1,
+              "cara": 1,
+              "gimana": 1,
+              "kenapa": 1,
+              "mengapa": 1,
+              "kapan": 1,
+              "dimana": 1,
+              "di": 1,
+              "mana": 1,
+              "dong": 1,
+              "ceritakan": 1,
+              "maksudnya": 1,
+              "who": 1,
+              "how": 1,
+              "to": 1,
+              "whi": 1,
+              "when": 1,
+              "did": 1,
+              "where": 1,
+              "tell": 1,
+              "about": 1
+            },
+            "intents": {
+              "SCRAPE": 1,
+              "PAPER_DOWNLOAD": 1,
+              "IMAGE_ANALYZE": 1,
+              "GREETING": 1,
+              "AI_CHAT": 1
+            },
+            "intentFeatures": {
+              "SCRAPE": {
+                "cari": 1,
+                "carikan": 1,
+                "carin": 1,
+                "tolong": 1,
+                "bantu": 1,
+                "scrape": 1,
+                "nyari": 1,
+                "mau": 1,
+                "search": 1,
+                "find": 1,
+                "cariin": 1,
+                "coba": 1,
+                "data": 1,
+                "gambar": 1,
+                "jurnal": 1,
+                "paper": 1,
+                "me": 1,
+                "for": 1,
+                "can": 1,
+                "you": 1
+              },
+              "PAPER_DOWNLOAD": {
+                "download": 1,
+                "paper": 1,
+                "jurnal": 1,
+                "unduh": 1,
+                "artikel": 1,
+                "downloadin": 1,
+                "ini": 1,
+                "tolong": 1,
+                "bantu": 1,
+                "buka": 1,
+                "get": 1,
+                "pdf": 1,
+                "this": 1,
+                "articl": 1,
+                "fetch": 1,
+                "journal": 1
+              },
+              "IMAGE_ANALYZE": {
+                "analisa": 1,
+                "gambar": 1,
+                "analyz": 1,
+                "foto": 1,
+                "jelaskan": 1,
+                "terangkan": 1,
+                "apa": 1,
+                "isi": 1,
+                "ini": 1,
+                "jelasin": 1,
+                "tolong": 1,
+                "bantu": 1,
+                "deskripsikan": 1,
+                "imag": 1,
+                "photo": 1,
+                "describ": 1,
+                "this": 1,
+                "pictur": 1,
+                "explain": 1,
+                "what": 1,
+                "is": 1,
+                "in": 1
+              },
+              "GREETING": {
+                "hai": 1,
+                "halo": 1,
+                "helo": 1,
+                "hey": 1,
+                "hei": 1,
+                "yo": 1,
+                "oi": 1,
+                "p": 1,
+                "assalamualaikum": 1,
+                "selamat": 1,
+                "pagi": 1,
+                "siang": 1,
+                "sore": 1,
+                "malam": 1,
+                "bot": 1,
+                "min": 1,
+                "ping": 1,
+                "test": 1,
+                "hello": 1,
+                "hi": 1,
+                "good": 1,
+                "morn": 1,
+                "afternoon": 1,
+                "even": 1
+              },
+              "AI_CHAT": {
+                "apa": 1,
+                "itu": 1,
+                "siapa": 1,
+                "yang": 1,
+                "bagaimana": 1,
+                "cara": 1,
+                "gimana": 1,
+                "kenapa": 1,
+                "mengapa": 1,
+                "kapan": 1,
+                "dimana": 1,
+                "di": 1,
+                "mana": 1,
+                "tolong": 1,
+                "jelaskan": 1,
+                "jelasin": 1,
+                "dong": 1,
+                "ceritakan": 1,
+                "maksudnya": 1,
+                "ini": 1,
+                "what": 1,
+                "is": 1,
+                "who": 1,
+                "how": 1,
+                "to": 1,
+                "whi": 1,
+                "when": 1,
+                "did": 1,
+                "where": 1,
+                "explain": 1,
+                "me": 1,
+                "tell": 1,
+                "about": 1,
+                "describ": 1
+              }
+            },
+            "featuresToIntent": {
+              "cari": [
+                "SCRAPE"
+              ],
+              "carikan": [
+                "SCRAPE"
+              ],
+              "carin": [
+                "SCRAPE"
+              ],
+              "tolong": [
+                "SCRAPE",
+                "PAPER_DOWNLOAD",
+                "IMAGE_ANALYZE",
+                "AI_CHAT"
+              ],
+              "bantu": [
+                "SCRAPE",
+                "PAPER_DOWNLOAD",
+                "IMAGE_ANALYZE"
+              ],
+              "scrape": [
+                "SCRAPE"
+              ],
+              "nyari": [
+                "SCRAPE"
+              ],
+              "mau": [
+                "SCRAPE"
+              ],
+              "search": [
+                "SCRAPE"
+              ],
+              "find": [
+                "SCRAPE"
+              ],
+              "cariin": [
+                "SCRAPE"
+              ],
+              "coba": [
+                "SCRAPE"
+              ],
+              "data": [
+                "SCRAPE"
+              ],
+              "gambar": [
+                "SCRAPE",
+                "IMAGE_ANALYZE"
+              ],
+              "jurnal": [
+                "SCRAPE",
+                "PAPER_DOWNLOAD"
+              ],
+              "paper": [
+                "SCRAPE",
+                "PAPER_DOWNLOAD"
+              ],
+              "me": [
+                "SCRAPE",
+                "AI_CHAT"
+              ],
+              "for": [
+                "SCRAPE"
+              ],
+              "can": [
+                "SCRAPE"
+              ],
+              "you": [
+                "SCRAPE"
+              ],
+              "download": [
+                "PAPER_DOWNLOAD"
+              ],
+              "unduh": [
+                "PAPER_DOWNLOAD"
+              ],
+              "artikel": [
+                "PAPER_DOWNLOAD"
+              ],
+              "downloadin": [
+                "PAPER_DOWNLOAD"
+              ],
+              "ini": [
+                "PAPER_DOWNLOAD",
+                "IMAGE_ANALYZE",
+                "AI_CHAT"
+              ],
+              "buka": [
+                "PAPER_DOWNLOAD"
+              ],
+              "get": [
+                "PAPER_DOWNLOAD"
+              ],
+              "pdf": [
+                "PAPER_DOWNLOAD"
+              ],
+              "this": [
+                "PAPER_DOWNLOAD",
+                "IMAGE_ANALYZE"
+              ],
+              "articl": [
+                "PAPER_DOWNLOAD"
+              ],
+              "fetch": [
+                "PAPER_DOWNLOAD"
+              ],
+              "journal": [
+                "PAPER_DOWNLOAD"
+              ],
+              "analisa": [
+                "IMAGE_ANALYZE"
+              ],
+              "analyz": [
+                "IMAGE_ANALYZE"
+              ],
+              "foto": [
+                "IMAGE_ANALYZE"
+              ],
+              "jelaskan": [
+                "IMAGE_ANALYZE",
+                "AI_CHAT"
+              ],
+              "terangkan": [
+                "IMAGE_ANALYZE"
+              ],
+              "apa": [
+                "IMAGE_ANALYZE",
+                "AI_CHAT"
+              ],
+              "isi": [
+                "IMAGE_ANALYZE"
+              ],
+              "jelasin": [
+                "IMAGE_ANALYZE",
+                "AI_CHAT"
+              ],
+              "deskripsikan": [
+                "IMAGE_ANALYZE"
+              ],
+              "imag": [
+                "IMAGE_ANALYZE"
+              ],
+              "photo": [
+                "IMAGE_ANALYZE"
+              ],
+              "describ": [
+                "IMAGE_ANALYZE",
+                "AI_CHAT"
+              ],
+              "pictur": [
+                "IMAGE_ANALYZE"
+              ],
+              "explain": [
+                "IMAGE_ANALYZE",
+                "AI_CHAT"
+              ],
+              "what": [
+                "IMAGE_ANALYZE",
+                "AI_CHAT"
+              ],
+              "is": [
+                "IMAGE_ANALYZE",
+                "AI_CHAT"
+              ],
+              "in": [
+                "IMAGE_ANALYZE"
+              ],
+              "hai": [
+                "GREETING"
+              ],
+              "halo": [
+                "GREETING"
+              ],
+              "helo": [
+                "GREETING"
+              ],
+              "hey": [
+                "GREETING"
+              ],
+              "hei": [
+                "GREETING"
+              ],
+              "yo": [
+                "GREETING"
+              ],
+              "oi": [
+                "GREETING"
+              ],
+              "p": [
+                "GREETING"
+              ],
+              "assalamualaikum": [
+                "GREETING"
+              ],
+              "selamat": [
+                "GREETING"
+              ],
+              "pagi": [
+                "GREETING"
+              ],
+              "siang": [
+                "GREETING"
+              ],
+              "sore": [
+                "GREETING"
+              ],
+              "malam": [
+                "GREETING"
+              ],
+              "bot": [
+                "GREETING"
+              ],
+              "min": [
+                "GREETING"
+              ],
+              "ping": [
+                "GREETING"
+              ],
+              "test": [
+                "GREETING"
+              ],
+              "hello": [
+                "GREETING"
+              ],
+              "hi": [
+                "GREETING"
+              ],
+              "good": [
+                "GREETING"
+              ],
+              "morn": [
+                "GREETING"
+              ],
+              "afternoon": [
+                "GREETING"
+              ],
+              "even": [
+                "GREETING"
+              ],
+              "itu": [
+                "AI_CHAT"
+              ],
+              "siapa": [
+                "AI_CHAT"
+              ],
+              "yang": [
+                "AI_CHAT"
+              ],
+              "bagaimana": [
+                "AI_CHAT"
+              ],
+              "cara": [
+                "AI_CHAT"
+              ],
+              "gimana": [
+                "AI_CHAT"
+              ],
+              "kenapa": [
+                "AI_CHAT"
+              ],
+              "mengapa": [
+                "AI_CHAT"
+              ],
+              "kapan": [
+                "AI_CHAT"
+              ],
+              "dimana": [
+                "AI_CHAT"
+              ],
+              "di": [
+                "AI_CHAT"
+              ],
+              "mana": [
+                "AI_CHAT"
+              ],
+              "dong": [
+                "AI_CHAT"
+              ],
+              "ceritakan": [
+                "AI_CHAT"
+              ],
+              "maksudnya": [
+                "AI_CHAT"
+              ],
+              "who": [
+                "AI_CHAT"
+              ],
+              "how": [
+                "AI_CHAT"
+              ],
+              "to": [
+                "AI_CHAT"
+              ],
+              "whi": [
+                "AI_CHAT"
+              ],
+              "when": [
+                "AI_CHAT"
+              ],
+              "did": [
+                "AI_CHAT"
+              ],
+              "where": [
+                "AI_CHAT"
+              ],
+              "tell": [
+                "AI_CHAT"
+              ],
+              "about": [
+                "AI_CHAT"
+              ]
+            },
+            "neuralNetwork": {
+              "settings": {
+                "locale": "en",
+                "tag": "nlu-en",
+                "keepStopwords": true,
+                "nonefeatureValue": 1,
+                "nonedeltaMultiplier": 1.2,
+                "spellCheck": false,
+                "spellCheckDistance": 1,
+                "filterZeros": true,
+                "log": true
+              },
+              "features": [
+                "cari",
+                "carikan",
+                "carin",
+                "tolong",
+                "bantu",
+                "scrape",
+                "nyari",
+                "mau",
+                "search",
+                "find",
+                "cariin",
+                "coba",
+                "data",
+                "gambar",
+                "jurnal",
+                "paper",
+                "me",
+                "for",
+                "can",
+                "you",
+                "download",
+                "unduh",
+                "artikel",
+                "downloadin",
+                "ini",
+                "buka",
+                "get",
+                "pdf",
+                "this",
+                "articl",
+                "fetch",
+                "journal",
+                "analisa",
+                "analyz",
+                "foto",
+                "jelaskan",
+                "terangkan",
+                "apa",
+                "isi",
+                "jelasin",
+                "deskripsikan",
+                "imag",
+                "photo",
+                "describ",
+                "pictur",
+                "explain",
+                "what",
+                "is",
+                "in",
+                "hai",
+                "halo",
+                "helo",
+                "hey",
+                "hei",
+                "yo",
+                "oi",
+                "p",
+                "assalamualaikum",
+                "selamat",
+                "pagi",
+                "siang",
+                "sore",
+                "malam",
+                "bot",
+                "min",
+                "ping",
+                "test",
+                "hello",
+                "hi",
+                "good",
+                "morn",
+                "afternoon",
+                "even",
+                "itu",
+                "siapa",
+                "yang",
+                "bagaimana",
+                "cara",
+                "gimana",
+                "kenapa",
+                "mengapa",
+                "kapan",
+                "dimana",
+                "di",
+                "mana",
+                "dong",
+                "ceritakan",
+                "maksudnya",
+                "who",
+                "how",
+                "to",
+                "whi",
+                "when",
+                "did",
+                "where",
+                "tell",
+                "about"
+              ],
+              "intents": [
+                "SCRAPE",
+                "PAPER_DOWNLOAD",
+                "IMAGE_ANALYZE",
+                "GREETING",
+                "AI_CHAT"
+              ],
+              "perceptrons": [
+                [
+                  11.969417572021484,
+                  12.011335372924805,
+                  12.02966594696045,
+                  0.5372754335403442,
+                  0.11916548758745193,
+                  12.036760330200195,
+                  12.000651359558105,
+                  0.08914756029844284,
+                  11.728047370910645,
+                  11.787589073181152,
+                  11.223769187927246,
+                  0.0783785730600357,
+                  0.00497325137257576,
+                  -0.1652555614709854,
+                  0.047193076461553574,
+                  -0.15146906673908234,
+                  0.3189481794834137,
+                  0.4597414433956146,
+                  0.1323564499616623,
+                  0.1323564499616623,
+                  -4.161175727844238,
+                  -2.5394747257232666,
+                  -0.7834630012512207,
+                  -0.6051763892173767,
+                  -1.693942904472351,
+                  -2.005774736404419,
+                  -1.65780508518219,
+                  -1.65780508518219,
+                  -2.0122830867767334,
+                  -0.2472967803478241,
+                  -1.6078184843063354,
+                  -1.6078184843063354,
+                  -3.0006699562072754,
+                  -2.3893520832061768,
+                  -2.9277448654174805,
+                  -3.7987029552459717,
+                  -0.8602151274681091,
+                  -1.6531397104263306,
+                  -0.28292354941368103,
+                  -1.717990517616272,
+                  -1.9636776447296143,
+                  -1.3119786977767944,
+                  -1.0910875797271729,
+                  -2.2244720458984375,
+                  -0.7498304843902588,
+                  -1.4981446266174316,
+                  -0.49939247965812683,
+                  -1.8123245239257812,
+                  -0.28016361594200134,
+                  -2.307966470718384,
+                  -2.284694194793701,
+                  -2.2676122188568115,
+                  -2.256882429122925,
+                  -2.2553422451019287,
+                  -2.2547430992126465,
+                  -2.25405216217041,
+                  -2.253263473510742,
+                  -2.252373218536377,
+                  -2.156543016433716,
+                  -0.5734509229660034,
+                  -0.5422641038894653,
+                  -0.48837968707084656,
+                  -0.4380219578742981,
+                  -2.2511096000671387,
+                  -2.249939441680908,
+                  -2.248650550842285,
+                  -2.247239351272583,
+                  -2.245701551437378,
+                  -2.244033098220825,
+                  -1.6999261379241943,
+                  -0.5758914351463318,
+                  -0.5543965101242065,
+                  -0.5535598397254944,
+                  -0.940172553062439,
+                  -1.4063855409622192,
+                  -0.8461305499076843,
+                  -0.7514966130256653,
+                  -1.5024199485778809,
+                  -0.7507399320602417,
+                  -2.240671157836914,
+                  -2.2385528087615967,
+                  -2.2362852096557617,
+                  -2.2338647842407227,
+                  -1.1239476203918457,
+                  -1.1239476203918457,
+                  -0.5296212434768677,
+                  -2.229217767715454,
+                  -0.5927483439445496,
+                  -0.43756866455078125,
+                  -0.6336773633956909,
+                  -1.6118049621582031,
+                  -0.43612468242645264,
+                  -1.1225032806396484,
+                  -1.1225032806396484,
+                  -0.43435177206993103,
+                  -1.511211633682251,
+                  -1.511211633682251,
+                  2.248778569171091
+                ],
+                [
+                  -6.732987403869629,
+                  -0.6610249280929565,
+                  -0.6603432893753052,
+                  -0.10491424053907394,
+                  -0.029774151742458344,
+                  -0.6624602675437927,
+                  -0.6601318120956421,
+                  -0.17743240296840668,
+                  -0.6595344543457031,
+                  -0.6588919162750244,
+                  -0.5222511887550354,
+                  -0.003981044050306082,
+                  -0.1290394365787506,
+                  -2.2961103916168213,
+                  5.9674835205078125,
+                  5.9638142585754395,
+                  -0.2531849443912506,
+                  -0.07320539653301239,
+                  -0.05544283986091614,
+                  -0.05544283986091614,
+                  7.710468769073486,
+                  7.676018714904785,
+                  5.880532264709473,
+                  5.4514946937561035,
+                  2.1956851482391357,
+                  7.615453720092773,
+                  6.811956882476807,
+                  6.811956882476807,
+                  1.7011293172836304,
+                  4.192571640014648,
+                  6.811211109161377,
+                  6.811211109161377,
+                  -0.739718496799469,
+                  -1.371834635734558,
+                  -1.962681531906128,
+                  -0.7691172957420349,
+                  -0.44556882977485657,
+                  -2.8421201705932617,
+                  -0.304208904504776,
+                  -0.897680938243866,
+                  -0.16802304983139038,
+                  -1.3900485038757324,
+                  -0.836237370967865,
+                  -1.2081807851791382,
+                  -1.1501494646072388,
+                  -0.9682786464691162,
+                  -0.4558713734149933,
+                  -0.6486338376998901,
+                  -0.4203852117061615,
+                  -0.8813093900680542,
+                  -0.8579727411270142,
+                  -0.8423627018928528,
+                  -0.8216601610183716,
+                  -0.8068220019340515,
+                  -0.7883909940719604,
+                  -0.7749699950218201,
+                  -0.7616881132125854,
+                  -0.7466971278190613,
+                  -1.0908203125,
+                  -0.2850915789604187,
+                  -0.2559458613395691,
+                  -0.22734422981739044,
+                  -0.2006298303604126,
+                  -0.7223541736602783,
+                  -0.7136846780776978,
+                  -0.7043450474739075,
+                  -0.6958443522453308,
+                  -0.6888473629951477,
+                  -0.682583749294281,
+                  -0.7278749942779541,
+                  -0.2490912228822708,
+                  -0.22371195256710052,
+                  -0.19927531480789185,
+                  -0.34732651710510254,
+                  -0.5533465147018433,
+                  -0.2751847803592682,
+                  -0.2859753668308258,
+                  -0.5666690468788147,
+                  -0.26478496193885803,
+                  -0.6709662675857544,
+                  -0.6689193844795227,
+                  -0.667513370513916,
+                  -0.6664217710494995,
+                  -0.3570777475833893,
+                  -0.3570777475833893,
+                  -0.01989220455288887,
+                  -0.6652204990386963,
+                  -0.00452724564820528,
+                  -0.07540231198072433,
+                  -0.3086540699005127,
+                  -0.3549360930919647,
+                  -0.057700734585523605,
+                  -0.33177152276039124,
+                  -0.33177152276039124,
+                  -0.04454590752720833,
+                  -0.20690374076366425,
+                  -0.20690374076366425,
+                  0.6605429554081154
+                ],
+                [
+                  -10.994335174560547,
+                  -0.11512293666601181,
+                  -0.08742604404687881,
+                  -0.9430627226829529,
+                  3.0622801780700684,
+                  -0.12667621672153473,
+                  -0.10598158091306686,
+                  -0.05693100765347481,
+                  -0.07286388427019119,
+                  -0.07077527046203613,
+                  -0.19035248458385468,
+                  -0.005116506014019251,
+                  -0.03268003091216087,
+                  13.080083847045898,
+                  -0.0470464825630188,
+                  -1.0693336725234985,
+                  -0.7351568937301636,
+                  -0.0043798708356916904,
+                  -0.0038910959847271442,
+                  -0.0038910959847271442,
+                  -2.9019949436187744,
+                  -0.20086537301540375,
+                  -0.0034078918397426605,
+                  -0.8473109602928162,
+                  3.0781915187835693,
+                  0,
+                  0,
+                  0,
+                  7.2068915367126465,
+                  -2.8293983936309814,
+                  0,
+                  0,
+                  3.7358603477478027,
+                  7.941954135894775,
+                  8.85018253326416,
+                  3.053623914718628,
+                  7.157044887542725,
+                  -0.5769141912460327,
+                  0.8726680278778076,
+                  4.229386329650879,
+                  3.2355360984802246,
+                  7.961748123168945,
+                  8.030739784240723,
+                  2.0118002891540527,
+                  6.82889986038208,
+                  1.101237416267395,
+                  0.21082261204719543,
+                  -0.6760966181755066,
+                  1.4253950119018555,
+                  -0.9852592945098877,
+                  -0.9497030973434448,
+                  -0.9154080748558044,
+                  -0.8823304772377014,
+                  -0.85042804479599,
+                  -0.819659948348999,
+                  -0.7899867296218872,
+                  -0.7613701820373535,
+                  -0.7337735891342163,
+                  -1.6322238445281982,
+                  -0.40558502078056335,
+                  -0.3635638356208801,
+                  -0.3218764364719391,
+                  -0.28281664848327637,
+                  -0.6876581311225891,
+                  -0.6641213297843933,
+                  -0.641364574432373,
+                  -0.6193634867668152,
+                  -0.5980938673019409,
+                  -0.5775325298309326,
+                  -0.9929614663124084,
+                  -0.3072817027568817,
+                  -0.27538856863975525,
+                  -0.24368876218795776,
+                  -0.9965332746505737,
+                  -0.5923808813095093,
+                  -0.31022682785987854,
+                  -0.3143998086452484,
+                  -0.6589110493659973,
+                  -0.2815190851688385,
+                  -0.4564965069293976,
+                  -0.4405294358730316,
+                  -0.42510756850242615,
+                  -0.42959359288215637,
+                  -0.31847837567329407,
+                  -0.31847837567329407,
+                  -2.2930638790130615,
+                  -0.2992290258407593,
+                  -0.5906383991241455,
+                  -0.30381134152412415,
+                  -0.09577584266662598,
+                  -0.787481963634491,
+                  -0.27802011370658875,
+                  -0.12564677000045776,
+                  -0.12564677000045776,
+                  -0.24859346449375153,
+                  -0.04574143514037132,
+                  -0.04574143514037132,
+                  -1.9279640973046277
+                ],
+                [
+                  -5.599604606628418,
+                  -5.593510150909424,
+                  -5.587594509124756,
+                  -4.0520243644714355,
+                  -0.9690049886703491,
+                  -5.603933811187744,
+                  -5.584898471832275,
+                  -1.5293998718261719,
+                  -5.581142425537109,
+                  -5.575641632080078,
+                  -1.5436525344848633,
+                  -0.514746367931366,
+                  -1.2613049745559692,
+                  -3.827049493789673,
+                  -2.803316593170166,
+                  -3.7324118614196777,
+                  -2.5856735706329346,
+                  -1.2525520324707031,
+                  -0.8336595296859741,
+                  -0.8336595296859741,
+                  -3.684067726135254,
+                  -2.7922544479370117,
+                  -1.9113903045654297,
+                  -0.42503273487091064,
+                  -1.5228393077850342,
+                  -1.8629229068756104,
+                  -2.797600746154785,
+                  -2.797600746154785,
+                  -1.747285008430481,
+                  -0.4884253442287445,
+                  -2.7975285053253174,
+                  -2.7975285053253174,
+                  -1.7741434574127197,
+                  -3.721083641052246,
+                  -3.192094326019287,
+                  -2.3191215991973877,
+                  -2.402804374694824,
+                  -4.292135238647461,
+                  0,
+                  -2.9063076972961426,
+                  -1.767660140991211,
+                  -2.0964269638061523,
+                  -1.873464584350586,
+                  -5.596790313720703,
+                  -0.2405223399400711,
+                  -1.7516907453536987,
+                  -1.2822859287261963,
+                  -4.66758918762207,
+                  0,
+                  8.700160026550293,
+                  8.701757431030273,
+                  8.700886726379395,
+                  8.6996488571167,
+                  8.698028564453125,
+                  8.696006774902344,
+                  8.693565368652344,
+                  8.690686225891113,
+                  8.687353134155273,
+                  6.9538469314575195,
+                  1.7387429475784302,
+                  1.7386640310287476,
+                  1.738506555557251,
+                  1.7381227016448975,
+                  8.683119773864746,
+                  8.6786527633667,
+                  8.673672676086426,
+                  8.668163299560547,
+                  8.662110328674316,
+                  8.655501365661621,
+                  6.5144524574279785,
+                  2.172909736633301,
+                  2.171523094177246,
+                  2.1698622703552246,
+                  -3.383535146713257,
+                  -4.006531715393066,
+                  -2.331326961517334,
+                  -2.220327377319336,
+                  -4.335224628448486,
+                  -2.058297634124756,
+                  -5.643714904785156,
+                  -5.629039287567139,
+                  -5.617937088012695,
+                  -5.609800338745117,
+                  -2.9035189151763916,
+                  -2.9035189151763916,
+                  -2.8723361492156982,
+                  -5.601796627044678,
+                  -1.4445111751556396,
+                  -1.2104971408843994,
+                  -2.481894016265869,
+                  -3.2294580936431885,
+                  -1.113477110862732,
+                  -2.850980758666992,
+                  -2.850980758666992,
+                  -1.0429140329360962,
+                  -1.5733861923217773,
+                  -1.5733861923217773,
+                  5.599025087168335
+                ],
+                [
+                  -6.327675819396973,
+                  -4.521705627441406,
+                  -4.223535537719727,
+                  2.6199381351470947,
+                  -2.186680793762207,
+                  -4.99894380569458,
+                  -4.403836250305176,
+                  -1.9295694828033447,
+                  -4.334029674530029,
+                  -6.381462097167969,
+                  -6.306405544281006,
+                  -0.33110547065734863,
+                  -1.6171921491622925,
+                  -13.072846412658691,
+                  -2.7338006496429443,
+                  -3.95000958442688,
+                  2.5714032649993896,
+                  -1.2941919565200806,
+                  -0.6480904817581177,
+                  -0.6480904817581177,
+                  -3.5946543216705322,
+                  -2.1871225833892822,
+                  -1.2712751626968384,
+                  -1.041782021522522,
+                  1.4396651983261108,
+                  -1.056230068206787,
+                  -2.2128140926361084,
+                  -2.2128140926361084,
+                  -8.894845962524414,
+                  -0.23240792751312256,
+                  -2.202488660812378,
+                  -2.202488660812378,
+                  -0.6116460561752319,
+                  -2.4161794185638428,
+                  -7.363894462585449,
+                  8.034770011901855,
+                  -0.916680634021759,
+                  8.312734603881836,
+                  -1.996324062347412,
+                  2.4357783794403076,
+                  -0.09755188226699829,
+                  -1.7651350498199463,
+                  -3.651266574859619,
+                  10.242013931274414,
+                  -4.855518341064453,
+                  1.6194483041763306,
+                  2.1174120903015137,
+                  8.491415977478027,
+                  -3.112722396850586,
+                  -3.661452054977417,
+                  -3.655796527862549,
+                  -3.653019428253174,
+                  -3.651369333267212,
+                  -3.6494815349578857,
+                  -3.6473476886749268,
+                  -3.644961357116699,
+                  -3.642317533493042,
+                  -3.639409065246582,
+                  -2.9353394508361816,
+                  -0.7662116289138794,
+                  -0.7323465943336487,
+                  -0.7157924771308899,
+                  -0.7152147889137268,
+                  -3.6355338096618652,
+                  -3.6319565773010254,
+                  -3.6280927658081055,
+                  -3.62393856048584,
+                  -3.6194891929626465,
+                  -3.614741563796997,
+                  -2.732656955718994,
+                  -0.9121399521827698,
+                  -0.9108203649520874,
+                  -0.909334123134613,
+                  2.857177257537842,
+                  7.4162092208862305,
+                  3.4369583129882812,
+                  3.552727222442627,
+                  7.105605602264404,
+                  3.553292989730835,
+                  10.666028022766113,
+                  10.662701606750488,
+                  10.658790588378906,
+                  10.654279708862305,
+                  5.3307061195373535,
+                  5.3307061195373535,
+                  8.116090774536133,
+                  10.633736610412598,
+                  2.407329559326172,
+                  2.1265406608581543,
+                  4.185964107513428,
+                  6.425357818603516,
+                  2.1246235370635986,
+                  5.3063764572143555,
+                  5.3063764572143555,
+                  2.1225621700286865,
+                  4.020862102508545,
+                  4.020862102508545,
+                  3.6863019870970604
+                ]
+              ]
+            }
+          }
+        }
+      }
+    },
+    "intentDomains": {},
+    "extraSentences": [
+      [
+        "id",
+        "cari"
+      ],
+      [
+        "en",
+        "cari"
+      ],
+      [
+        "id",
+        "carikan"
+      ],
+      [
+        "en",
+        "carikan"
+      ],
+      [
+        "id",
+        "carin"
+      ],
+      [
+        "en",
+        "carin"
+      ],
+      [
+        "id",
+        "tolong cari"
+      ],
+      [
+        "en",
+        "tolong cari"
+      ],
+      [
+        "id",
+        "bantu cari"
+      ],
+      [
+        "en",
+        "bantu cari"
+      ],
+      [
+        "id",
+        "scrape"
+      ],
+      [
+        "en",
+        "scrape"
+      ],
+      [
+        "id",
+        "scraping"
+      ],
+      [
+        "en",
+        "scraping"
+      ],
+      [
+        "id",
+        "nyari"
+      ],
+      [
+        "en",
+        "nyari"
+      ],
+      [
+        "id",
+        "mau cari"
+      ],
+      [
+        "en",
+        "mau cari"
+      ],
+      [
+        "id",
+        "mau nyari"
+      ],
+      [
+        "en",
+        "mau nyari"
+      ],
+      [
+        "id",
+        "search"
+      ],
+      [
+        "en",
+        "search"
+      ],
+      [
+        "id",
+        "find"
+      ],
+      [
+        "en",
+        "find"
+      ],
+      [
+        "id",
+        "tolong cariin"
+      ],
+      [
+        "en",
+        "tolong cariin"
+      ],
+      [
+        "id",
+        "coba cari"
+      ],
+      [
+        "en",
+        "coba cari"
+      ],
+      [
+        "id",
+        "carikan data"
+      ],
+      [
+        "en",
+        "carikan data"
+      ],
+      [
+        "id",
+        "cari gambar"
+      ],
+      [
+        "en",
+        "cari gambar"
+      ],
+      [
+        "id",
+        "cari jurnal"
+      ],
+      [
+        "en",
+        "cari jurnal"
+      ],
+      [
+        "id",
+        "cari paper"
+      ],
+      [
+        "en",
+        "cari paper"
+      ],
+      [
+        "id",
+        "find me"
+      ],
+      [
+        "en",
+        "find me"
+      ],
+      [
+        "id",
+        "search for"
+      ],
+      [
+        "en",
+        "search for"
+      ],
+      [
+        "id",
+        "can you find"
+      ],
+      [
+        "en",
+        "can you find"
+      ],
+      [
+        "id",
+        "scrape data"
+      ],
+      [
+        "en",
+        "scrape data"
+      ],
+      [
+        "id",
+        "download paper"
+      ],
+      [
+        "en",
+        "download paper"
+      ],
+      [
+        "id",
+        "download jurnal"
+      ],
+      [
+        "en",
+        "download jurnal"
+      ],
+      [
+        "id",
+        "unduh paper"
+      ],
+      [
+        "en",
+        "unduh paper"
+      ],
+      [
+        "id",
+        "unduh jurnal"
+      ],
+      [
+        "en",
+        "unduh jurnal"
+      ],
+      [
+        "id",
+        "download artikel"
+      ],
+      [
+        "en",
+        "download artikel"
+      ],
+      [
+        "id",
+        "downloadin paper ini"
+      ],
+      [
+        "en",
+        "downloadin paper ini"
+      ],
+      [
+        "id",
+        "tolong download jurnal"
+      ],
+      [
+        "en",
+        "tolong download jurnal"
+      ],
+      [
+        "id",
+        "bantu unduh paper"
+      ],
+      [
+        "en",
+        "bantu unduh paper"
+      ],
+      [
+        "id",
+        "buka paper"
+      ],
+      [
+        "en",
+        "buka paper"
+      ],
+      [
+        "id",
+        "download paper"
+      ],
+      [
+        "en",
+        "download paper"
+      ],
+      [
+        "id",
+        "get pdf"
+      ],
+      [
+        "en",
+        "get pdf"
+      ],
+      [
+        "id",
+        "download this article"
+      ],
+      [
+        "en",
+        "download this article"
+      ],
+      [
+        "id",
+        "fetch journal"
+      ],
+      [
+        "en",
+        "fetch journal"
+      ],
+      [
+        "id",
+        "analisa gambar"
+      ],
+      [
+        "en",
+        "analisa gambar"
+      ],
+      [
+        "id",
+        "analyze foto"
+      ],
+      [
+        "en",
+        "analyze foto"
+      ],
+      [
+        "id",
+        "jelaskan gambar"
+      ],
+      [
+        "en",
+        "jelaskan gambar"
+      ],
+      [
+        "id",
+        "terangkan foto"
+      ],
+      [
+        "en",
+        "terangkan foto"
+      ],
+      [
+        "id",
+        "apa isi gambar ini"
+      ],
+      [
+        "en",
+        "apa isi gambar ini"
+      ],
+      [
+        "id",
+        "jelasin foto ini"
+      ],
+      [
+        "en",
+        "jelasin foto ini"
+      ],
+      [
+        "id",
+        "gambar apa ini"
+      ],
+      [
+        "en",
+        "gambar apa ini"
+      ],
+      [
+        "id",
+        "tolong analisa gambar"
+      ],
+      [
+        "en",
+        "tolong analisa gambar"
+      ],
+      [
+        "id",
+        "bantu jelasin foto"
+      ],
+      [
+        "en",
+        "bantu jelasin foto"
+      ],
+      [
+        "id",
+        "deskripsikan gambar"
+      ],
+      [
+        "en",
+        "deskripsikan gambar"
+      ],
+      [
+        "id",
+        "analyze image"
+      ],
+      [
+        "en",
+        "analyze image"
+      ],
+      [
+        "id",
+        "analyze photo"
+      ],
+      [
+        "en",
+        "analyze photo"
+      ],
+      [
+        "id",
+        "describe this picture"
+      ],
+      [
+        "en",
+        "describe this picture"
+      ],
+      [
+        "id",
+        "explain this image"
+      ],
+      [
+        "en",
+        "explain this image"
+      ],
+      [
+        "id",
+        "what is in this photo"
+      ],
+      [
+        "en",
+        "what is in this photo"
+      ],
+      [
+        "id",
+        "hai"
+      ],
+      [
+        "en",
+        "hai"
+      ],
+      [
+        "id",
+        "halo"
+      ],
+      [
+        "en",
+        "halo"
+      ],
+      [
+        "id",
+        "helo"
+      ],
+      [
+        "en",
+        "helo"
+      ],
+      [
+        "id",
+        "hey"
+      ],
+      [
+        "en",
+        "hey"
+      ],
+      [
+        "id",
+        "hei"
+      ],
+      [
+        "en",
+        "hei"
+      ],
+      [
+        "id",
+        "yo"
+      ],
+      [
+        "en",
+        "yo"
+      ],
+      [
+        "id",
+        "oi"
+      ],
+      [
+        "en",
+        "oi"
+      ],
+      [
+        "id",
+        "p"
+      ],
+      [
+        "en",
+        "p"
+      ],
+      [
+        "id",
+        "assalamualaikum"
+      ],
+      [
+        "en",
+        "assalamualaikum"
+      ],
+      [
+        "id",
+        "selamat pagi"
+      ],
+      [
+        "en",
+        "selamat pagi"
+      ],
+      [
+        "id",
+        "selamat siang"
+      ],
+      [
+        "en",
+        "selamat siang"
+      ],
+      [
+        "id",
+        "selamat sore"
+      ],
+      [
+        "en",
+        "selamat sore"
+      ],
+      [
+        "id",
+        "selamat malam"
+      ],
+      [
+        "en",
+        "selamat malam"
+      ],
+      [
+        "id",
+        "bot"
+      ],
+      [
+        "en",
+        "bot"
+      ],
+      [
+        "id",
+        "min"
+      ],
+      [
+        "en",
+        "min"
+      ],
+      [
+        "id",
+        "ping"
+      ],
+      [
+        "en",
+        "ping"
+      ],
+      [
+        "id",
+        "test"
+      ],
+      [
+        "en",
+        "test"
+      ],
+      [
+        "id",
+        "hello"
+      ],
+      [
+        "en",
+        "hello"
+      ],
+      [
+        "id",
+        "hi"
+      ],
+      [
+        "en",
+        "hi"
+      ],
+      [
+        "id",
+        "good morning"
+      ],
+      [
+        "en",
+        "good morning"
+      ],
+      [
+        "id",
+        "good afternoon"
+      ],
+      [
+        "en",
+        "good afternoon"
+      ],
+      [
+        "id",
+        "good evening"
+      ],
+      [
+        "en",
+        "good evening"
+      ],
+      [
+        "id",
+        "apa itu"
+      ],
+      [
+        "en",
+        "apa itu"
+      ],
+      [
+        "id",
+        "siapa itu"
+      ],
+      [
+        "en",
+        "siapa itu"
+      ],
+      [
+        "id",
+        "siapa yang"
+      ],
+      [
+        "en",
+        "siapa yang"
+      ],
+      [
+        "id",
+        "bagaimana cara"
+      ],
+      [
+        "en",
+        "bagaimana cara"
+      ],
+      [
+        "id",
+        "gimana cara"
+      ],
+      [
+        "en",
+        "gimana cara"
+      ],
+      [
+        "id",
+        "kenapa"
+      ],
+      [
+        "en",
+        "kenapa"
+      ],
+      [
+        "id",
+        "mengapa"
+      ],
+      [
+        "en",
+        "mengapa"
+      ],
+      [
+        "id",
+        "kapan"
+      ],
+      [
+        "en",
+        "kapan"
+      ],
+      [
+        "id",
+        "dimana"
+      ],
+      [
+        "en",
+        "dimana"
+      ],
+      [
+        "id",
+        "di mana"
+      ],
+      [
+        "en",
+        "di mana"
+      ],
+      [
+        "id",
+        "tolong jelaskan"
+      ],
+      [
+        "en",
+        "tolong jelaskan"
+      ],
+      [
+        "id",
+        "jelasin dong"
+      ],
+      [
+        "en",
+        "jelasin dong"
+      ],
+      [
+        "id",
+        "ceritakan"
+      ],
+      [
+        "en",
+        "ceritakan"
+      ],
+      [
+        "id",
+        "apa maksudnya"
+      ],
+      [
+        "en",
+        "apa maksudnya"
+      ],
+      [
+        "id",
+        "ini apa"
+      ],
+      [
+        "en",
+        "ini apa"
+      ],
+      [
+        "id",
+        "what is"
+      ],
+      [
+        "en",
+        "what is"
+      ],
+      [
+        "id",
+        "who is"
+      ],
+      [
+        "en",
+        "who is"
+      ],
+      [
+        "id",
+        "how to"
+      ],
+      [
+        "en",
+        "how to"
+      ],
+      [
+        "id",
+        "why is"
+      ],
+      [
+        "en",
+        "why is"
+      ],
+      [
+        "id",
+        "when did"
+      ],
+      [
+        "en",
+        "when did"
+      ],
+      [
+        "id",
+        "where is"
+      ],
+      [
+        "en",
+        "where is"
+      ],
+      [
+        "id",
+        "explain to me"
+      ],
+      [
+        "en",
+        "explain to me"
+      ],
+      [
+        "id",
+        "tell me about"
+      ],
+      [
+        "en",
+        "tell me about"
+      ],
+      [
+        "id",
+        "describe"
+      ],
+      [
+        "en",
+        "describe"
+      ]
+    ]
+  },
+  "ner": {
+    "settings": {
+      "tag": "ner",
+      "entityPreffix": "%",
+      "entitySuffix": "%"
+    },
+    "rules": {}
+  },
+  "nlgManager": {
+    "settings": {
+      "tag": "nlg-manager"
+    },
+    "responses": {}
+  },
+  "actionManager": {
+    "settings": {
+      "tag": "action-manager"
+    },
+    "actions": {}
+  },
+  "slotManager": {}
+}

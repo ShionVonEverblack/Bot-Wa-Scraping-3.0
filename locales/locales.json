@@ -1,0 +1,40 @@
+{
+  "id": {
+    "greeting": "Halo! 👋 Saya *{botName}*, asisten pencari data.",
+    "search_start": "Mencari {type} \"{keyword}\"...",
+    "search_done": "Selesai! {count} hasil ditemukan.",
+    "search_empty": "Tidak ada hasil untuk \"{keyword}\".",
+    "error_generic": "Maaf, terjadi error. Coba lagi ya.",
+    "error_access": "Akses ditolak.",
+    "error_cooldown": "Tunggu {seconds} detik lagi ya...",
+    "error_ai": "AI sedang tidak tersedia. Coba lagi nanti.",
+    "job_created": "Job dibuat: {jobId}",
+    "job_completed": "Selesai! {count} item ditemukan.",
+    "job_failed": "Job gagal: {error}",
+    "job_cancelled": "Job dibatalkan.",
+    "wizard_keyword": "Mau cari apa? Ketik keyword pencarian:",
+    "wizard_type": "Pilih jenis data (images/papers/datasets/general):",
+    "wizard_limit": "Berapa banyak hasil? (1-50)",
+    "wizard_confirm": "Lanjutkan?",
+    "help_intro": "Ketik !help untuk bantuan."
+  },
+  "en": {
+    "greeting": "Hello! 👋 I'm *{botName}*, your data search assistant.",
+    "search_start": "Searching {type} \"{keyword}\"...",
+    "search_done": "Done! {count} results found.",
+    "search_empty": "No results for \"{keyword}\".",
+    "error_generic": "Sorry, an error occurred. Please try again.",
+    "error_access": "Access denied.",
+    "error_cooldown": "Please wait {seconds} seconds...",
+    "error_ai": "AI is unavailable. Try again later.",
+    "job_created": "Job created: {jobId}",
+    "job_completed": "Done! {count} items found.",
+    "job_failed": "Job failed: {error}",
+    "job_cancelled": "Job cancelled.",
+    "wizard_keyword": "What do you want to search? Enter a keyword:",
+    "wizard_type": "Select data type (images/papers/datasets/general):",
+    "wizard_limit": "How many results? (1-50)",
+    "wizard_confirm": "Proceed?",
+    "help_intro": "Type !help for assistance."
+  }
+}

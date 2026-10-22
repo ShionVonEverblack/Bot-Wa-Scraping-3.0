@@ -1,0 +1,48 @@
+{
+  "entries": [
+    {
+      "path": ".agents/skills"
+    },
+    {
+      "path": "skills"
+    },
+    {
+      "path": "skills/karpathy/skills"
+    },
+    {
+      "path": "skills/superpowers/skills"
+    },
+    {
+      "path": "skills/mattpocock/skills/engineering"
+    },
+    {
+      "path": "skills/mattpocock/skills/productivity"
+    },
+    {
+      "path": "skills/mattpocock/skills/in-progress"
+    },
+    {
+      "path": "skills/mattpocock/skills/misc"
+    },
+    {
+      "path": "skills/anthropics/skills"
+    },
+    {
+      "path": "skills/ecc/skills",
+      "include_only": [
+        "data-scraper-agent",
+        "tdd-workflow",
+        "agentic-engineering",
+        "agent-architecture-audit",
+        "agent-eval",
+        "agent-introspection-debugging",
+        "agent-security-hardening",
+        "e2e-testing",
+        "scientific-thinking-literature-review",
+        "security-review",
+        "team-agent-orchestration",
+        "test-collaboration"
+      ]
+    }
+  ]
+}

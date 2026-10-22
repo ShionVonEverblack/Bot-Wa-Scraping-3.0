@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  rima-bot:
+    build: .
+    container_name: rima-bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - PUPPETEER_HEADLESS=true
+    volumes:
+      - ./auth:/app/auth
+      - ./jobs:/app/jobs
+      - ./outputs:/app/outputs
+      - ./watches:/app/watches
+      - ./cache:/app/cache
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
