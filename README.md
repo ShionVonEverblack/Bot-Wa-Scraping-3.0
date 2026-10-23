@@ -1,32 +1,32 @@
-# 🤖 Rima — Bot Scraping WhatsApp 3.0
+# 🤖 Rima - Bot Scraping WhatsApp 3.0
 
 > Asisten pencari data all-in-one berbasis WhatsApp dengan NLP, multi-AI provider, dan 19 data source.
 
 ## ✨ Fitur Utama (Ultimate 3.0)
 
-- 🎙️ **Voice Note AI** — Anda tidak perlu mengetik! Kirim pesan suara (PTT/Audio) dan bot akan otomatis mentranskripsikannya menggunakan model *Speech-to-Text* (Whisper/OpenAI) dan memrosesnya layaknya teks.
-- 📺 **YouTube Video Summarizer** — Kirim link YouTube (contoh: `!yt https://youtu.be/...`). Bot akan mengunduh transkrip/CC videonya di latar belakang lalu AI akan membuat ringkasan terstruktur lengkap dengan poin penting!
-- 👁️ **AI OCR (Ekstraksi Teks Gambar)** — Kirim atau _reply_ gambar (buku, jurnal, tabel) dengan `!ocr`. AI Vision (Gemini/GPT-4o) akan mengekstrak **seluruh teks** secara mutlak dan presisi (mendukung tulisan tangan & bahasa asing).
-- 🧠 **Chat dengan Dokumen (RAG)** — Setelah mengunduh jurnal/paper (PDF), AI akan secara instan membaca isinya ke dalam memori. Anda bisa bertanya spesifik tentang metodologi, kesimpulan, atau isi dari jurnal tersebut!
-- 🗄️ **Multi-Provider Aggregation (`--multi`)** — Tarik data dari seluruh sumber API sekaligus secara paralel! Bot akan menggabungkan, mendeduplikasi, dan merangking hasilnya.
-- 🔍 **Smart Search (NLP)** — Cari gambar, anime art, paper akademik, dataset, dan web via bahasa natural. Paham *typo* dan terklasifikasi dalam *3-Layer NLP Intent*.
-- 🤖 **Multi-AI & Auto-Summary** — Dukungan OpenAI, Gemini, Groq, dan Grok dengan sistem *auto-fallback* dan peringkasan instan (`--ai` atau `+ai`).
-- 📄 **Paper Download** — Rantai resolver pintar: Europe PMC → Unpaywall → OpenAlex → arXiv → Crossref.
-- 🌐 **Deep Scrape & Custom Scrape** — Puppeteer + Brave browser. Kini dilengkapi `!customscrape` yang bisa menargetkan CSS Selector spesifik dari web apa pun.
-- 🛡️ **Anti-Spam & Rate Limiting** — Melindungi bot dari _banned_ WhatsApp dan pembengkakan tagihan API dengan sistem *Cooldown* cerdas (10 detik) per pengguna.
-- ✨ **Rich UI Formatting** — Balasan bot menggunakan kutipan *(Blockquote)* dan pembatas elegan ala *Markdown* yang membuat output tampak sangat rapi dan berkelas.
-- 🛠️ **Admin Dashboard (`!admin`)** — Kontrol penuh khusus nomor pemilik bot: pantau RAM, _uptime_, pembersihan _cache_, hingga menghentikan proses paksa (`cancel-all`).
-- ⏰ **Watch System** — Penjadwalan scraping otomatis (jam/hari/minggu).
-- 📦 **Multi-Format Output** — Ekspor hasil ke JSON, CSV, TSV, HTML, Excel, SQL, TXT, ZIP.
-- 🕸️ **LLM-Ready Web Crawler (`!crawl`)** — Terinspirasi *Firecrawl*, *Crawl4AI* & *Agent-Reach*: ubah halaman web jadi Markdown bersih (Fit-Markdown), buang boilerplate (nav/iklan/footer), dan crawl multi-halaman (BFS) dengan deduplikasi redirect.
-- 🧬 **Adaptive Scraper** — Terinspirasi *Scrapling*: selector yang "self-healing" (relokasi elemen via signature similarity saat struktur web berubah) + stealth headers.
-- 📚 **Deep PDF & RAG (`!rag`)** — Terinspirasi *OpenDataLoader-PDF* & *RAGFlow*: parsing PDF layout-aware, chunking sadar struktur (tabel atomik), Hybrid Search BM25 + TF-IDF (RRF), dan jawaban dengan sitasi.
-- 🕵️ **Knowledge Graph (`!graph`)** — Terinspirasi *Graphify*: ekstraksi entitas/relasi, "God Nodes" (sentralitas), deteksi komunitas, dan ekspor diagram Mermaid.
-- 🧠 **Persistent Memory (`!memory`)** — Terinspirasi *Claude-Mem*: memori 3-lapis (index → timeline → observasi) yang tersimpan di disk + kompresi konteks ala *Headroom*.
-- ⚙️ **Agentic Workflows (`!workflow`)** — Terinspirasi *Dify*: workflow deklaratif `deep-research`, `crawl-and-rag`, `fact-check` + bridge opsional ke Dify API.
-- 🧩 **Agent Skills (`!skills`)** — 395 skill terindeks dari Karpathy Guidelines, Superpowers, Matt Pocock Skills, ECC, dan Anthropic Skills.
-- 🧪 **Test Suite Lengkap** — 40 test suites / 605 tests (unit + E2E + adversarial stress) menjamin stabilitas fungsi inti.
-- 📊 **Web Dashboard** — Monitor status bot & scan QR code via browser (`http://localhost:3000`).
+- 🎙️ **Voice Note AI** - Anda tidak perlu mengetik! Kirim pesan suara (PTT/Audio) dan bot akan otomatis mentranskripsikannya menggunakan model *Speech-to-Text* (Whisper/OpenAI) dan memrosesnya layaknya teks.
+- 📺 **YouTube Video Summarizer** - Kirim link YouTube (contoh: `!yt https://youtu.be/...`). Bot akan mengunduh transkrip/CC videonya di latar belakang lalu AI akan membuat ringkasan terstruktur lengkap dengan poin penting!
+- 👁️ **AI OCR (Ekstraksi Teks Gambar)** - Kirim atau _reply_ gambar (buku, jurnal, tabel) dengan `!ocr`. AI Vision (Gemini/GPT-4o) akan mengekstrak **seluruh teks** secara mutlak dan presisi (mendukung tulisan tangan & bahasa asing).
+- 🧠 **Chat dengan Dokumen (RAG)** - Setelah mengunduh jurnal/paper (PDF), AI akan secara instan membaca isinya ke dalam memori. Anda bisa bertanya spesifik tentang metodologi, kesimpulan, atau isi dari jurnal tersebut!
+- 🗄️ **Multi-Provider Aggregation (`--multi`)** - Tarik data dari seluruh sumber API sekaligus secara paralel! Bot akan menggabungkan, mendeduplikasi, dan merangking hasilnya.
+- 🔍 **Smart Search (NLP)** - Cari gambar, anime art, paper akademik, dataset, dan web via bahasa natural. Paham *typo* dan terklasifikasi dalam *3-Layer NLP Intent*.
+- 🤖 **Multi-AI & Auto-Summary** - Dukungan OpenAI, Gemini, Groq, dan Grok dengan sistem *auto-fallback* dan peringkasan instan (`--ai` atau `+ai`).
+- 📄 **Paper Download** - Rantai resolver pintar: Europe PMC → Unpaywall → OpenAlex → arXiv → Crossref.
+- 🌐 **Deep Scrape & Custom Scrape** - Puppeteer + Brave browser. Kini dilengkapi `!customscrape` yang bisa menargetkan CSS Selector spesifik dari web apa pun.
+- 🛡️ **Anti-Spam & Rate Limiting** - Melindungi bot dari _banned_ WhatsApp dan pembengkakan tagihan API dengan sistem *Cooldown* cerdas (10 detik) per pengguna.
+- ✨ **Rich UI Formatting** - Balasan bot menggunakan kutipan *(Blockquote)* dan pembatas elegan ala *Markdown* yang membuat output tampak sangat rapi dan berkelas.
+- 🛠️ **Admin Dashboard (`!admin`)** - Kontrol penuh khusus nomor pemilik bot: pantau RAM, _uptime_, pembersihan _cache_, hingga menghentikan proses paksa (`cancel-all`).
+- ⏰ **Watch System** - Penjadwalan scraping otomatis (jam/hari/minggu).
+- 📦 **Multi-Format Output** - Ekspor hasil ke JSON, CSV, TSV, HTML, Excel, SQL, TXT, ZIP.
+- 🕸️ **LLM-Ready Web Crawler (`!crawl`)** - Terinspirasi *Firecrawl*, *Crawl4AI* & *Agent-Reach*: ubah halaman web jadi Markdown bersih (Fit-Markdown), buang boilerplate (nav/iklan/footer), dan crawl multi-halaman (BFS) dengan deduplikasi redirect.
+- 🧬 **Adaptive Scraper** - Terinspirasi *Scrapling*: selector yang "self-healing" (relokasi elemen via signature similarity saat struktur web berubah) + stealth headers.
+- 📚 **Deep PDF & RAG (`!rag`)** - Terinspirasi *OpenDataLoader-PDF* & *RAGFlow*: parsing PDF layout-aware, chunking sadar struktur (tabel atomik), Hybrid Search BM25 + TF-IDF (RRF), dan jawaban dengan sitasi.
+- 🕵️ **Knowledge Graph (`!graph`)** - Terinspirasi *Graphify*: ekstraksi entitas/relasi, "God Nodes" (sentralitas), deteksi komunitas, dan ekspor diagram Mermaid.
+- 🧠 **Persistent Memory (`!memory`)** - Terinspirasi *Claude-Mem*: memori 3-lapis (index → timeline → observasi) yang tersimpan di disk + kompresi konteks ala *Headroom*.
+- ⚙️ **Agentic Workflows (`!workflow`)** - Terinspirasi *Dify*: workflow deklaratif `deep-research`, `crawl-and-rag`, `fact-check` + bridge opsional ke Dify API.
+- 🧩 **Agent Skills (`!skills`)** - 395 skill terindeks dari Karpathy Guidelines, Superpowers, Matt Pocock Skills, ECC, dan Anthropic Skills.
+- 🧪 **Test Suite Lengkap** - 40 test suites / 605 tests (unit + E2E + adversarial stress) menjamin stabilitas fungsi inti.
+- 📊 **Web Dashboard** - Monitor status bot & scan QR code via browser (`http://localhost:3000`).
 
 ## 📋 Prerequisites
 

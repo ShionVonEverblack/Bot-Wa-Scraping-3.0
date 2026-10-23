@@ -50,7 +50,7 @@ describe('toExcel', () => {
 
     const stat = await fs.promises.stat(filepath);
     expect(stat.size).toBeGreaterThan(0);
-  });
+  }, 20000); // first exceljs load can be slow on cold start / OneDrive-synced disks
 
   test('Excel file contains correct data', async () => {
     const filepath = await toExcel(SAMPLE_ITEMS, SAMPLE_META, TEST_OUTPUT_DIR);
