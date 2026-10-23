@@ -566,7 +566,7 @@ Semua modul diimplementasikan **native di Node.js** (langsung jalan tanpa Python
 ### Agent Skills yang Terpasang
 | Folder | Sumber |
 |--------|--------|
-| `skills/karpathy-guidelines`, `skills/andrej-karpathy-skills-main`, `CLAUDE.md`, `.cursor/rules/karpathy-guidelines.mdc` | `andrej-karpathy-skills-main.zip` |
+| `skills/karpathy-guidelines`, `skills/andrej-karpathy-skills-main`, `CLAUDE.md`, `.cursor/rules/karpathy-guidelines.mdc` | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) |
 | `skills/superpowers` | [obra/superpowers](https://github.com/obra/superpowers) |
 | `skills/mattpocock-skills` | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `skills/ecc` | [affaan-m/ECC](https://github.com/affaan-m/ECC) |

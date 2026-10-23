@@ -167,7 +167,7 @@ skills/             # Agent Skills: karpathy-guidelines, superpowers, mattpocock
 
 Fitur baru diimplementasikan **native di Node.js** (tanpa dependensi Python) dengan konsep dari:
 [Firecrawl](https://github.com/firecrawl/firecrawl) · [Crawl4AI](https://github.com/unclecode/crawl4ai) · [Scrapling](https://github.com/D4Vinci/Scrapling) · [Agent-Reach](https://github.com/Panniantong/Agent-Reach) · [OpenDataLoader-PDF](https://github.com/opendataloader-project/opendataloader-pdf) · [RAGFlow](https://github.com/infiniflow/ragflow) · [Graphify](https://github.com/Graphify-Labs/graphify) · [Claude-Mem](https://github.com/thedotmack/claude-mem) · [Headroom](https://github.com/headroomlabs-ai/headroom) · [Dify](https://github.com/langgenius/dify).
-Agent Skills: Karpathy Skills (`andrej-karpathy-skills-main.zip`) · [Superpowers](https://github.com/obra/superpowers) · [Matt Pocock Skills](https://github.com/mattpocock/skills) · [ECC](https://github.com/affaan-m/ECC) · [Anthropic Skills](https://github.com/anthropics/skills).
+Agent Skills: [Karpathy Skills](https://github.com/multica-ai/andrej-karpathy-skills) · [Superpowers](https://github.com/obra/superpowers) · [Matt Pocock Skills](https://github.com/mattpocock/skills) · [ECC](https://github.com/affaan-m/ECC) · [Anthropic Skills](https://github.com/anthropics/skills).
 
 ## 📊 Web Dashboard
 
