@@ -365,8 +365,8 @@ node index.js
 | `!health` | Status sistem | `!health` |
 | `!settings` | Lihat setting | `!settings` |
 | `!lang` | Ganti bahasa | `!lang en` |
-| `!menu` | Menu utama | `!menu` |
-| `!help` | Bantuan | `!help` |
+| `!menu` | Menu interaktif (Native Polls) / Teks | `!menu` (tombol interaktif)<br>`!menu text` (menu teks klasik) |
+| `!help` | Bantuan lengkap | `!help` |
 | `!crawl` | Web → Markdown LLM-ready / crawl multi-halaman | `!crawl https://example.com --max 3 --depth 1`<br>`!crawl <url> --bridge native\|jina\|firecrawl`<br>`!crawl <url> --selector "article h2"` |
 | `!rag` | Tanya-jawab dokumen/web dengan sitasi | `!rag ingest <url\|jobId\|teks>`<br>`!rag ask apa metodologinya?`<br>`!rag stats` / `!rag list` / `!rag clear` |
 | `!graph` | Knowledge graph dari job/URL/keyword/teks | `!graph <jobId\|url\|keyword>` |
@@ -385,7 +385,13 @@ Bot memahami bahasa natural (Indonesia & English) dengan sangat cerdas & toleran
 "analisa gambar ini"                   → Image analysis (vision AI)
 ```
 
-### Grup vs DM
+### Interaktivitas & UX Cerdas
+- **WhatsApp Native Polls Menu (`!menu`)**: Menu utama disajikan berupa tombol interaktif WhatsApp Native Polls resmi (`new Poll`, `allowMultipleAnswers: false`) yang aman anti-ban dan kompatibel multi-device (MD). Menyediakan panduan berantai interaktif (wizard) saat tombol diklik.
+- **Emoji Status Reactions**: Bot memberikan feedback langsung via reaksi emoji pada pesan: `⏳` (memproses), `✅` (berhasil), `❌` (gagal), dan `❓` (perintah tidak dikenal).
+- **Fuzzy Typo Suggestion**: Deteksi otomatis salah ketik perintah via algoritma Damerau-Levenshtein (contoh: `!scraep` -> `!scrape`).
+- **Auto-Delivery Dokumen**: File hasil crawl (`.md`) dan laporan unduhan langsung dikirimkan ke chat via `MessageMedia.fromFilePath`.
+
+### Grup vs DM
 - **DM (Private Chat)**: Bot merespon semua pesan
 - **Grup**: Bot hanya merespon jika di-mention (`@Rima`) atau pesan diawali `!command` (konfigurabel via `GROUP_REQUIRE_MENTION`)
 

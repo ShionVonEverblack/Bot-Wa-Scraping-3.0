@@ -175,6 +175,16 @@ function createClient() {
     // Already handled by 'message' event in most cases
   });
 
+  // ─── Poll Vote Update Handler ──────────────────────────────────────
+  client.on('vote_update', async (vote) => {
+    try {
+      const { handleVoteUpdate } = require('./messageHandler');
+      await handleVoteUpdate(vote, client);
+    } catch (err) {
+      log.error('Vote handling error', { error: err.message });
+    }
+  });
+
   return client;
 }
 

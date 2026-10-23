@@ -92,6 +92,29 @@ async function handle(msg, args) {
           truncate(siteResult.combinedMarkdown, 1200),
         ].join('\n')
       );
+      if (siteResult.combinedMarkdown && siteResult.combinedMarkdown.length > 1000) {
+        try {
+          const fs = require('fs');
+          const path = require('path');
+          const config = require('../../config');
+          const { MessageMedia } = require('whatsapp-web.js');
+          const outDir = config.dirs?.outputs || './outputs';
+          if (!fs.existsSync(outDir)) await fs.promises.mkdir(outDir, { recursive: true });
+          const safeDomain = new URL(url).hostname.replace(/[^a-zA-Z0-9.-]/g, '_');
+          const mdPath = path.join(outDir, `crawl_multipage_${safeDomain}_${Date.now()}.md`);
+          await fs.promises.writeFile(mdPath, siteResult.combinedMarkdown, 'utf8');
+
+          const media = MessageMedia.fromFilePath(mdPath);
+          const targetChat = msg.from || msg.to;
+          if (msg.client && typeof msg.client.sendMessage === 'function') {
+            await msg.client.sendMessage(targetChat, media, { caption: `📑 *Dokumen Multi-Page Crawl:* ${siteResult.pagesVisited} halaman` });
+          } else if (typeof msg.reply === 'function') {
+            await msg.reply(media, undefined, { caption: `📑 *Dokumen Multi-Page Crawl:* ${siteResult.pagesVisited} halaman` });
+          }
+        } catch (mediaErr) {
+          log.debug('Could not auto-deliver multi-page markdown document', { error: mediaErr.message });
+        }
+      }
       return;
     }
 
@@ -108,6 +131,30 @@ async function handle(msg, args) {
         truncate(markdownBody, 1800),
       ].join('\n')
     );
+
+    if (markdownBody && markdownBody.length > 1000) {
+      try {
+        const fs = require('fs');
+        const path = require('path');
+        const config = require('../../config');
+        const { MessageMedia } = require('whatsapp-web.js');
+        const outDir = config.dirs?.outputs || './outputs';
+        if (!fs.existsSync(outDir)) await fs.promises.mkdir(outDir, { recursive: true });
+        const safeDomain = new URL(url).hostname.replace(/[^a-zA-Z0-9.-]/g, '_');
+        const mdPath = path.join(outDir, `crawl_${safeDomain}_${Date.now()}.md`);
+        await fs.promises.writeFile(mdPath, markdownBody, 'utf8');
+
+        const media = MessageMedia.fromFilePath(mdPath);
+        const targetChat = msg.from || msg.to;
+        if (msg.client && typeof msg.client.sendMessage === 'function') {
+          await msg.client.sendMessage(targetChat, media, { caption: `📑 *Dokumen Fit-Markdown Lengkap:* ${doc.title || safeDomain}` });
+        } else if (typeof msg.reply === 'function') {
+          await msg.reply(media, undefined, { caption: `📑 *Dokumen Fit-Markdown Lengkap:* ${doc.title || safeDomain}` });
+        }
+      } catch (mediaErr) {
+        log.debug('Could not auto-deliver markdown document', { error: mediaErr.message });
+      }
+    }
   } catch (err) {
     log.error('Crawl command failed', { url, error: err.message });
     await msg.reply(`❌ Crawl gagal: ${err.message}`);

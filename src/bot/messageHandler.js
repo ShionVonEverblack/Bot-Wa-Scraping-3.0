@@ -35,6 +35,76 @@ async function sendTyping(chatOrMsg) {
 /** Cooldown tracker: userId → last message timestamp. */
 const cooldowns = new Map();
 
+/** Map of active pending interactive actions from poll button clicks: userId -> { action, timestamp, chatId } */
+const pendingInteractiveActions = new Map();
+
+const KNOWN_COMMANDS = [
+  'scrape', 'crawl', 'paper', 'rag', 'graph', 'memory', 'workflow', 'skills',
+  'deepscrape', 'template', 'analyze', 'ocr', 'youtube', 'help', 'menu',
+  'clear', 'status', 'cancel', 'history', 'health', 'ai', 'settings',
+  'lang', 'watch', 'unwatch', 'watches', 'wizard', 'next', 'send',
+  'compress', 'resolve', 'admin'
+];
+
+/**
+ * Compute Damerau-Levenshtein distance between two strings (handles transpositions).
+ * @param {string} a
+ * @param {string} b
+ * @returns {number}
+ */
+function computeDamerauLevenshtein(a, b) {
+  if (!a || !b) return (a || b || '').length;
+  const la = a.length;
+  const lb = b.length;
+  if (la === 0) return lb;
+  if (lb === 0) return la;
+
+  const d = [];
+  for (let i = 0; i <= la; i++) d[i] = [i];
+  for (let j = 0; j <= lb; j++) d[0][j] = j;
+
+  for (let i = 1; i <= la; i++) {
+    for (let j = 1; j <= lb; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      d[i][j] = Math.min(
+        d[i - 1][j] + 1,       // deletion
+        d[i][j - 1] + 1,       // insertion
+        d[i - 1][j - 1] + cost // substitution
+      );
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
+        d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1); // transposition
+      }
+    }
+  }
+  return d[la][lb];
+}
+
+/**
+ * Find closest registered command for typo / fuzzy suggestion.
+ * @param {string} inputCmd
+ * @param {string[]} [candidates]
+ * @param {number} [threshold=0.50]
+ * @returns {string|null}
+ */
+function findClosestCommand(inputCmd, candidates = KNOWN_COMMANDS, threshold = 0.50) {
+  if (!inputCmd) return null;
+  const target = inputCmd.toLowerCase().trim();
+  let bestMatch = null;
+  let highestScore = 0;
+
+  for (const candidate of candidates) {
+    const dist = computeDamerauLevenshtein(target, candidate);
+    const maxLen = Math.max(target.length, candidate.length);
+    const similarity = maxLen > 0 ? (maxLen - dist) / maxLen : 0;
+    if (similarity > highestScore && similarity >= threshold) {
+      highestScore = similarity;
+      bestMatch = candidate;
+    }
+  }
+
+  return bestMatch;
+}
+
 /** Ready gate — buffer messages until bot is ready. */
 let isReady = false;
 const messageBuffer = [];
@@ -128,7 +198,7 @@ async function routeCommand(msg, client, cleanText) {
       rangkumyt: 'youtube',
       how: 'help',
       bantuan: 'help',
-      menu: 'help',
+      menu: 'menu',
       hapus: 'clear',
       bersihkan: 'clear',
       crawl: 'crawl',
@@ -154,24 +224,33 @@ async function routeCommand(msg, client, cleanText) {
       handler = require(`../commands/handlers/${handlerName}.handler`);
     } catch (err) {
       if (err.code === 'MODULE_NOT_FOUND') {
+        try { if (typeof msg.react === 'function') await msg.react('❓'); } catch {}
         log.debug(`No handler for command: ${command}`);
-        await msg.reply(`❓ Command \`!${command}\` tidak dikenali. Ketik \`!help\` untuk daftar command.`);
+        const suggestion = findClosestCommand(command);
+        if (suggestion) {
+          const argSuffix = args.length > 0 ? ' ' + args.join(' ') : '';
+          await msg.reply(`❓ Command \`!${command}\` tidak dikenali. Maksud Anda *!${suggestion}*?\n\nKetik: \`!${suggestion}${argSuffix}\`\nAtau ketik \`!menu\` untuk tombol interaktif.`);
+        } else {
+          await msg.reply(`❓ Command \`!${command}\` tidak dikenali. Ketik \`!help\` untuk daftar command atau \`!menu\` untuk tombol interaktif.`);
+        }
         return true;
       }
       throw err;
     }
 
-    if (handler && typeof handler.handle === 'function') {
+    if (handler && typeof handler.handle === "function") {
       log.info(`Command: !${command}`, { args: args.slice(0, 5) });
+      try { if (typeof msg.react === 'function') await msg.react('⏳'); } catch {}
       await handler.handle(msg, args, client);
+      try { if (typeof msg.react === 'function') await msg.react('✅'); } catch {}
       return true;
     }
   } catch (err) {
+    try { if (typeof msg.react === 'function') await msg.react('❌'); } catch {}
     log.error(`Command handler error: !${command}`, { error: err.message });
     await msg.reply(`❌ Error menjalankan command: ${friendlyError(err)}`);
     return true;
   }
-
   return false;
 }
 
@@ -494,6 +573,28 @@ async function handleMessage(msg, client) {
       }
     }
 
+    // 4c. Check pending interactive poll action (from clicking menu buttons)
+    if (pendingInteractiveActions.has(userId) && !startsWithCommand(cleanText)) {
+      const pending = pendingInteractiveActions.get(userId);
+      pendingInteractiveActions.delete(userId);
+
+      // Valid if within 5 minutes
+      if (Date.now() - pending.timestamp < 5 * 60 * 1000) {
+        log.info(`Executing interactive action ${pending.action} for ${userId}: "${truncate(cleanText, 40)}"`);
+        let cmdToRun = '';
+        if (pending.action === 'SCRAPE') cmdToRun = `!scrape ${cleanText}`;
+        else if (pending.action === 'CRAWL') cmdToRun = `!crawl ${cleanText}`;
+        else if (pending.action === 'PAPER') cmdToRun = `!paper ${cleanText}`;
+        else if (pending.action === 'RAG') cmdToRun = `!rag ask ${cleanText}`;
+        else if (pending.action === 'AI') cmdToRun = `!ai ${cleanText}`;
+
+        if (cmdToRun) {
+          const handled = await routeCommand(msg, client, cmdToRun);
+          if (handled) return;
+        }
+      }
+    }
+
     // 5. Command check (prefix ! or /)
     if (startsWithCommand(cleanText)) {
       const handled = await routeCommand(msg, client, cleanText);
@@ -522,4 +623,63 @@ async function handleMessage(msg, client) {
   }
 }
 
-module.exports = { handleMessage, setReady };
+/**
+ * Handle poll vote update event from WhatsApp client.
+ * @param {Object} vote - PollVote instance from whatsapp-web.js
+ * @param {Object} client - WhatsApp client
+ */
+async function handleVoteUpdate(vote, client) {
+  if (!vote || !Array.isArray(vote.selectedOptions) || vote.selectedOptions.length === 0) {
+    return;
+  }
+
+  const voter = vote.voter;
+  const selected = (vote.selectedOptions[0]?.name || '').trim();
+  const parentMsg = vote.parentMessage;
+  const chatId = parentMsg?.id?.remote || parentMsg?.to || parentMsg?.from || voter;
+
+  if (!chatId || !client || typeof client.sendMessage !== 'function') {
+    return;
+  }
+
+  log.info(`Poll vote received from ${voter}: "${selected}" in ${chatId}`);
+
+  if (selected.includes('1') || selected.includes('Cari Data') || selected.includes('Scrape')) {
+    pendingInteractiveActions.set(voter, { action: 'SCRAPE', timestamp: Date.now(), chatId });
+    await client.sendMessage(
+      chatId,
+      `🔍 *Pencarian Data (Scrape)*\nSilakan ketik apa yang ingin Anda cari (contoh: "kucing anggora", "paper machine learning", "dataset covid"):`
+    );
+  } else if (selected.includes('2') || selected.includes('Crawl')) {
+    pendingInteractiveActions.set(voter, { action: 'CRAWL', timestamp: Date.now(), chatId });
+    await client.sendMessage(
+      chatId,
+      `🕸️ *LLM-Ready Web Crawler*\nKirimkan tautan (URL) website yang ingin Anda ubah menjadi Markdown bersih (contoh: "https://example.com"):`
+    );
+  } else if (selected.includes('3') || selected.includes('Download Paper')) {
+    pendingInteractiveActions.set(voter, { action: 'PAPER', timestamp: Date.now(), chatId });
+    await client.sendMessage(
+      chatId,
+      `📄 *Download Paper PDF*\nKirimkan DOI, link arXiv, atau PMID paper yang ingin Anda unduh (contoh: "10.1038/nature12345" atau "2301.07041"):`
+    );
+  } else if (selected.includes('4') || selected.includes('Chat Dokumen') || selected.includes('RAG')) {
+    pendingInteractiveActions.set(voter, { action: 'RAG', timestamp: Date.now(), chatId });
+    await client.sendMessage(
+      chatId,
+      `🧠 *Chat Dokumen & RAG*\nKetik pertanyaan Anda tentang dokumen yang baru saja diunduh (contoh: "apa kesimpulan penelitian ini?"):`
+    );
+  } else if (selected.includes('5') || selected.includes('Tanya AI')) {
+    pendingInteractiveActions.set(voter, { action: 'AI', timestamp: Date.now(), chatId });
+    await client.sendMessage(
+      chatId,
+      `🤖 *Tanya AI / Asisten*\nSilakan ketik pertanyaan apa saja yang ingin Anda tanyakan kepada AI:`
+    );
+  } else if (selected.includes('6') || selected.includes('Panduan') || selected.includes('Help')) {
+    pendingInteractiveActions.delete(voter);
+    const helpHandler = require('../commands/handlers/help.handler');
+    const mockMsg = { reply: (content) => client.sendMessage(chatId, content) };
+    await helpHandler.handle(mockMsg, [], client);
+  }
+}
+
+module.exports = { handleMessage, setReady, handleVoteUpdate, findClosestCommand, pendingInteractiveActions };

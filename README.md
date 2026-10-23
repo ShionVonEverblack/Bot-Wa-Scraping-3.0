@@ -4,6 +4,10 @@
 
 ## ✨ Fitur Utama (Ultimate 3.0)
 
+- 🔘 **Interactive Buttons Menu (`!menu`)** - Menggantikan menu teks konvensional dengan WhatsApp Native Polls (`new Poll`) interaktif multi-device yang 100% resmi & anti-ban. Cukup sentuh opsi untuk memandu pencarian, crawl, AI, atau RAG.
+- 💬 **Emoji Status Reactions** - Notifikasi status visual instan langsung pada balon pesan pengguna: `⏳` (sedang diproses), `✅` (sukses), `❌` (error), dan `❓` (perintah tidak dikenal).
+- 🎯 **Fuzzy Typo Suggestion** - Deteksi cerdas kesalahan ketik (misal `!scraep` → `!scrape`, `!cralw` → `!crawl`, `!hepl` → `!help`) menggunakan algoritma Damerau-Levenshtein.
+- 📁 **Auto-Delivery File Dokumen** - Berkas hasil crawl Markdown atau laporan scraping berukuran panjang otomatis dikirim sebagai dokumen terlampir (`.md`, `.xlsx`, `.pdf`) ke chat.
 - 🎙️ **Voice Note AI** - Anda tidak perlu mengetik! Kirim pesan suara (PTT/Audio) dan bot akan otomatis mentranskripsikannya menggunakan model *Speech-to-Text* (Whisper/OpenAI) dan memrosesnya layaknya teks.
 - 📺 **YouTube Video Summarizer** - Kirim link YouTube (contoh: `!yt https://youtu.be/...`). Bot akan mengunduh transkrip/CC videonya di latar belakang lalu AI akan membuat ringkasan terstruktur lengkap dengan poin penting!
 - 👁️ **AI OCR (Ekstraksi Teks Gambar)** - Kirim atau _reply_ gambar (buku, jurnal, tabel) dengan `!ocr`. AI Vision (Gemini/GPT-4o) akan mengekstrak **seluruh teks** secara mutlak dan presisi (mendukung tulisan tangan & bahasa asing).
@@ -100,6 +104,8 @@ Copy `.env.example` ke `.env` dan isi:
 !ocr | !baca                      (reply ke gambar, AI mengekstrak Teks/OCR)
 !watch keyword --every daily
 !wizard                           (guided step-by-step)
+!menu                             (Menu tombol interaktif WhatsApp Native Polls)
+!menu text | !menu teks           (Fallback ke menu teks klasik)
 !help | !bantuan                  (Memunculkan menu bantuan teks)
 !admin stats | !admin flush       (Khusus Admin)
 ```
