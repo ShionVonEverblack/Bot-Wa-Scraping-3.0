@@ -15,6 +15,7 @@ const TYPE_MAP = {
   general: 'general', web: 'general', website: 'general', umum: 'general',
   forum: 'forums', forums: 'forums', diskusi: 'forums', opini: 'forums', reddit: 'forums',
   book: 'books', books: 'books', buku: 'books', literatur: 'books',
+  code: 'code', codes: 'code', kode: 'code', repo: 'code', repository: 'code', github: 'code', script: 'code', program: 'code',
 };
 
 /** Map of format aliases → canonical format names. */

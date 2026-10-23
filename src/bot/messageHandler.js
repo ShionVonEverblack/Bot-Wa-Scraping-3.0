@@ -327,7 +327,7 @@ async function handleNlpIntent(msg, client, userId, text) {
           });
         } catch { /* ignore */ }
 
-        const typeEmoji = { images: '🖼️', papers: '📄', datasets: '📊', general: '🔍' };
+        const typeEmoji = { images: '🖼️', papers: '📄', datasets: '📊', code: '💻', books: '📚', forums: '💬', general: '🔍' };
         await msg.reply(`${typeEmoji[type] || '🔍'} Mencari ${type} "${keyword}"... (Job: ${job.jobId})`);
       } catch (err) {
         log.error('Auto-scrape failed', { error: err.message });

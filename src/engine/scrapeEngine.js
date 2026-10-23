@@ -118,6 +118,21 @@ function normalizeItems(items, type) {
         normalized.license = item.license || '';
         break;
 
+      case 'code':
+        normalized.stars = parseInt(item.stars || item.stargazers_count, 10) || 0;
+        normalized.language = item.language || '';
+        normalized.forks = parseInt(item.forks || item.forks_count, 10) || 0;
+        normalized.author = item.author || item.owner || '';
+        normalized.paperUrl = item.paperUrl || null;
+        break;
+
+      case 'books':
+        normalized.authors = String(item.authors || item.author || '');
+        normalized.downloadUrl = item.downloadUrl || null;
+        normalized.formats = item.formats || {};
+        normalized.downloads = parseInt(item.downloads, 10) || 0;
+        break;
+
       default:
         // Keep extra fields as-is for general type
         Object.assign(normalized, {

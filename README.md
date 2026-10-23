@@ -1,6 +1,6 @@
 # 🤖 Rima - Bot Scraping WhatsApp 3.0
 
-> Asisten pencari data all-in-one berbasis WhatsApp dengan NLP, multi-AI provider, dan 19 data source.
+> Asisten pencari data all-in-one berbasis WhatsApp dengan NLP, multi-AI provider, dan 28 data source (Papers, Code, Books, Datasets, Forums, Images, General).
 
 ## ✨ Fitur Utama (Ultimate 3.0)
 
@@ -8,6 +8,8 @@
 - 💬 **Emoji Status Reactions** - Notifikasi status visual instan langsung pada balon pesan pengguna: `⏳` (sedang diproses), `✅` (sukses), `❌` (error), dan `❓` (perintah tidak dikenal).
 - 🎯 **Fuzzy Typo Suggestion** - Deteksi cerdas kesalahan ketik (misal `!scraep` → `!scrape`, `!cralw` → `!crawl`, `!hepl` → `!help`) menggunakan algoritma Damerau-Levenshtein.
 - 📁 **Auto-Delivery File Dokumen** - Berkas hasil crawl Markdown atau laporan scraping berukuran panjang otomatis dikirim sebagai dokumen terlampir (`.md`, `.xlsx`, `.pdf`) ke chat.
+- 💻 **Code & ML Intelligence (`--type code`)** - Cari repositori open-source GitHub (stars, bahasa, deskripsi) dan paper ML yang terhubung langsung dengan kode implementasinya via Papers With Code.
+- 📚 **Full-Text Classic E-Books** - Download puluhan ribu buku sastra & sains domain publik lengkap (TXT/EPUB) dari Project Gutenberg (Gutendex) dan katalog Open Library.
 - 🎙️ **Voice Note AI** - Anda tidak perlu mengetik! Kirim pesan suara (PTT/Audio) dan bot akan otomatis mentranskripsikannya menggunakan model *Speech-to-Text* (Whisper/OpenAI) dan memrosesnya layaknya teks.
 - 📺 **YouTube Video Summarizer** - Kirim link YouTube (contoh: `!yt https://youtu.be/...`). Bot akan mengunduh transkrip/CC videonya di latar belakang lalu AI akan membuat ringkasan terstruktur lengkap dengan poin penting!
 - 👁️ **AI OCR (Ekstraksi Teks Gambar)** - Kirim atau _reply_ gambar (buku, jurnal, tabel) dengan `!ocr`. AI Vision (Gemini/GPT-4o) akan mengekstrak **seluruh teks** secara mutlak dan presisi (mendukung tulisan tangan & bahasa asing).
@@ -15,7 +17,7 @@
 - 🗄️ **Multi-Provider Aggregation (`--multi`)** - Tarik data dari seluruh sumber API sekaligus secara paralel! Bot akan menggabungkan, mendeduplikasi, dan merangking hasilnya.
 - 🔍 **Smart Search (NLP)** - Cari gambar, anime art, paper akademik, dataset, dan web via bahasa natural. Paham *typo* dan terklasifikasi dalam *3-Layer NLP Intent*.
 - 🤖 **Multi-AI & Auto-Summary** - Dukungan OpenAI, Gemini, Groq, dan Grok dengan sistem *auto-fallback* dan peringkasan instan (`--ai` atau `+ai`).
-- 📄 **Paper Download** - Rantai resolver pintar: Europe PMC → Unpaywall → OpenAlex → arXiv → Crossref.
+- 📄 **Paper Download** - Rantai resolver pintar: arXiv → Unpaywall → OpenAlex → Europe PMC / NCBI → Crossref.
 - 🌐 **Deep Scrape & Custom Scrape** - Puppeteer + Brave browser. Kini dilengkapi `!customscrape` yang bisa menargetkan CSS Selector spesifik dari web apa pun.
 - 🛡️ **Anti-Spam & Rate Limiting** - Melindungi bot dari _banned_ WhatsApp dan pembengkakan tagihan API dengan sistem *Cooldown* cerdas (10 detik) per pengguna.
 - ✨ **Rich UI Formatting** - Balasan bot menggunakan kutipan *(Blockquote)* dan pembatas elegan ala *Markdown* yang membuat output tampak sangat rapi dan berkelas.
@@ -29,7 +31,7 @@
 - 🧠 **Persistent Memory (`!memory`)** - Terinspirasi *Claude-Mem*: memori 3-lapis (index → timeline → observasi) yang tersimpan di disk + kompresi konteks ala *Headroom*.
 - ⚙️ **Agentic Workflows (`!workflow`)** - Terinspirasi *Dify*: workflow deklaratif `deep-research`, `crawl-and-rag`, `fact-check` + bridge opsional ke Dify API.
 - 🧩 **Agent Skills (`!skills`)** - 395 skill terindeks dari Karpathy Guidelines, Superpowers, Matt Pocock Skills, ECC, dan Anthropic Skills.
-- 🧪 **Test Suite Lengkap** - 40 test suites / 605 tests (unit + E2E + adversarial stress) menjamin stabilitas fungsi inti.
+- 🧪 **Test Suite Lengkap** - 42 test suites / 633 tests (unit + E2E + adversarial stress) menjamin stabilitas fungsi inti.
 - 📊 **Web Dashboard** - Monitor status bot & scan QR code via browser (`http://localhost:3000`).
 
 ## 📋 Prerequisites
@@ -93,6 +95,10 @@ Copy `.env.example` ke `.env` dan isi:
 ### Command Terstruktur
 ```
 !scrape <keyword> --type images --limit 20
+!scrape llama --type code --limit 10             (Cari repositori GitHub & PapersWithCode)
+!scrape frankenstein --provider gutendex         (Download buku klasik Project Gutenberg)
+!scrape "deep learning" --provider dblp          (Cari paper Computer Science di DBLP)
+!scrape ai --provider hackernews                 (Diskusi & berita teknologi Hacker News)
 !scrape anime --type images --provider safebooru --multi
 !scrape covid --type datasets --provider zenodo --ai
 !paper 10.1038/s41586-020-2649-2

@@ -23,6 +23,9 @@ const TYPE_KEYWORDS = {
   // English synonyms
   photo: 'images', picture: 'images', pictures: 'images',
   journal: 'papers', article: 'papers', articles: 'papers', research: 'papers',
+  kode: 'code', code: 'code', repo: 'code', repository: 'code', github: 'code', script: 'code',
+  buku: 'books', book: 'books', books: 'books', novel: 'books',
+  forum: 'forums', diskusi: 'forums', thread: 'forums',
 };
 
 /**

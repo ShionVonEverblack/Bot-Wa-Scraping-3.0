@@ -131,10 +131,70 @@ async function resolvePdf(parsed) {
     } catch (err) {
       log.debug('EuropePMC resolution failed', { error: err.message });
     }
+
+    // NCBI E-utilities fallback
+    try {
+      const db = type === 'pmc' ? 'pmc' : 'pubmed';
+      const cleanVal = type === 'pmc' ? value.replace(/^PMC/i, '') : value;
+      const apiKey = config.providers.ncbiApiKey;
+      const keyParam = apiKey ? `&api_key=${encodeURIComponent(apiKey)}` : '';
+      const url = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=${db}&id=${encodeURIComponent(cleanVal)}&retmode=json${keyParam}`;
+      const resp = await httpClient.get(url, { timeout: 15000, maxRetries: 1 });
+      const doc = resp.data?.result?.[cleanVal];
+      if (doc) {
+        const articleIds = Array.isArray(doc.articleids) ? doc.articleids : [];
+        const pmcItem = articleIds.find(i => i.idtype === 'pmc');
+        const pmcid = type === 'pmc' ? value : (pmcItem ? pmcItem.value : null);
+        const doiItem = articleIds.find(i => i.idtype === 'doi');
+        const pdfUrl = pmcid
+          ? `https://europepmc.org/backend/ptpmcrender.fcgi?accid=${pmcid}&blobtype=pdf`
+          : null;
+        return {
+          pdfUrl,
+          source: 'NCBI/PubMed',
+          metadata: {
+            title: (doc.title || value).replace(/<[^>]+>/g, '').trim(),
+            authors: Array.isArray(doc.authors) ? doc.authors.map(a => a.name).join(', ') : '',
+            year: doc.pubdate ? parseInt(doc.pubdate.slice(0, 4), 10) : null,
+            doi: doiItem ? doiItem.value : null,
+          },
+        };
+      }
+    } catch (err) {
+      log.debug('NCBI fallback resolution failed', { error: err.message });
+    }
   }
 
-  // 4. DOI via OpenAlex
+  // 4. DOI via Unpaywall (Gold standard for free Open-Access PDF location)
   if (type === 'doi') {
+    try {
+      const email = config.providers.unpaywallEmail || config.providers.openalexEmail || config.providers.contactEmail || 'bot@example.com';
+      const upUrl = `https://api.unpaywall.org/v2/${encodeURIComponent(value)}?email=${encodeURIComponent(email)}`;
+      const resp = await httpClient.get(upUrl, { timeout: 15000, maxRetries: 1 });
+      const data = resp.data;
+      if (data && (data.is_oa || data.best_oa_location?.url_for_pdf)) {
+        const pdfUrl = data.best_oa_location?.url_for_pdf || data.best_oa_location?.url || null;
+        if (pdfUrl) {
+          const authors = Array.isArray(data.z_authors)
+            ? data.z_authors.map(a => `${a.given || ''} ${a.family || ''}`.trim()).filter(Boolean).join(', ')
+            : '';
+          return {
+            pdfUrl,
+            source: 'Unpaywall',
+            metadata: {
+              title: data.title || value,
+              authors,
+              year: data.year ? parseInt(data.year, 10) : null,
+              doi: value,
+            },
+          };
+        }
+      }
+    } catch (err) {
+      log.debug('Unpaywall resolution failed', { error: err.message });
+    }
+
+  // 5. DOI via OpenAlex
     try {
       const oaUrl = `https://api.openalex.org/works/https://doi.org/${encodeURIComponent(value)}`;
       const resp = await httpClient.get(oaUrl, { timeout: 15000, maxRetries: 2 });

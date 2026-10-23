@@ -1,6 +1,6 @@
 # 📖 Rima — Dokumentasi Lengkap Bot Scraping WhatsApp 3.0
 
-> **Rima** adalah bot WhatsApp all-in-one untuk pencarian data (gambar, paper akademik, dataset, buku, forum, web) dengan 3-Layer NLP, multi-AI provider, dan 19 data source. Dibangun dengan Node.js, whatsapp-web.js, dan Puppeteer.
+> **Rima** adalah bot WhatsApp all-in-one untuk pencarian data (gambar, paper akademik, dataset, buku, forum, web) dengan 3-Layer NLP, multi-AI provider, dan 28 data source (Papers, Code, Books, Datasets, Forums, Images, General). Dibangun dengan Node.js, whatsapp-web.js, dan Puppeteer.
 
 ---
 
@@ -8,7 +8,7 @@
 
 ### Apa itu Rima?
 Bot asisten WhatsApp yang bisa:
-- **Mencari data** dari 19+ sumber (Unsplash, Zenodo, Reddit, Safebooru, arXiv, Kaggle, Wikipedia, dll)
+- **Mencari data** dari 28+ sumber (Unsplash, Zenodo, Reddit, Safebooru, arXiv, Kaggle, Wikipedia, dll)
 - **Chat dengan AI** (OpenAI, Gemini, Groq, Grok) dengan konteks multi-turn
 - **Download paper akademik** via DOI/arXiv ID/PMID dengan smart resolver (Europe PMC, Sci-Hub fallback)
 - **Deep scrape** halaman web dengan Puppeteer + Brave browser
@@ -320,7 +320,7 @@ Saat job berjalan, user menerima progress bar di WhatsApp:
 
 ### Job Types
 - `SCRAPE` → `jobWorker.js` (melalui scrapeEngine pipeline)
-- `DOWNLOAD_PAPER` → `paperWorker.js` (resolver chain: Unpaywall → OpenAlex → arXiv → Crossref)
+- `DOWNLOAD_PAPER` → `paperWorker.js` (resolver chain: arXiv → Unpaywall → OpenAlex → Europe PMC / NCBI PubMed → Crossref)
 
 ---
 
@@ -345,7 +345,7 @@ node index.js
 ### Commands
 | Command | Deskripsi | Contoh / Opsi Baru |
 |---------|-----------|--------------------|
-| `!scrape` | Cari data dari 19+ provider | `!scrape machine learning --type papers --ai` (dengan summary AI)<br>`!scrape anime --type images --provider safebooru` |
+| `!scrape` | Cari data dari 28+ provider | `!scrape machine learning --type papers --ai` (dengan summary AI)<br>`!scrape anime --type images --provider safebooru` |
 | `!paper` | Download paper | `!paper 10.1038/s41586-020-2649-2` |
 | `!deepscrape` | Scrape halaman web | `!deepscrape https://example.com` |
 | `!ai` | Tanya AI | `!ai apa itu machine learning?` |

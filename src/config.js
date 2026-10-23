@@ -133,6 +133,8 @@ const config = {
     coreApiKey: env.CORE_API_KEY || '',
     openalexEmail: env.OPENALEX_EMAIL || '',
     crossrefMailto: env.CROSSREF_MAILTO || '',
+    unpaywallEmail: env.UNPAYWALL_EMAIL || env.OPENALEX_EMAIL || env.CONTACT_EMAIL || 'bot@example.com',
+    ncbiApiKey: env.NCBI_API_KEY || '',
   },
 
   // --- Puppeteer ---
