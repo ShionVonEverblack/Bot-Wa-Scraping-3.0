@@ -390,6 +390,10 @@ Bot memahami bahasa natural (Indonesia & English) dengan sangat cerdas & toleran
 - **Emoji Status Reactions**: Bot memberikan feedback langsung via reaksi emoji pada pesan: `⏳` (memproses), `✅` (berhasil), `❌` (gagal), dan `❓` (perintah tidak dikenal).
 - **Fuzzy Typo Suggestion**: Deteksi otomatis salah ketik perintah via algoritma Damerau-Levenshtein (contoh: `!scraep` -> `!scrape`).
 - **Auto-Delivery Dokumen**: File hasil crawl (`.md`) dan laporan unduhan langsung dikirimkan ke chat via `MessageMedia.fromFilePath`.
+- **Native WhatsApp Typing Indicator**: Menampilkan status *"sedang mengetik..."* di bar navigasi WhatsApp (`chat.sendStateTyping()`) saat LLM atau scraper sedang bekerja.
+- **Smart Link Drop (Auto-Scrape URL)**: Tautan web atau URL artikel yang dikirimkan pengguna langsung dideteksi, diekstrak dengan LLM crawler, dan dirangkum secara otomatis. Tautan YouTube secara cerdas dialihkan langsung ke YouTube Video Summarizer.
+- **Anti-Ban Human Jitter Delay**: Pengiriman pesan balasan dilengkapi jeda waktu acak (400ms–900ms) untuk mensimulasikan pengetikan manusia dan melindungi akun WhatsApp dari pemblokiran otomatis Meta.
+- **Mobile Brevity Guard**: Menjaga kenyamanan membaca di layar ponsel dengan memotong respons yang melebihi 1.500 karakter dan melampirkan teks lengkapnya dalam bentuk file dokumen `.md`.
 
 ### Grup vs DM
 - **DM (Private Chat)**: Bot merespon semua pesan

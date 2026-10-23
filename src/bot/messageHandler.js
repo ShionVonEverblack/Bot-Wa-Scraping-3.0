@@ -7,6 +7,8 @@
  * @module bot/messageHandler
  */
 
+const path = require('path');
+const fs = require('fs');
 const config = require('../config');
 const { createLogger } = require('../services/monitor/logger');
 const { startsWithCommand, splitArgs, isWizardTrigger, stripMentions, truncate } = require('../utils/text');
@@ -30,6 +32,60 @@ async function sendTyping(chatOrMsg) {
       : (typeof chatOrMsg.getChat === 'function' ? await chatOrMsg.getChat() : null);
     if (chat && chat.sendStateTyping) await chat.sendStateTyping();
   } catch { /* ignore */ }
+}
+
+/**
+ * Sleep for a random jitter duration to mimic human delay and avoid anti-ban triggers.
+ * @param {number} [minMs=400]
+ * @param {number} [maxMs=900]
+ * @returns {Promise<void>}
+ */
+function jitterDelay(minMs = 400, maxMs = 900) {
+  if (process.env.NODE_ENV === 'test') {
+    return Promise.resolve();
+  }
+  const ms = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Send a reply to the user with a mobile brevity guard.
+ * If text exceeds maxChars (default 1500), sends an excerpt and delivers the full text as an attached document.
+ * @param {Object} msg - WhatsApp message
+ * @param {string} text - Response text
+ * @param {number} [maxChars=1500] - Threshold
+ */
+async function replyWithBrevityGuard(msg, text, maxChars = 1500) {
+  await jitterDelay();
+
+  if (!text || typeof text !== 'string' || text.length <= maxChars) {
+    return msg.reply(text);
+  }
+
+  const excerpt = text.slice(0, maxChars) + '\n\n... *(teks dipotong agar nyaman dibaca di ponsel)*\n📄 _Dokumen lengkap dikirimkan di bawah:_';
+  await msg.reply(excerpt);
+
+  try {
+    const outputsDir = path.resolve(config.dirs.outputs || './outputs');
+    if (!fs.existsSync(outputsDir)) {
+      fs.mkdirSync(outputsDir, { recursive: true });
+    }
+    const tempFile = path.join(outputsDir, `response_${Date.now()}.md`);
+    fs.writeFileSync(tempFile, text, 'utf8');
+
+    let MessageMedia;
+    try { MessageMedia = require('whatsapp-web.js').MessageMedia; } catch {}
+    if (MessageMedia && typeof MessageMedia.fromFilePath === 'function') {
+      const media = MessageMedia.fromFilePath(tempFile);
+      media.filename = `ringkasan_lengkap_${Date.now()}.md`;
+      const chat = typeof msg.getChat === 'function' ? await msg.getChat() : null;
+      if (chat && typeof chat.sendMessage === 'function') {
+        await chat.sendMessage(media, { caption: '📄 Salinan teks lengkap' });
+      }
+    }
+  } catch (err) {
+    log.debug('Failed to send brevity document attachment', { error: err.message });
+  }
 }
 
 /** Cooldown tracker: userId → last message timestamp. */
@@ -241,6 +297,7 @@ async function routeCommand(msg, client, cleanText) {
     if (handler && typeof handler.handle === "function") {
       log.info(`Command: !${command}`, { args: args.slice(0, 5) });
       try { if (typeof msg.react === 'function') await msg.react('⏳'); } catch {}
+      await sendTyping(msg);
       await handler.handle(msg, args, client);
       try { if (typeof msg.react === 'function') await msg.react('✅'); } catch {}
       return true;
@@ -483,6 +540,71 @@ async function handleNlpIntent(msg, client, userId, text) {
 }
 
 /**
+ * Handle incoming direct URL (Smart Link Drop).
+ * Crawls the page with llmCrawler, extracts clean text, and synthesizes a structured summary.
+ * @param {Object} msg
+ * @param {Object} client
+ * @param {string} userId
+ * @param {string} cleanText
+ * @param {string} url
+ * @returns {Promise<boolean>}
+ */
+async function handleSmartLinkDrop(msg, client, userId, cleanText, url) {
+  log.info(`Smart Link Drop detected for ${userId}: ${url}`);
+  try { if (typeof msg.react === 'function') await msg.react('⏳'); } catch {}
+  await sendTyping(msg);
+
+  if (url.includes('youtube.com') || url.includes('youtu.be')) {
+    try {
+      const ytHandler = require('../commands/handlers/youtube.handler');
+      await ytHandler.handle(msg, [url], client);
+      try { if (typeof msg.react === 'function') await msg.react('✅'); } catch {}
+      return true;
+    } catch (err) {
+      log.debug('Direct YouTube handler invocation failed, falling back', { error: err.message });
+    }
+  }
+
+  const userQuestion = cleanText.replace(url, '').trim();
+  await msg.reply(`🔗 *Membaca tautan web...*\n_${url}_\nMohon tunggu sebentar...`);
+
+  try {
+    const llmCrawler = require('../engine/llmCrawler');
+    const crawlResult = await llmCrawler.scrapeUrlToMarkdown(url);
+    const markdown = crawlResult?.fitMarkdown || crawlResult?.markdown || crawlResult?.text || '';
+
+    if (!markdown || markdown.trim().length === 0) {
+      await msg.reply('⚠️ Tidak dapat mengekstrak konten teks dari tautan tersebut.');
+      try { if (typeof msg.react === 'function') await msg.react('❌'); } catch {}
+      return true;
+    }
+
+    contextMemory.store(userId, {
+      lastUrl: url,
+      lastUrlContent: markdown.slice(0, 3000),
+      lastUrlTitle: crawlResult?.title || url,
+    });
+
+    const aiService = require('../services/ai/aiService');
+    const prompt = userQuestion
+      ? `Berdasarkan isi halaman web berikut, jawab pertanyaan pengguna: "${userQuestion}"\n\nIsi Halaman:\n${markdown.slice(0, 4000)}`
+      : `Buat ringkasan eksekutif yang padat, berbobot, dan mudah dipahami dalam 3-5 poin penting dari artikel/halaman web berikut:\n\nJudul: ${crawlResult?.title || ''}\nURL: ${url}\n\nKonten:\n${markdown.slice(0, 4000)}`;
+
+    const summary = await aiService.chat(prompt);
+    const replyText = `🌐 *Ringkasan Halaman Web:*\n*${crawlResult?.title || 'Web Page'}*\n\n${summary}`;
+
+    await replyWithBrevityGuard(msg, replyText);
+    try { if (typeof msg.react === 'function') await msg.react('✅'); } catch {}
+    return true;
+  } catch (err) {
+    log.error('Smart Link Drop failed', { error: err.message });
+    await msg.reply(`❌ Gagal membaca tautan web: ${friendlyError(err)}`);
+    try { if (typeof msg.react === 'function') await msg.react('❌'); } catch {}
+    return true;
+  }
+}
+
+/**
  * Main message handler — processes all incoming WhatsApp messages.
  * @param {Object} msg - WhatsApp message object
  * @param {Object} client - WhatsApp client instance
@@ -595,6 +717,13 @@ async function handleMessage(msg, client) {
       }
     }
 
+    // 4d. Smart Link Drop — auto detect and summarize shared URLs
+    const urlMatch = cleanText.match(/(https?:\/\/[^\s]+)/i);
+    if (!startsWithCommand(cleanText) && urlMatch) {
+      const handled = await handleSmartLinkDrop(msg, client, userId, cleanText, urlMatch[0]);
+      if (handled) return;
+    }
+
     // 5. Command check (prefix ! or /)
     if (startsWithCommand(cleanText)) {
       const handled = await routeCommand(msg, client, cleanText);
@@ -682,4 +811,4 @@ async function handleVoteUpdate(vote, client) {
   }
 }
 
-module.exports = { handleMessage, setReady, handleVoteUpdate, findClosestCommand, pendingInteractiveActions };
+module.exports = { handleMessage, setReady, handleVoteUpdate, findClosestCommand, pendingInteractiveActions, sendTyping, jitterDelay, replyWithBrevityGuard, handleSmartLinkDrop };

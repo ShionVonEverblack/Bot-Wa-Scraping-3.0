@@ -4,6 +4,10 @@
 
 ## ✨ Fitur Utama (Ultimate 3.0)
 
+- 💬 **Native Typing Indicator** - Menampilkan status *"sedang mengetik..."* di header obrolan WhatsApp saat bot memproses scraping, AI, atau pencarian dokumen.
+- 🔗 **Smart Link Drop (Auto-Scrape URL)** - Kirim atau paste link web apa saja langsung ke chat, bot otomatis mengekstrak konten bersih dan memberikan ringkasan berbobot tanpa perlu command manual.
+- 🛡️ **Anti-Ban Human Jitter Delay** - Perlindungan akun WhatsApp multi-device dengan jeda waktu pengetikan acak (400ms–900ms) yang meniru interaksi manusiawi.
+- 📱 **Mobile Brevity Guard** - Mencegah *wall of text* di layar HP. Respons panjang (>1500 karakter) otomatis dipotong rapi dan dokumen lengkapnya dilampirkan via dokumen `.md`.
 - 🔘 **Interactive Buttons Menu (`!menu`)** - Menggantikan menu teks konvensional dengan WhatsApp Native Polls (`new Poll`) interaktif multi-device yang 100% resmi & anti-ban. Cukup sentuh opsi untuk memandu pencarian, crawl, AI, atau RAG.
 - 💬 **Emoji Status Reactions** - Notifikasi status visual instan langsung pada balon pesan pengguna: `⏳` (sedang diproses), `✅` (sukses), `❌` (error), dan `❓` (perintah tidak dikenal).
 - 🎯 **Fuzzy Typo Suggestion** - Deteksi cerdas kesalahan ketik (misal `!scraep` → `!scrape`, `!cralw` → `!crawl`, `!hepl` → `!help`) menggunakan algoritma Damerau-Levenshtein.
@@ -31,7 +35,7 @@
 - 🧠 **Persistent Memory (`!memory`)** - Terinspirasi *Claude-Mem*: memori 3-lapis (index → timeline → observasi) yang tersimpan di disk + kompresi konteks ala *Headroom*.
 - ⚙️ **Agentic Workflows (`!workflow`)** - Terinspirasi *Dify*: workflow deklaratif `deep-research`, `crawl-and-rag`, `fact-check` + bridge opsional ke Dify API.
 - 🧩 **Agent Skills (`!skills`)** - 395 skill terindeks dari Karpathy Guidelines, Superpowers, Matt Pocock Skills, ECC, dan Anthropic Skills.
-- 🧪 **Test Suite Lengkap** - 42 test suites / 633 tests (unit + E2E + adversarial stress) menjamin stabilitas fungsi inti.
+- 🧪 **Test Suite Lengkap** - 43 test suites / 642 tests (unit + E2E + adversarial stress) menjamin stabilitas fungsi inti.
 - 📊 **Web Dashboard** - Monitor status bot & scan QR code via browser (`http://localhost:3000`).
 
 ## 📋 Prerequisites
