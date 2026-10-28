@@ -2,7 +2,7 @@
 
 /**
  * @fileoverview Per-user conversation memory with TTL auto-cleanup.
- * Stores last keyword, type, jobId, intent, and message history per userId.
+ * Stores last keyword, type, jobId, intent, active document/URL context, and message history per userId.
  * @module bot/nlp/contextMemory
  */
 
@@ -26,6 +26,11 @@ const MAX_HISTORY = 20;
  * @property {string|null} lastType
  * @property {string|null} lastJobId
  * @property {string|null} lastIntent
+ * @property {string|null} lastUrl
+ * @property {string|null} lastUrlContent
+ * @property {string|null} lastUrlTitle
+ * @property {string|null} lastDocumentText
+ * @property {string|null} lastDocumentTitle
  * @property {Array<{role:string, content:string, ts:number}>} messages
  * @property {number} updatedAt - Timestamp of last update
  */
@@ -77,6 +82,11 @@ function stopCleanup() {
  * @param {string} [update.lastType] - Last search type
  * @param {string} [update.lastJobId] - Last job ID
  * @param {string} [update.lastIntent] - Last detected intent
+ * @param {string} [update.lastUrl] - Last crawled/shared URL
+ * @param {string} [update.lastUrlContent] - Extracted markdown/text from URL
+ * @param {string} [update.lastUrlTitle] - Page title from URL
+ * @param {string} [update.lastDocumentText] - Active focus document content for multi-turn Q&A
+ * @param {string} [update.lastDocumentTitle] - Active focus document title
  * @param {{role:string, content:string}} [update.message] - Message to add to history
  */
 function storeContext(userId, update) {
@@ -90,6 +100,11 @@ function storeContext(userId, update) {
       lastType: null,
       lastJobId: null,
       lastIntent: null,
+      lastUrl: null,
+      lastUrlContent: null,
+      lastUrlTitle: null,
+      lastDocumentText: null,
+      lastDocumentTitle: null,
       messages: [],
       updatedAt: Date.now(),
     };
@@ -101,6 +116,19 @@ function storeContext(userId, update) {
   if (update.lastType !== undefined) ctx.lastType = update.lastType;
   if (update.lastJobId !== undefined) ctx.lastJobId = update.lastJobId;
   if (update.lastIntent !== undefined) ctx.lastIntent = update.lastIntent;
+  if (update.lastUrl !== undefined) ctx.lastUrl = update.lastUrl;
+  if (update.lastUrlContent !== undefined) {
+    ctx.lastUrlContent = update.lastUrlContent;
+    if (update.lastDocumentText === undefined) {
+      ctx.lastDocumentText = update.lastUrlContent;
+    }
+  }
+  if (update.lastUrlTitle !== undefined) {
+    ctx.lastUrlTitle = update.lastUrlTitle;
+    if (update.lastDocumentTitle === undefined) {
+      ctx.lastDocumentTitle = update.lastUrlTitle;
+    }
+  }
   if (update.lastDocumentText !== undefined) ctx.lastDocumentText = update.lastDocumentText;
   if (update.lastDocumentTitle !== undefined) ctx.lastDocumentTitle = update.lastDocumentTitle;
 

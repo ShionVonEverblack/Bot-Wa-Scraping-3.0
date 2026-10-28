@@ -123,6 +123,20 @@ async function handle(msg, args) {
     const doc = await scrapeUrlToMarkdown(url, { bridge });
     const markdownBody = preferFit ? (doc.fitMarkdown || doc.markdown) : (doc.markdown || doc.fitMarkdown);
 
+    // Store in contextMemory so user can ask follow-up questions about this page
+    try {
+      const contextMemory = require('../../bot/nlp/contextMemory');
+      const contact = typeof msg.getContact === 'function' ? await msg.getContact() : null;
+      const userId = contact?.id?._serialized || msg.author || msg.from;
+      if (userId && markdownBody) {
+        contextMemory.store(userId, {
+          lastUrl: url,
+          lastDocumentTitle: doc.title || url,
+          lastDocumentText: markdownBody.slice(0, 4000),
+        });
+      }
+    } catch { /* ignore context store error */ }
+
     await msg.reply(
       [
         `📄 *${doc.title || url}*`,

@@ -57,6 +57,36 @@ async function handle(msg, args, client) {
     }
 
     await msg.reply(response);
+
+    // Export and deliver formatted file when requested
+    try {
+      const { formatAndSave } = require('../../services/formatters');
+      const exportItems = [
+        ...(result.headings || []).map(h => ({ type: 'heading', level: h.level, title: h.text, url: result.url })),
+        ...(result.paragraphs || []).map(p => ({ type: 'paragraph', title: truncate(p, 80), description: p, url: result.url })),
+        ...(result.links || []).map(l => ({ type: 'link', title: l.text || l.href, url: l.href || result.url })),
+        ...(result.images || []).map(img => ({ type: 'image', title: img.alt || 'Image', url: img.src || result.url })),
+      ];
+      if (exportItems.length > 0) {
+        const { filepath } = await formatAndSave(exportItems, format || 'json', {
+          keyword: result.title || url,
+          providerUsed: 'deepscrape',
+        });
+        if (filepath) {
+          const { MessageMedia } = require('whatsapp-web.js');
+          const media = MessageMedia.fromFilePath(filepath);
+          const targetChat = msg.from || msg.to;
+          if (client && targetChat && typeof client.sendMessage === 'function') {
+            await client.sendMessage(targetChat, media, { caption: `📎 *Hasil Deep Scrape (${format}):* ${result.title || url}` });
+          } else if (typeof msg.reply === 'function') {
+            await msg.reply(media, undefined, { caption: `📎 *Hasil Deep Scrape (${format}):* ${result.title || url}` });
+          }
+        }
+      }
+    } catch (exportErr) {
+      log.debug('Could not export deepscrape file', { error: exportErr.message });
+    }
+
     log.info(`Deep scrape completed for ${url}`);
   } catch (err) {
     log.error('Deep scrape command failed', { url, error: err.message });
