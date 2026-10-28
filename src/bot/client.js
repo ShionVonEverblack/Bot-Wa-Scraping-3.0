@@ -1,7 +1,8 @@
 'use strict';
 
 /**
- * @fileoverview WhatsApp client setup using whatsapp-web.js with Brave browser.
+ * @fileoverview WhatsApp client setup using whatsapp-web.js with Brave browser,
+ * memory-optimized Chromium flags, and a periodic Health Watchdog with graceful in-process reconnect.
  * @module bot/client
  */
 
@@ -14,6 +15,12 @@ const { createLogger } = require('../services/monitor/logger');
 const dashboard = require('../services/monitor/dashboard');
 
 const log = createLogger('bot:client');
+
+/** Active watchdog timer reference. */
+let watchdogTimer = null;
+
+/** Guard flag to prevent concurrent reconnect attempts. */
+let isReconnecting = false;
 
 /**
  * Auto-detect Brave browser executable path.
@@ -51,6 +58,85 @@ function detectBravePath() {
 }
 
 /**
+ * Perform a single health check on the WhatsApp client and trigger a graceful
+ * in-process reconnect (destroy + initialize) if the session is frozen or disconnected.
+ * Keeps the Node.js process and Express Web Dashboard alive.
+ * @param {Object} client - whatsapp-web.js Client instance
+ * @param {number} [timeoutMs=10000] - Max wait for getState()
+ * @returns {Promise<{ healthy: boolean, state: string|null, reconnected: boolean }>}
+ */
+async function checkClientHealth(client, timeoutMs = 10000) {
+  if (!client || typeof client.getState !== 'function') {
+    return { healthy: false, state: null, reconnected: false };
+  }
+  if (isReconnecting) {
+    return { healthy: false, state: 'RECONNECTING', reconnected: false };
+  }
+
+  let state = null;
+  try {
+    state = await Promise.race([
+      client.getState(),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('State check timeout')), timeoutMs)
+      ),
+    ]);
+
+    if (state === 'CONNECTED') {
+      return { healthy: true, state, reconnected: false };
+    }
+
+    log.warn(`WhatsApp health check detected non-connected state: ${state || 'null'}`);
+  } catch (err) {
+    log.warn(`WhatsApp health check failed or timed out: ${err.message}`);
+  }
+
+  // Graceful in-process reconnect without killing the Express dashboard
+  isReconnecting = true;
+  try {
+    dashboard.setDisconnected('Watchdog auto-reconnect');
+    if (typeof client.destroy === 'function') {
+      await client.destroy().catch(e => log.debug('Destroy during reconnect warning', { error: e.message }));
+    }
+    if (typeof client.initialize === 'function') {
+      await client.initialize().catch(e => log.error('Initialize during reconnect failed', { error: e.message }));
+    }
+    log.info('Graceful WhatsApp client reconnect initiated by watchdog');
+    return { healthy: false, state, reconnected: true };
+  } finally {
+    isReconnecting = false;
+  }
+}
+
+/**
+ * Start periodic health check watchdog for the WhatsApp client.
+ * @param {Object} client - whatsapp-web.js Client instance
+ * @param {number} [intervalMs=180000] - Check interval in ms (default: 3 minutes)
+ * @returns {NodeJS.Timeout}
+ */
+function startHealthWatchdog(client, intervalMs = 180000) {
+  stopHealthWatchdog();
+  watchdogTimer = setInterval(() => {
+    checkClientHealth(client).catch(err => {
+      log.error('Watchdog loop error', { error: err.message });
+    });
+  }, intervalMs);
+
+  if (watchdogTimer.unref) watchdogTimer.unref();
+  return watchdogTimer;
+}
+
+/**
+ * Stop the active health check watchdog timer.
+ */
+function stopHealthWatchdog() {
+  if (watchdogTimer) {
+    clearInterval(watchdogTimer);
+    watchdogTimer = null;
+  }
+}
+
+/**
  * Create and configure a new WhatsApp client instance.
  * @returns {Client} Configured whatsapp-web.js client
  */
@@ -72,6 +158,10 @@ function createClient() {
       '--no-first-run',
       '--no-zygote',
       '--disable-blink-features=AutomationControlled',
+      '--disable-background-timer-throttling',
+      '--disable-backgrounding-occluded-windows',
+      '--disable-renderer-backgrounding',
+      '--memory-pressure-off',
     ],
   };
 
@@ -127,6 +217,11 @@ function createClient() {
       setReady(true, client);
     } catch (err) {
       log.warn('messageHandler setReady failed', { error: err.message });
+    }
+
+    // Start Puppeteer health watchdog in production/development
+    if (process.env.NODE_ENV !== 'test') {
+      startHealthWatchdog(client);
     }
 
     // Resume pending/running jobs from before restart
@@ -188,4 +283,10 @@ function createClient() {
   return client;
 }
 
-module.exports = { createClient, detectBravePath };
+module.exports = {
+  createClient,
+  detectBravePath,
+  checkClientHealth,
+  startHealthWatchdog,
+  stopHealthWatchdog,
+};

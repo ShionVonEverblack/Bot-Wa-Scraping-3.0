@@ -4,6 +4,10 @@
 
 ## ✨ Fitur Utama (Ultimate 3.0)
 
+- 🤫 **Kontrol Anti-Nimbrung (`!pause`, `!resume`, `!mode command`)** - Heningkan bot per ruang obrolan tanpa batas (`!pause`), dengan timer otomatis (`!pause 30m`), atau gunakan **Command-Only Mode** (`!mode command`) agar bot *hanya* merespons pesan berawalan tanda `!` dan tidak ikut menyahuti obrolan biasa/link biasa. Dilengkapi deteksi kata utuh (*word-boundary*) sehingga kata seperti *"terima kasih"* atau *"darimana"* di grup tidak akan memicu nama bot `"Rima"`.
+- 📄 **Direct PDF / Document Drop (Ala Google NotebookLM)** - Kirim file dokumen (`.pdf`, `.txt`, `.md`, `.csv`) langsung ke ruang obrolan (bahkan tanpa caption di DM!) untuk otomatis diekstrak, diindeks ke RAG Hybrid Search (`ragEngine`) dan `contextMemory`, lalu dirangkum secara instan. Di grup tetap patuh Anti-Nimbrung (hanya aktif jika di-mention `@Rima`).
+- 🦙 **Ollama Local / Offline AI Provider** - Dukungan AI lokal/offline penuh (`http://localhost:11434`, misal `llama3.2`, `qwen2.5`, `deepseek-r1`) untuk privasi data 100% dan *zero API cost* sebagai provider utama (`AI_PROVIDER=ollama`) maupun fallback otomatis (`OLLAMA_ENABLED=true`).
+- 🩺 **Puppeteer Health Watchdog & Graceful Auto-Reconnect** - Dilengkapi flag penghematan RAM Chromium dan pemantauan berkala `client.getState()` yang memulihkan sesi Chromium macet secara *graceful* (`destroy()` + `initialize()`) tanpa mematikan server Express Web Dashboard.
 - 💬 **Native Typing Indicator** - Menampilkan status *"sedang mengetik..."* di header obrolan WhatsApp saat bot memproses scraping, AI, atau pencarian dokumen.
 - 🔗 **Smart Link Drop (Auto-Scrape URL)** - Kirim atau paste link web apa saja langsung ke chat, bot otomatis mengekstrak konten bersih dan memberikan ringkasan berbobot tanpa perlu command manual.
 - 🛡️ **Anti-Ban Human Jitter Delay** - Perlindungan akun WhatsApp multi-device dengan jeda waktu pengetikan acak (400ms–900ms) yang meniru interaksi manusiawi.
@@ -11,18 +15,18 @@
 - 🔘 **Interactive Buttons Menu (`!menu`)** - Menggantikan menu teks konvensional dengan WhatsApp Native Polls (`new Poll`) interaktif multi-device yang 100% resmi & anti-ban. Cukup sentuh opsi untuk memandu pencarian, crawl, AI, atau RAG.
 - 💬 **Emoji Status Reactions** - Notifikasi status visual instan langsung pada balon pesan pengguna: `⏳` (sedang diproses), `✅` (sukses), `❌` (error), dan `❓` (perintah tidak dikenal).
 - 🎯 **Fuzzy Typo Suggestion** - Deteksi cerdas kesalahan ketik (misal `!scraep` → `!scrape`, `!cralw` → `!crawl`, `!hepl` → `!help`) menggunakan algoritma Damerau-Levenshtein.
-- 📁 **Auto-Delivery File Dokumen** - Berkas hasil crawl Markdown atau laporan scraping berukuran panjang otomatis dikirim sebagai dokumen terlampir (`.md`, `.xlsx`, `.pdf`) ke chat.
+- 📁 **Auto-Delivery File Dokumen & TTL Storage Cleanup** - Berkas hasil crawl Markdown atau laporan scraping berukuran panjang otomatis dikirim sebagai dokumen terlampir (`.md`, `.xlsx`, `.pdf`), dan file sementara berusia >24 jam dibersihkan otomatis.
 - 💻 **Code & ML Intelligence (`--type code`)** - Cari repositori open-source GitHub (stars, bahasa, deskripsi) dan paper ML yang terhubung langsung dengan kode implementasinya via Papers With Code.
 - 📚 **Full-Text Classic E-Books** - Download puluhan ribu buku sastra & sains domain publik lengkap (TXT/EPUB) dari Project Gutenberg (Gutendex) dan katalog Open Library.
 - 🎙️ **Voice Note AI** - Anda tidak perlu mengetik! Kirim pesan suara (PTT/Audio) dan bot akan otomatis mentranskripsikannya menggunakan model *Speech-to-Text* (Whisper/OpenAI) dan memrosesnya layaknya teks.
 - 📺 **YouTube Video Summarizer** - Kirim link YouTube (contoh: `!yt https://youtu.be/...`). Bot akan mengunduh transkrip/CC videonya di latar belakang lalu AI akan membuat ringkasan terstruktur lengkap dengan poin penting!
 - 👁️ **AI OCR (Ekstraksi Teks Gambar)** - Kirim atau _reply_ gambar (buku, jurnal, tabel) dengan `!ocr`. AI Vision (Gemini/GPT-4o) akan mengekstrak **seluruh teks** secara mutlak dan presisi (mendukung tulisan tangan & bahasa asing).
-- 🧠 **Chat dengan Dokumen (RAG)** - Setelah mengunduh jurnal/paper (PDF), AI akan secara instan membaca isinya ke dalam memori. Anda bisa bertanya spesifik tentang metodologi, kesimpulan, atau isi dari jurnal tersebut!
+- 🧠 **Chat dengan Dokumen (RAG)** - Setelah mengunduh jurnal/paper (PDF), mengirim file dokumen, atau melakukan `!crawl`, AI secara instan menyimpan isinya ke dalam memori konteks sehingga Anda bisa langsung bertanya spesifik tentang isi halaman/dokumen tersebut!
 - 🗄️ **Multi-Provider Aggregation (`--multi`)** - Tarik data dari seluruh sumber API sekaligus secara paralel! Bot akan menggabungkan, mendeduplikasi, dan merangking hasilnya.
 - 🔍 **Smart Search (NLP)** - Cari gambar, anime art, paper akademik, dataset, dan web via bahasa natural. Paham *typo* dan terklasifikasi dalam *3-Layer NLP Intent*.
-- 🤖 **Multi-AI & Auto-Summary** - Dukungan OpenAI, Gemini, Groq, dan Grok dengan sistem *auto-fallback* dan peringkasan instan (`--ai` atau `+ai`).
+- 🤖 **Multi-AI & Auto-Summary** - Dukungan OpenAI, Gemini, Groq, Grok, dan Ollama (Local AI) dengan sistem *auto-fallback* dan peringkasan instan (`--ai` atau `+ai`).
 - 📄 **Paper Download** - Rantai resolver pintar: arXiv → Unpaywall → OpenAlex → Europe PMC / NCBI → Crossref.
-- 🌐 **Deep Scrape & Custom Scrape** - Puppeteer + Brave browser. Kini dilengkapi `!customscrape` yang bisa menargetkan CSS Selector spesifik dari web apa pun.
+- 🌐 **Deep Scrape & Custom Scrape** - Puppeteer + Brave browser. Kini dilengkapi `!customscrape` yang bisa menargetkan CSS Selector spesifik dari web apa pun serta ekspor file langsung via `!deepscrape --format`.
 - 🛡️ **Anti-Spam & Rate Limiting** - Melindungi bot dari _banned_ WhatsApp dan pembengkakan tagihan API dengan sistem *Cooldown* cerdas (10 detik) per pengguna.
 - ✨ **Rich UI Formatting** - Balasan bot menggunakan kutipan *(Blockquote)* dan pembatas elegan ala *Markdown* yang membuat output tampak sangat rapi dan berkelas.
 - 🛠️ **Admin Dashboard (`!admin`)** - Kontrol penuh khusus nomor pemilik bot: pantau RAM, _uptime_, pembersihan _cache_, hingga menghentikan proses paksa (`cancel-all`).
@@ -35,7 +39,7 @@
 - 🧠 **Persistent Memory (`!memory`)** - Terinspirasi *Claude-Mem*: memori 3-lapis (index → timeline → observasi) yang tersimpan di disk + kompresi konteks ala *Headroom*.
 - ⚙️ **Agentic Workflows (`!workflow`)** - Terinspirasi *Dify*: workflow deklaratif `deep-research`, `crawl-and-rag`, `fact-check` + bridge opsional ke Dify API.
 - 🧩 **Agent Skills (`!skills`)** - 395 skill terindeks dari Karpathy Guidelines, Superpowers, Matt Pocock Skills, ECC, dan Anthropic Skills.
-- 🧪 **Test Suite Lengkap** - 43 test suites / 642 tests (unit + E2E + adversarial stress) menjamin stabilitas fungsi inti.
+- 🧪 **Test Suite Lengkap** - 45 test suites / 657 tests (unit + E2E + adversarial stress) menjamin stabilitas fungsi inti.
 - 📊 **Web Dashboard** - Monitor status bot & scan QR code via browser (`http://localhost:3000`).
 
 ## 📋 Prerequisites
@@ -43,7 +47,7 @@
 - **Node.js** v18+
 - **Brave Browser** (atau Chromium-based browser)
 - **WhatsApp** account
-- API keys (minimal: OpenAI atau Gemini)
+- API keys (minimal: OpenAI, Gemini, atau Ollama lokal)
 
 ## 🚀 Quick Start
 
@@ -72,13 +76,14 @@ Copy `.env.example` ke `.env` dan isi:
 | `GEMINI_API_KEY` | ✅* | Google Gemini API key |
 | `GROQ_API_KEY` | ❌ | Groq Cloud API key |
 | `GROK_API_KEY` | ❌ | Grok (xAI) API key |
+| `OLLAMA_ENABLED` | ❌ | `true` untuk mengaktifkan Ollama Local AI (`OLLAMA_BASE_URL`, `OLLAMA_MODEL`) |
 | `UNSPLASH_ACCESS_KEY` | ❌ | Unsplash image API |
 | `PEXELS_API_KEY` | ❌ | Pexels image API |
 | `PIXABAY_API_KEY` | ❌ | Pixabay image API |
 | `KAGGLE_USERNAME` | ❌ | Kaggle credentials |
 | `KAGGLE_KEY` | ❌ | Kaggle API key |
 
-*Minimal satu AI provider harus terisi.
+*Minimal satu AI provider harus terisi (atau aktifkan Ollama lokal).
 
 **Bridge opsional (fitur tetap jalan native tanpa ini):**
 
@@ -106,12 +111,15 @@ Copy `.env.example` ke `.env` dan isi:
 !scrape anime --type images --provider safebooru --multi
 !scrape covid --type datasets --provider zenodo --ai
 !paper 10.1038/s41586-020-2649-2
-!deepscrape https://example.com
+!deepscrape https://example.com --format excel
 !customscrape https://news.ycombinator.com/ --selector "span.titleline > a"
 !ai apa itu machine learning?
 !yt https://youtube.com/watch?v=...     (AI merangkum video YouTube)
 !analyze                          (reply ke gambar, AI mendeskripsikan gambar)
 !ocr | !baca                      (reply ke gambar, AI mengekstrak Teks/OCR)
+!pause | !pause 30m               (Heningkan bot agar tidak ikut nimbrung)
+!mode command                     (Bot hanya jalan jika diawali tanda '!')
+!resume | !mode auto              (Aktifkan kembali bot ke mode normal)
 !watch keyword --every daily
 !wizard                           (guided step-by-step)
 !menu                             (Menu tombol interaktif WhatsApp Native Polls)
@@ -140,29 +148,30 @@ Copy `.env.example` ke `.env` dan isi:
 !skills list <kata> | !skills info <nama> | !skills use <nama> | !skills off
 ```
 
-### Bahasa Natural (NLP) & Voice Note
-Anda bisa merekam _Voice Note_ (Pesan Suara) atau mengetik kalimat percakapan sehari-hari secara fleksibel:
+### Bahasa Natural (NLP), Direct Document Drop & Voice Note
+Anda bisa merekam _Voice Note_ (Pesan Suara), mengirim file dokumen (`.pdf`, `.txt`, `.md`, `.csv`) secara langsung, atau mengetik kalimat percakapan sehari-hari secara fleksibel:
 ```
 "cari gambar kucing lucu"
 "carikan anime art naruto dari safebooru"
 "tolong cari dataset covid di zenodo --ai"
 "carikan paper tentang deep learning dari semua tempat --multi"
 "download paper arXiv 2301.07041"
-(Setelah PDF terdownload): "Tolong rangkum metodologinya!"
+(Kirim file PDF/TXT/MD/CSV langsung ke chat): Bot otomatis membaca, mengindeks ke RAG, dan merangkumnya!
+(Setelah PDF terdownload / dikirim): "Tolong jelaskan bagian hasil eksperimennya!"
 ```
 
 ## 🏗️ Arsitektur
 
 ```
 src/
-├── bot/            # WhatsApp client, message handler, NLP (Neural Network), wizard
-├── commands/       # 25+ command handlers (termasuk crawl, rag, graph, memory, workflow, skills)
+├── bot/            # WhatsApp client (+ Health Watchdog), message handler, NLP, wizard
+├── commands/       # 26+ command handlers (termasuk pause/mode, crawl, rag, graph, memory, workflow, skills)
 ├── engine/         # Provider router, deep scraper, scrape engine
 │   ├── llmCrawler.js       # Firecrawl/Crawl4AI-style HTML→Markdown + BFS crawler + bridges
 │   ├── adaptiveScraper.js  # Scrapling-style self-healing selectors + stealth headers
-│   └── providers/  # 20 data providers (images/papers/datasets/forums/books/general)
+│   └── providers/  # 28 data providers (images/papers/datasets/code/books/forums/general)
 ├── jobs/           # Bottleneck job queue + workers
-├── services/       # AI, cache, formatters, i18n, images, packaging,
+├── services/       # AI (+ Ollama Local AI), cache, formatters, i18n, images, packaging,
 │   │               # resilience, security, identity, watch, templates
 │   ├── pdf/        # OpenDataLoader-style layout-aware PDF loader
 │   ├── rag/        # RAGFlow-style chunking + Hybrid BM25/TF-IDF search
@@ -171,12 +180,13 @@ src/
 │   ├── compression/# Headroom-style context compressor
 │   ├── workflows/  # Dify-style declarative workflow engine
 │   └── skills/     # Agent skill registry
-└── utils/          # HTTP client, file system, validators, logger
+└── utils/          # HTTP client, file system, storage cleanup, validators, logger
 
 skills/             # Agent Skills: karpathy-guidelines, superpowers, mattpocock-skills,
                     # ecc, anthropic-skills + SKILL.md untuk firecrawl, crawl4ai, scrapling,
                     # agent-reach, opendataloader-pdf, ragflow, graphify, claude-mem, headroom, dify
 .agents/skills/     # Salinan skill untuk agent IDE (Antigravity/Claude/Cursor)
+.agents/rules/      # Guardrails arsitektur & konvensi pengembangan proyek
 ```
 
 ## 🙏 Sumber Inspirasi
@@ -208,4 +218,3 @@ docker-compose up -d
 ## 📄 License
 
 MIT
-

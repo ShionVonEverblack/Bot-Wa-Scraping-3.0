@@ -2,7 +2,8 @@
 
 /**
  * @fileoverview Central message handler — routes all incoming WhatsApp messages.
- * Integrates access control, cooldown, command routing, NLP intent classification,
+ * Integrates access control, anti-nimbrung pause/mode controls, cooldown, command routing,
+ * Direct PDF/Document Drop (NotebookLM style), Smart Link Drop, NLP intent classification,
  * and context memory for natural language interactions.
  * @module bot/messageHandler
  */
@@ -17,8 +18,18 @@ const { extractEntities, extractIdentifier } = require('./nlp/entityExtractor');
 const contextMemory = require('./nlp/contextMemory');
 const { sanitizeInput, checkRateLimit } = require('../services/security');
 const { friendlyError } = require('../utils/errorMessages');
+const { isChatPaused, isCommandOnlyMode } = require('../commands/handlers/pause.handler');
+const { cleanOldOutputs } = require('../utils/storageCleanup');
 
 const log = createLogger('bot:handler');
+
+/** Commands allowed to execute even while a chat is paused (!pause). */
+const PAUSE_EXEMPT_COMMANDS = new Set([
+  'resume', 'unpause', 'unmute', 'lanjut',
+  'mode', 'botmode',
+  'pause', 'mute', 'diam', 'hening',
+  'status',
+]);
 
 /**
  * Send typing indicator to the current chat.
@@ -99,7 +110,7 @@ const KNOWN_COMMANDS = [
   'deepscrape', 'template', 'analyze', 'ocr', 'youtube', 'help', 'menu',
   'clear', 'status', 'cancel', 'history', 'health', 'ai', 'settings',
   'lang', 'watch', 'unwatch', 'watches', 'wizard', 'next', 'send',
-  'compress', 'resolve', 'admin'
+  'compress', 'resolve', 'admin', 'pause', 'resume', 'mode', 'mute', 'unmute', 'diam'
 ];
 
 /**
@@ -166,40 +177,52 @@ let isReady = false;
 const messageBuffer = [];
 
 /**
- * Set the ready state — when true, process buffered messages.
+ * Set the ready state — when true, process buffered messages and run background storage cleanup.
  * @param {boolean} ready
  * @param {Object} client - WhatsApp client
  */
 function setReady(ready, client) {
   isReady = ready;
-  if (ready && messageBuffer.length > 0) {
-    log.info(`Processing ${messageBuffer.length} buffered messages`);
-    const buffered = messageBuffer.splice(0);
-    for (const { msg } of buffered) {
-      handleMessage(msg, client).catch(err => {
-        log.error('Buffered message error', { error: err.message });
-      });
+  if (ready) {
+    if (process.env.NODE_ENV !== 'test') {
+      const outDir = path.resolve(config.dirs?.outputs || './outputs');
+      cleanOldOutputs(outDir).catch(() => {});
+    }
+    if (messageBuffer.length > 0) {
+      log.info(`Processing ${messageBuffer.length} buffered messages`);
+      const buffered = messageBuffer.splice(0);
+      for (const { msg } of buffered) {
+        handleMessage(msg, client).catch(err => {
+          log.error('Buffered message error', { error: err.message });
+        });
+      }
     }
   }
 }
 
 /**
  * Check if the bot is mentioned in a group message.
+ * Uses strict word-boundary matching so substrings like "terima kasih" or "darimana"
+ * do NOT falsely trigger the bot name "Rima".
  * @param {Object} msg - WhatsApp message
  * @returns {Promise<boolean>}
  */
 async function isBotMentioned(msg) {
   try {
-    const mentions = await msg.getMentions();
-    const chat = await msg.getChat();
-    if (!chat.isGroup) return true; // DM always passes
+    const mentions = (typeof msg.getMentions === 'function' ? await msg.getMentions() : []) || [];
+    const chat = typeof msg.getChat === 'function' ? await msg.getChat() : null;
+    if (chat && !chat.isGroup) return true; // DM always passes
 
-    // Check if message mentions bot or starts with bot name
     const body = (msg.body || '').toLowerCase();
-    const botName = config.botName.toLowerCase();
+    const botName = (config.botName || 'rima').toLowerCase().trim();
 
-    if (body.includes(botName)) return true;
-    if (mentions.some(m => m.isMe)) return true;
+    if (botName) {
+      const escapedName = botName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const nameRegex = new RegExp(`(?:^|[\\s.,!?@])${escapedName}(?:$|[\\s.,!?:;])`, 'i');
+      if (nameRegex.test(body)) return true;
+    }
+
+    if (Array.isArray(mentions) && mentions.some(m => m.isMe)) return true;
 
     return false;
   } catch {
@@ -230,10 +253,11 @@ function checkCooldown(userId) {
  * Route a command to its handler.
  * @param {Object} msg - WhatsApp message
  * @param {Object} client - WhatsApp client
+ * @param {string} cleanText - Sanitized message text
  * @returns {Promise<boolean>} true if command was handled
  */
 async function routeCommand(msg, client, cleanText) {
-  const { command, args, raw } = splitArgs(cleanText);
+  const { command, args } = splitArgs(cleanText);
   if (!command) return false;
 
   // Try to load command handler
@@ -263,6 +287,7 @@ async function routeCommand(msg, client, cleanText) {
       scrapling: 'crawl',
       rag: 'rag',
       ragflow: 'rag',
+      docqa: 'rag',
       graph: 'graph',
       graphify: 'graph',
       memory: 'memory',
@@ -272,6 +297,16 @@ async function routeCommand(msg, client, cleanText) {
       dify: 'workflow',
       skill: 'skills',
       skills: 'skills',
+      pause: 'pause',
+      mute: 'pause',
+      diam: 'pause',
+      hening: 'pause',
+      resume: 'pause',
+      unpause: 'pause',
+      unmute: 'pause',
+      lanjut: 'pause',
+      mode: 'pause',
+      botmode: 'pause',
     };
 
     const handlerName = handlerMap[command] || command;
@@ -294,7 +329,7 @@ async function routeCommand(msg, client, cleanText) {
       throw err;
     }
 
-    if (handler && typeof handler.handle === "function") {
+    if (handler && typeof handler.handle === 'function') {
       log.info(`Command: !${command}`, { args: args.slice(0, 5) });
       try { if (typeof msg.react === 'function') await msg.react('⏳'); } catch {}
       await sendTyping(msg);
@@ -428,8 +463,7 @@ async function handleNlpIntent(msg, client, userId, text) {
         const persistentMemory = require('../services/memory/persistentMemory');
         const skillRegistry = require('../services/skills/skillRegistry');
 
-        await sendTyping(msg);
-        await msg.reply('🤔 Sedang berpikir...');
+        try { if (typeof msg.react === 'function') await msg.react('⏳'); } catch {}
         await sendTyping(msg);
 
         // Build multi-turn history from context and apply Headroom compression
@@ -439,7 +473,7 @@ async function handleNlpIntent(msg, client, userId, text) {
 
         let systemPromptOverride = undefined;
         if (userContext?.lastDocumentText) {
-          systemPromptOverride = `Anda adalah Asisten Analitik Dokumen. Pengguna sedang bertanya mengenai dokumen / paper berjudul "${userContext.lastDocumentTitle || 'Dokumen'}" yang baru saja mereka baca.\n\n---\n[ISI DOKUMEN]\n${userContext.lastDocumentText}\n---\n\nJawablah pertanyaan pengguna SECARA DETAIL dan AKURAT HANYA berdasarkan teks dokumen di atas. Jika jawabannya tidak ada di dalam dokumen, katakan bahwa informasi tersebut tidak tercantum.`;
+          systemPromptOverride = `Anda adalah Asisten Analitik Dokumen. Pengguna sedang bertanya mengenai dokumen / halaman web berjudul "${userContext.lastDocumentTitle || 'Dokumen'}" yang baru saja mereka baca.\n\n---\n[ISI DOKUMEN]\n${userContext.lastDocumentText}\n---\n\nJawablah pertanyaan pengguna SECARA DETAIL dan AKURAT HANYA berdasarkan teks dokumen di atas. Jika jawabannya tidak ada di dalam dokumen, katakan bahwa informasi tersebut tidak tercantum.`;
         } else {
           const extraBlocks = [];
           const activeSkill = skillRegistry.getActiveSkill(userId);
@@ -457,12 +491,14 @@ async function handleNlpIntent(msg, client, userId, text) {
         }
 
         const response = await aiService.chat(text, { history, systemPrompt: systemPromptOverride });
-        await msg.reply(response);
+        await replyWithBrevityGuard(msg, response);
+        try { if (typeof msg.react === 'function') await msg.react('✅'); } catch {}
 
         contextMemory.store(userId, {
           message: { role: 'assistant', content: truncate(response, 500) },
         });
       } catch (err) {
+        try { if (typeof msg.react === 'function') await msg.react('❌'); } catch {}
         log.error('AI chat failed', { error: err.message });
         await msg.reply('❌ Maaf, AI sedang tidak tersedia. Coba lagi nanti.');
       }
@@ -525,8 +561,13 @@ async function handleNlpIntent(msg, client, userId, text) {
         const history = (userContext?.messages || []).slice(-6)
           .map(m => ({ role: m.role, content: m.content }));
 
-        const response = await aiService.chat(text, { history });
-        await msg.reply(response);
+        let systemPromptOverride = undefined;
+        if (userContext?.lastDocumentText) {
+          systemPromptOverride = `Anda adalah Asisten Analitik Dokumen. Pengguna sedang bertanya mengenai dokumen / halaman web berjudul "${userContext.lastDocumentTitle || 'Dokumen'}" yang baru saja mereka baca.\n\n---\n[ISI DOKUMEN]\n${userContext.lastDocumentText}\n---\n\nJawablah pertanyaan pengguna SECARA DETAIL dan AKURAT berdasarkan teks dokumen di atas.`;
+        }
+
+        const response = await aiService.chat(text, { history, systemPrompt: systemPromptOverride });
+        await replyWithBrevityGuard(msg, response);
 
         contextMemory.store(userId, {
           message: { role: 'assistant', content: truncate(response, 500) },
@@ -536,6 +577,120 @@ async function handleNlpIntent(msg, client, userId, text) {
       }
       break;
     }
+  }
+}
+
+/**
+ * Handle incoming direct PDF / text / Markdown / CSV file drop (NotebookLM style).
+ * Automatically parses the document, indexes it into RAG, sets it as the user's Active Focus Document
+ * in contextMemory, and replies with an executive summary or answers the caption question.
+ * @param {Object} msg
+ * @param {Object} client
+ * @param {string} userId
+ * @param {string} cleanText
+ * @returns {Promise<boolean>} true if a document was processed
+ */
+async function handleDirectDocumentDrop(msg, client, userId, cleanText) {
+  if (!msg || !msg.hasMedia) return false;
+  if (msg.type && ['ptt', 'audio', 'image', 'sticker', 'video'].includes(msg.type)) {
+    return false;
+  }
+  if (typeof msg.downloadMedia !== 'function') return false;
+
+  let media;
+  try {
+    media = await msg.downloadMedia();
+  } catch (err) {
+    log.debug('Direct document downloadMedia failed', { error: err.message });
+    return false;
+  }
+
+  if (!media || !media.data) return false;
+
+  const mime = (media.mimetype || '').toLowerCase();
+  const filename = media.filename || msg.filename || `dokumen_${Date.now()}.pdf`;
+  const isPdf = mime.includes('pdf') || /\.pdf$/i.test(filename);
+  const isTextDoc =
+    mime.includes('text/') ||
+    mime.includes('csv') ||
+    mime.includes('markdown') ||
+    /\.(txt|md|csv)$/i.test(filename);
+
+  if (!isPdf && !isTextDoc && msg.type !== 'document') {
+    return false;
+  }
+
+  log.info(`Direct Document Drop detected from ${userId}: ${filename} (${mime || 'document'})`);
+  try { if (typeof msg.react === 'function') await msg.react('⏳'); } catch {}
+  await sendTyping(msg);
+
+  try {
+    const buffer = Buffer.from(media.data, 'base64');
+    const pdfLoader = require('../services/pdf/pdfLoader');
+    const ragEngine = require('../services/rag/ragEngine');
+
+    let parsedDoc;
+    if (isPdf) {
+      parsedDoc = await pdfLoader.parseBuffer(buffer, { title: filename });
+    } else {
+      const rawText = buffer.toString('utf8');
+      parsedDoc = {
+        title: filename,
+        text: rawText,
+        markdown: rawText,
+        pageCount: 1,
+        sections: [{ heading: filename, level: 1, content: rawText }],
+        tables: [],
+      };
+    }
+
+    const docTitle = parsedDoc.title || filename;
+    const docId = `doc_${Date.now()}`;
+    const indexed = ragEngine.indexDocument(docId, parsedDoc, { title: docTitle });
+    const fullText = (parsedDoc.markdown || parsedDoc.text || '').trim();
+
+    // Sync into contextMemory as Active Focus Document (per rima-bot-conventions rule)
+    contextMemory.store(userId, {
+      lastDocumentTitle: docTitle,
+      lastDocumentText: fullText.slice(0, 4000),
+    });
+
+    // Clean bot name mention from caption if user mentioned @Rima in a group
+    const botName = (config.botName || 'rima').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const userQuestion = (cleanText || '')
+      .replace(new RegExp(`^(?:halo\\s+|hai\\s+)?@?${botName}[,!.?:;\\s]*`, 'i'), '')
+      .trim();
+
+    let bodyReply = '';
+    try {
+      const aiService = require('../services/ai/aiService');
+      const prompt = userQuestion
+        ? `Berdasarkan isi dokumen "${docTitle}" berikut, jawab pertanyaan pengguna secara akurat: "${userQuestion}"\n\nIsi Dokumen:\n${fullText.slice(0, 4000)}`
+        : `Buat ringkasan eksekutif (NotebookLM Overview) dalam 3-5 poin penting dari dokumen "${docTitle}" berikut:\n\nIsi Dokumen:\n${fullText.slice(0, 4000)}`;
+      bodyReply = await aiService.chat(prompt);
+    } catch {
+      // Fallback to local RAG retrieval summary if cloud/local AI is unconfigured
+      const ragRes = await ragEngine.answerWithRag(userQuestion || docTitle, { docId: indexed.docId });
+      bodyReply = ragRes.answer || truncate(fullText, 800);
+    }
+
+    const replyMessage = [
+      `📄 *Dokumen Diindeks:* *${docTitle}*`,
+      `🆔 ID: \`${indexed.docId}\` | 🧩 *${indexed.chunkCount} chunks* | 📑 *${parsedDoc.sections?.length || 1} bagian*`,
+      '━━━━━━━━━━━━━━━━━━━━━━',
+      bodyReply,
+      '',
+      '💡 _Dokumen ini kini menjadi fokus aktif Anda. Ketik pertanyaan lanjutan secara langsung tanpa perlu command!_',
+    ].join('\n');
+
+    await replyWithBrevityGuard(msg, replyMessage);
+    try { if (typeof msg.react === 'function') await msg.react('✅'); } catch {}
+    return true;
+  } catch (err) {
+    log.error('Direct Document Drop failed', { filename, error: err.message });
+    await msg.reply(`❌ Gagal memproses dokumen *${filename}*: ${friendlyError(err)}`);
+    try { if (typeof msg.react === 'function') await msg.react('❌'); } catch {}
+    return true;
   }
 }
 
@@ -579,10 +734,15 @@ async function handleSmartLinkDrop(msg, client, userId, cleanText, url) {
       return true;
     }
 
+    const docSlice = markdown.slice(0, 3500);
+    const docTitle = crawlResult?.title || url;
+
     contextMemory.store(userId, {
       lastUrl: url,
-      lastUrlContent: markdown.slice(0, 3000),
-      lastUrlTitle: crawlResult?.title || url,
+      lastUrlContent: docSlice,
+      lastUrlTitle: docTitle,
+      lastDocumentText: docSlice,
+      lastDocumentTitle: docTitle,
     });
 
     const aiService = require('../services/ai/aiService');
@@ -603,7 +763,7 @@ async function handleSmartLinkDrop(msg, client, userId, cleanText, url) {
     return true;
   }
 }
-
+
 /**
  * Main message handler — processes all incoming WhatsApp messages.
  * @param {Object} msg - WhatsApp message object
@@ -627,6 +787,7 @@ async function handleMessage(msg, client) {
     const userId = contact.id._serialized;
     const chat = await msg.getChat();
     const isGroup = chat.isGroup;
+    const chatId = chat?.id?._serialized || msg.from || userId;
 
     log.info(`📩 ${isGroup ? `[${chat.name}]` : '[DM]'} ${contact.pushname || userId}: ${truncate(body, 80)}`);
 
@@ -641,15 +802,38 @@ async function handleMessage(msg, client) {
       return;
     }
 
+    // 2b. Check Pause & Command-Only Mode (Anti-Nimbrung Guard)
+    const preCleanText = sanitizeInput(stripMentions(body));
+    const isCmd = startsWithCommand(preCleanText);
+
+    if (isChatPaused(chatId)) {
+      if (!isCmd) {
+        log.debug(`Chat ${chatId} is paused — ignoring message`);
+        return;
+      }
+      const { command: cmdName } = splitArgs(preCleanText);
+      if (!PAUSE_EXEMPT_COMMANDS.has((cmdName || '').toLowerCase())) {
+        log.debug(`Chat ${chatId} is paused — ignoring command !${cmdName}`);
+        return;
+      }
+    }
+
+    if (isCommandOnlyMode(chatId)) {
+      const hasPendingAction = pendingInteractiveActions.has(userId);
+      if (!isCmd && !hasPendingAction) {
+        log.debug(`Chat ${chatId} is in command-only mode — ignoring non-command message`);
+        return;
+      }
+    }
+
     // 3. Mention guard (group only)
     if (isGroup && config.group.requireMention) {
       const mentioned = await isBotMentioned(msg);
-      const isCommand = startsWithCommand(body);
-      if (!mentioned && !isCommand) return;
+      if (!mentioned && !isCmd) return;
     }
 
     // Clean text (remove mentions + sanitize)
-    let cleanText = sanitizeInput(stripMentions(body));
+    let cleanText = preCleanText;
 
     // 3b. Voice Note Audio Transcription
     if (msg.hasMedia && (msg.type === 'ptt' || msg.type === 'audio')) {
@@ -673,6 +857,12 @@ async function handleMessage(msg, client) {
         await msg.reply('❌ Maaf, sistem gagal menerjemahkan pesan suara Anda. Pastikan API key Groq atau OpenAI terkonfigurasi.');
         return;
       }
+    }
+
+    // 3c. Direct PDF / Document Drop (NotebookLM style) — runs when media is a document and not an explicit !command
+    if (msg.hasMedia && !isCmd && msg.type !== 'ptt' && msg.type !== 'audio') {
+      const docHandled = await handleDirectDocumentDrop(msg, client, userId, cleanText);
+      if (docHandled) return;
     }
 
     if (!cleanText) return; // If still empty after all processing
@@ -811,4 +1001,16 @@ async function handleVoteUpdate(vote, client) {
   }
 }
 
-module.exports = { handleMessage, setReady, handleVoteUpdate, findClosestCommand, pendingInteractiveActions, sendTyping, jitterDelay, replyWithBrevityGuard, handleSmartLinkDrop };
+module.exports = {
+  handleMessage,
+  setReady,
+  handleVoteUpdate,
+  findClosestCommand,
+  pendingInteractiveActions,
+  sendTyping,
+  jitterDelay,
+  replyWithBrevityGuard,
+  handleSmartLinkDrop,
+  handleDirectDocumentDrop,
+  isBotMentioned,
+};

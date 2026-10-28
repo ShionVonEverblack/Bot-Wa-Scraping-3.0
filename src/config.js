@@ -94,7 +94,7 @@ const config = {
   // --- AI ---
   ai: {
     provider: (env.AI_PROVIDER || 'openai').toLowerCase(),
-    fallbackOrder: parsePriorityList(env.AI_FALLBACK_ORDER, ['openai', 'gemini', 'groq', 'grok']),
+    fallbackOrder: parsePriorityList(env.AI_FALLBACK_ORDER, ['openai', 'gemini', 'groq', 'grok', 'ollama']),
     autoSummary: toBool(env.AUTO_SUMMARY, false),
     summaryMaxItems: toInt(env.AI_SUMMARY_MAX_ITEMS, 20),
 
@@ -113,6 +113,11 @@ const config = {
     grok: {
       apiKey: env.GROK_API_KEY || '',
       model: env.GROK_MODEL || 'grok-4',
+    },
+    ollama: {
+      enabled: toBool(env.OLLAMA_ENABLED, false),
+      baseUrl: env.OLLAMA_BASE_URL || 'http://localhost:11434',
+      model: env.OLLAMA_MODEL || 'llama3.2',
     },
   },
 
@@ -211,6 +216,7 @@ Object.freeze(config.ai.openai);
 Object.freeze(config.ai.gemini);
 Object.freeze(config.ai.groq);
 Object.freeze(config.ai.grok);
+Object.freeze(config.ai.ollama);
 Object.freeze(config.providers);
 Object.freeze(config.puppeteer);
 Object.freeze(config.cache);

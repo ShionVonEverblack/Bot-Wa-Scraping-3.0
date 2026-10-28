@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @fileoverview Unified AI service interface with auto-fallback across providers.
+ * @fileoverview Unified AI service interface with auto-fallback across providers (OpenAI, Gemini, Groq, Grok, Ollama).
  * @module services/ai/aiService
  */
 
@@ -18,6 +18,7 @@ const PROVIDERS = {
   gemini: () => require('./providers/gemini.provider'),
   groq: () => require('./providers/groq.provider'),
   grok: () => require('./providers/grok.provider'),
+  ollama: () => require('./providers/ollama.provider'),
 };
 
 /**
@@ -67,7 +68,13 @@ async function generate({ messages, model, temperature = 0.7, maxTokens = 2048, 
 
     try {
       log.debug(`Trying AI provider: ${providerName}`);
-      const result = await provider.generate({ messages, model, temperature, maxTokens });
+      const result = await provider.generate({
+        messages,
+        model,
+        temperature,
+        maxTokens,
+        forceEnable: aiProvider === providerName,
+      });
 
       // Apply safety filters
       result.text = filterOutput(result.text);
@@ -76,7 +83,7 @@ async function generate({ messages, model, temperature = 0.7, maxTokens = 2048, 
       return result;
     } catch (err) {
       if (err.code === 'KEY_MISSING') {
-        log.debug(`Skipping ${providerName}: no API key`);
+        log.debug(`Skipping ${providerName}: no API key / not enabled`);
       } else {
         log.warn(`Provider ${providerName} failed, trying next`, { error: err.message });
       }
@@ -188,7 +195,7 @@ async function analyzeImage({ imageBase64, mimeType, prompt }, options = {}) {
 async function classifyIntent(text) {
   const systemPrompt = [
     'Kamu adalah intent classifier. Klasifikasi pesan user ke salah satu intent:',
-    '- SCRAPE: user ingin mencari/scrape data (gambar, paper, dataset, website)',
+    '- SCRAPE: user ingin mencari/scrape data (gambar, paper, dataset, website, kode, buku, forum)',
     '- AI_CHAT: user bertanya atau minta penjelasan',
     '- PAPER_DOWNLOAD: user mau download paper/PDF (ada DOI, arXiv ID, dll)',
     '- IMAGE_ANALYZE: user mau analisa gambar',
@@ -196,7 +203,7 @@ async function classifyIntent(text) {
     '- UNKNOWN: tidak jelas',
     '',
     'Respond HANYA dengan JSON: {"intent":"INTENT_NAME","entities":{"keyword":"...","type":"..."}}',
-    'Contoh entities type: images, papers, datasets, general',
+    'Contoh entities type: images, papers, datasets, code, books, forums, general',
   ].join('\n');
 
   try {
@@ -225,7 +232,7 @@ async function classifyIntent(text) {
 async function transcribeAudio({ audioBase64, mimeType }) {
   const isGroq = !!config.ai.groq.apiKey;
   const isOpenAI = !!config.ai.openai.apiKey;
-  
+
   if (!isGroq && !isOpenAI) {
     throw new Error('No API key configured for audio transcription (Groq or OpenAI required)');
   }
@@ -236,7 +243,7 @@ async function transcribeAudio({ audioBase64, mimeType }) {
 
   try {
     const buffer = Buffer.from(audioBase64, 'base64');
-    
+
     // Convert to Blob for Node 18+ native FormData
     const blob = new Blob([buffer], { type: mimeType });
     const form = new FormData();
@@ -259,4 +266,4 @@ async function transcribeAudio({ audioBase64, mimeType }) {
   }
 }
 
-module.exports = { generate, chat, summarizeResults, analyzeImage, classifyIntent, transcribeAudio };
+module.exports = { generate, chat, summarizeResults, analyzeImage, classifyIntent, transcribeAudio, getProvider, getProviderOrder };
