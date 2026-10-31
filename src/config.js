@@ -181,6 +181,7 @@ const config = {
     chunkSize: toInt(env.RAG_CHUNK_SIZE, 800),
     chunkOverlap: toInt(env.RAG_CHUNK_OVERLAP, 150),
     topK: toInt(env.RAG_TOP_K, 5),
+    minScore: parseFloat(env.RAG_MIN_SCORE || '0.05') || 0.05,
     ragflowBaseUrl: env.RAGFLOW_API_URL || '',
     ragflowApiKey: env.RAGFLOW_API_KEY || '',
     ragflowDatasetId: env.RAGFLOW_DATASET_ID || '',
@@ -204,6 +205,13 @@ const config = {
     difyBaseUrl: env.DIFY_API_URL || 'https://api.dify.ai/v1',
     difyApiKey: env.DIFY_API_KEY || '',
   },
+
+  // --- Web Dashboard ---
+  dashboard: {
+    port: toInt(env.DASHBOARD_PORT, 3000),
+    host: env.DASHBOARD_HOST || '127.0.0.1',
+    token: env.DASHBOARD_TOKEN || '',
+  },
 };
 
 // Freeze to prevent accidental mutation
@@ -226,5 +234,6 @@ Object.freeze(config.rag);
 Object.freeze(config.graph);
 Object.freeze(config.memory);
 Object.freeze(config.workflows);
+Object.freeze(config.dashboard);
 
 module.exports = config;

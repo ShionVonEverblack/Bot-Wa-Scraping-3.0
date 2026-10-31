@@ -5,11 +5,14 @@ services:
     build: .
     container_name: rima-bot
     restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
     env_file:
       - .env
     environment:
       - NODE_ENV=production
       - PUPPETEER_HEADLESS=true
+      - DASHBOARD_HOST=0.0.0.0
     volumes:
       - ./auth:/app/auth
       - ./jobs:/app/jobs

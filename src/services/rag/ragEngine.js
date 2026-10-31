@@ -10,6 +10,7 @@
 const config = require('../../config');
 const { extractLayoutStructure } = require('../pdf/pdfLoader');
 const { createLogger } = require('../monitor/logger');
+const { buildSourcesBlock, formatCitations } = require('../ai/citationFormatter');
 
 const log = createLogger('services:rag');
 
@@ -428,14 +429,13 @@ function retrieve(query, options = {}) {
  * @returns {string}
  */
 function buildGroundedPrompt(query, retrievedChunks = []) {
-  const contextBlocks = retrievedChunks
-    .map(c => `${c.citation} (${c.title} — Section: ${c.section}):\n${c.rawText}`)
-    .join('\n\n---\n\n');
+  const contextBlocks = buildSourcesBlock(retrievedChunks);
 
   return [
     'Anda adalah asisten Deep RAG (Retrieval-Augmented Generation).',
     'Jawablah pertanyaan pengguna HANYA berdasarkan konteks dokumen di bawah ini.',
-    'Sertakan sitasi inline seperti [1], [2] pada setiap klaim penting.',
+    'Sertakan sitasi inline seperti [1], [2] pada setiap klaim atau fakta penting.',
+    'Jika jawaban tidak ditemukan pada konteks dokumen, nyatakan dengan jujur bahwa informasi tidak ditemukan. Jangan mengarang nomor sitasi.',
     '',
     '=== KONTEKS DOKUMEN ===',
     contextBlocks || '(Tidak ada konteks yang relevan)',
@@ -450,17 +450,24 @@ function buildGroundedPrompt(query, retrievedChunks = []) {
  * with automatic extractive fallback if no LLM key is set.
  * @param {string} query
  * @param {Object} [options]
- * @returns {Promise<{ answer: string, citations: Array<Object> }>}
+ * @returns {Promise<{ answer: string, rawAnswer?: string, citations: Array<Object>, formatted?: Object }>}
  */
 async function answerWithRag(query, options = {}) {
   let hits = await retrieveViaRagflowBridge(query, options);
   if (!hits || hits.length === 0) {
     hits = retrieve(query, options);
   }
-  if (hits.length === 0) {
+
+  const minScore = options.minScore != null ? options.minScore : (config.rag?.minScore ?? 0.05);
+  const validHits = (hits || []).filter(h => (h.bm25Score > 0 || h.vectorScore >= minScore));
+
+  if (!hits || hits.length === 0 || validHits.length === 0) {
+    const notFound = 'Tidak ditemukan potongan dokumen yang relevan di dalam indeks RAG.';
     return {
-      answer: 'Tidak ditemukan potongan dokumen yang relevan di dalam indeks RAG.',
+      answer: notFound,
+      rawAnswer: notFound,
       citations: [],
+      formatted: { text: notFound, used: [], invalid: [] },
     };
   }
 
@@ -469,18 +476,25 @@ async function answerWithRag(query, options = {}) {
   try {
     const aiService = require('../ai/aiService');
     const llmAnswer = await aiService.chat(prompt, { maxTokens: 1200 });
+    const formatted = formatCitations(llmAnswer, hits);
+
     return {
-      answer: llmAnswer,
+      answer: formatted.text,
+      rawAnswer: llmAnswer,
       citations: hits,
+      formatted,
     };
   } catch {
     // Graceful extractive synthesis when no AI provider key is configured
     const summaryLines = hits.map(
       h => `• ${h.citation} *[${h.title} — ${h.section}]*: ${h.rawText.slice(0, 300)}`
     );
+    const extractiveText = `📚 *Hasil Ekstraksi RAG (Grounded Citations):*\n\n${summaryLines.join('\n\n')}`;
     return {
-      answer: `📚 *Hasil Ekstraksi RAG (Grounded Citations):*\n\n${summaryLines.join('\n\n')}`,
+      answer: extractiveText,
+      rawAnswer: extractiveText,
       citations: hits,
+      formatted: { text: extractiveText, used: hits, invalid: [] },
     };
   }
 }

@@ -53,20 +53,22 @@ async function handle(msg, args) {
     const prompt = [
       'Kamu adalah asisten ahli yang bertugas merangkum isi video YouTube.',
       'Berikut adalah transkrip otomatis (CC) dari video tersebut.',
-      'Buatlah ringkasan yang rapi, komprehensif, dan mudah dibaca (gunakan emoji secukupnya), mencakup:',
+      'Buatlah ringkasan yang rapi, komprehensif, dan mudah dibaca (gunakan emoji secukupnya), sertakan sitasi [1] pada fakta penting, mencakup:',
       '1. Judul Topik Utama',
       '2. Poin-Poin Penting',
       '3. Kesimpulan Akhir',
       '',
-      'Transkrip Video:',
+      `[1] Transkrip Video (${url}):`,
       '"""',
       fullText,
       '"""'
     ].join('\n');
 
-    const summary = await aiService.chat(prompt, { maxTokens: 1500 });
+    const rawSummary = await aiService.chat(prompt, { maxTokens: 1500 });
+    const { formatCitations } = require('../../services/ai/citationFormatter');
+    const formattedYt = formatCitations(rawSummary, [{ title: 'Video YouTube', url }]);
 
-    await msg.reply(`📺 *YOUTUBE SUMMARY*\n━━━━━━━━━━━━━━━━━━━━━━\n\n${summary}`);
+    await msg.reply(`📺 *YOUTUBE SUMMARY*\n━━━━━━━━━━━━━━━━━━━━━━\n\n${formattedYt.text}`);
   } catch (err) {
     log.error('YouTube summarizer failed', { error: err.message });
     await msg.reply('❌ Gagal memproses video.\nKemungkinan penyebab:\n1. Video ini tidak memiliki fitur Subtitle (CC).\n2. Video bersifat privat atau dihapus.\n3. Server YouTube membatasi akses.');

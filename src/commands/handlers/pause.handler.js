@@ -271,6 +271,24 @@ async function handle(msg, args = []) {
   );
 }
 
+function getPausedSummary() {
+  let pausedCount = 0;
+  let commandOnlyCount = 0;
+  const now = Date.now();
+  for (const [chatId, state] of chatStates.entries()) {
+    if (state.mode === 'paused') {
+      if (state.pausedUntil && state.pausedUntil !== Infinity && state.pausedUntil <= now) {
+        chatStates.delete(chatId);
+      } else {
+        pausedCount++;
+      }
+    } else if (state.mode === 'command') {
+      commandOnlyCount++;
+    }
+  }
+  return { pausedCount, commandOnlyCount, totalModified: pausedCount + commandOnlyCount };
+}
+
 module.exports = {
   handle,
   command: 'pause',
@@ -282,4 +300,5 @@ module.exports = {
   setChatMode,
   resumeChat,
   clearAllChatStates,
+  getPausedSummary,
 };

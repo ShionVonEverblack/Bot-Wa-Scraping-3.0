@@ -80,6 +80,11 @@ async function generate({ messages, model, temperature = 0.7, maxTokens = 2048, 
       result.text = filterOutput(result.text);
       result.text = redactSecrets(result.text);
 
+      try {
+        const stats = require('../monitor/stats');
+        stats.recordAiProvider(providerName);
+      } catch {}
+
       return result;
     } catch (err) {
       if (err.code === 'KEY_MISSING') {
@@ -138,16 +143,24 @@ async function summarizeResults({ type, items, aiProvider }) {
   const sliced = items.slice(0, maxItems);
   const { compressJsonItems } = require('../compression/contextCompressor');
   const { crushedText } = compressJsonItems(sliced);
+  const { formatCitations } = require('./citationFormatter');
+
+  const sources = sliced.map((item, idx) => ({
+    title: item.title || `Item #${idx + 1}`,
+    url: item.url,
+  }));
 
   const prompt = [
     `Berikan ringkasan singkat (3-5 bullet points) dari ${sliced.length} hasil pencarian ${type} berikut:`,
     '',
     crushedText,
     '',
-    'Format: bullet points, singkat dan informatif. Bahasa: sesuaikan dengan konten.',
+    'Format: bullet points, sertakan nomor sitasi [1], [2] pada item relevan sesuai urutan item di atas. Bahasa: sesuaikan dengan konten.',
   ].join('\n');
 
-  return chat(prompt, { aiProvider });
+  const rawSummary = await chat(prompt, { aiProvider });
+  const formatted = formatCitations(rawSummary, sources);
+  return formatted.text;
 }
 
 /**

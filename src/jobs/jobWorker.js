@@ -97,7 +97,10 @@ async function processScrapeJob(job, client, signal) {
           `⚠️ Tidak ditemukan hasil untuk *${request.keyword}* (Job: \`${jobId}\`).`
         );
       } else {
-        const preview = formatPreview(items, request.scrapeType, 5);
+        const preview = formatPreview(items, request.scrapeType, 5, {
+          keyword: request.keyword,
+          provider: scrapeResult?.providerUsed,
+        });
         await client.sendMessage(
           request.chatId,
           `✅ *Job \`${jobId}\` Selesai!* (${items.length} hasil via ${scrapeResult.providerUsed})\n\n${preview}`

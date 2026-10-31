@@ -5,6 +5,9 @@
 ## ✨ Fitur Utama (Ultimate 3.0)
 
 - 🤫 **Kontrol Anti-Nimbrung (`!pause`, `!resume`, `!mode command`)** - Heningkan bot per ruang obrolan tanpa batas (`!pause`), dengan timer otomatis (`!pause 30m`), atau gunakan **Command-Only Mode** (`!mode command`) agar bot *hanya* merespons pesan berawalan tanda `!` dan tidak ikut menyahuti obrolan biasa/link biasa. Dilengkapi deteksi kata utuh (*word-boundary*) sehingga kata seperti *"terima kasih"* atau *"darimana"* di grup tidak akan memicu nama bot `"Rima"`.
+- 📚 **Perplexity-Style Grounded Citations & Hallucination Guard** - Setiap jawaban AI berbasis sumber (`!rag ask`, Direct Document Drop, Smart Link Drop, `!yt`, dan ringkasan hasil scrape `--ai`) dilengkapi sitasi inline `[1]`, `[2]`, renumber otomatis berdasarkan urutan kemunculan, footer daftar sumber terverifikasi (`📚 Sumber:`), serta filter ambang batas relevansi (`RAG_MIN_SCORE`) untuk mencegah halusinasi.
+- 🃏 **Rich Preview Cards (7 Kategori Data)** - Kartu pratinjau hasil pencarian WhatsApp yang dirancang khusus untuk masing-masing kategori: **Code** (⭐ stars, 🍴 forks, 💻 bahasa), **Books** (✍️ penulis, 📅 tahun, 📥 link unduh), **Forums** (⬆️ skor, 💬 komentar, 👤 penulis), **Papers** (📊 sitasi, 🔓 OA), **Datasets** (💾 ukuran, ⬇️ unduhan), **Images** (📐 dimensi, 📷 fotografer), dan **General**, dilengkapi penempatan URL utama pada baris kedua agar banner pratinjau tautan (*link preview unfurling*) WhatsApp otomatis aktif.
+- 📊 **Web Dashboard v2.0 (Zero-Flicker SSE & Token Auth)** - Tampilan dashboard pemantauan live berbasis Server-Sent Events (SSE) tanpa reload halaman. Dilengkapi login keamanan berbasis token (`DASHBOARD_TOKEN`), fail-safe blokir host publik tanpa token (`DASHBOARD_HOST`), serta panel telemetri lengkap: status koneksi, RAM, uptime, volume pesan (DM/Grup), job antrean, provider AI aktif, dan status Anti-Nimbrung.
 - 📄 **Direct PDF / Document Drop (Ala Google NotebookLM)** - Kirim file dokumen (`.pdf`, `.txt`, `.md`, `.csv`) langsung ke ruang obrolan (bahkan tanpa caption di DM!) untuk otomatis diekstrak, diindeks ke RAG Hybrid Search (`ragEngine`) dan `contextMemory`, lalu dirangkum secara instan. Di grup tetap patuh Anti-Nimbrung (hanya aktif jika di-mention `@Rima`).
 - 🦙 **Ollama Local / Offline AI Provider** - Dukungan AI lokal/offline penuh (`http://localhost:11434`, misal `llama3.2`, `qwen2.5`, `deepseek-r1`) untuk privasi data 100% dan *zero API cost* sebagai provider utama (`AI_PROVIDER=ollama`) maupun fallback otomatis (`OLLAMA_ENABLED=true`).
 - 🩺 **Puppeteer Health Watchdog & Graceful Auto-Reconnect** - Dilengkapi flag penghematan RAM Chromium dan pemantauan berkala `client.getState()` yang memulihkan sesi Chromium macet secara *graceful* (`destroy()` + `initialize()`) tanpa mematikan server Express Web Dashboard.
@@ -39,8 +42,7 @@
 - 🧠 **Persistent Memory (`!memory`)** - Terinspirasi *Claude-Mem*: memori 3-lapis (index → timeline → observasi) yang tersimpan di disk + kompresi konteks ala *Headroom*.
 - ⚙️ **Agentic Workflows (`!workflow`)** - Terinspirasi *Dify*: workflow deklaratif `deep-research`, `crawl-and-rag`, `fact-check` + bridge opsional ke Dify API.
 - 🧩 **Agent Skills (`!skills`)** - 395 skill terindeks dari Karpathy Guidelines, Superpowers, Matt Pocock Skills, ECC, dan Anthropic Skills.
-- 🧪 **Test Suite Lengkap** - 45 test suites / 657 tests (unit + E2E + adversarial stress) menjamin stabilitas fungsi inti.
-- 📊 **Web Dashboard** - Monitor status bot & scan QR code via browser (`http://localhost:3000`).
+- 🧪 **Test Suite Lengkap** - 49 test suites / 677 tests (unit + E2E + adversarial stress) menjamin stabilitas fungsional 100%.
 
 ## 📋 Prerequisites
 
@@ -77,6 +79,10 @@ Copy `.env.example` ke `.env` dan isi:
 | `GROQ_API_KEY` | ❌ | Groq Cloud API key |
 | `GROK_API_KEY` | ❌ | Grok (xAI) API key |
 | `OLLAMA_ENABLED` | ❌ | `true` untuk mengaktifkan Ollama Local AI (`OLLAMA_BASE_URL`, `OLLAMA_MODEL`) |
+| `DASHBOARD_HOST` | ❌ | Host bind dashboard (default: `127.0.0.1`). Set `0.0.0.0` untuk LAN/Docker (wajib isi token) |
+| `DASHBOARD_PORT` | ❌ | Port web dashboard (default: `3000`) |
+| `DASHBOARD_TOKEN` | ❌ | Token rahasia otentikasi login dashboard (wajib jika `DASHBOARD_HOST=0.0.0.0`) |
+| `RAG_MIN_SCORE` | ❌ | Ambang batas skor relevansi pencarian RAG (default: `0.05`) |
 | `UNSPLASH_ACCESS_KEY` | ❌ | Unsplash image API |
 | `PEXELS_API_KEY` | ❌ | Pexels image API |
 | `PIXABAY_API_KEY` | ❌ | Pixabay image API |
@@ -84,20 +90,6 @@ Copy `.env.example` ke `.env` dan isi:
 | `KAGGLE_KEY` | ❌ | Kaggle API key |
 
 *Minimal satu AI provider harus terisi (atau aktifkan Ollama lokal).
-
-**Bridge opsional (fitur tetap jalan native tanpa ini):**
-
-| Variable | Deskripsi |
-|----------|-----------|
-| `FIRECRAWL_API_KEY` / `FIRECRAWL_BASE_URL` | Bridge ke Firecrawl API untuk `!crawl` |
-| `CRAWL4AI_API_URL` / `CRAWL4AI_API_KEY` | Bridge ke server Crawl4AI |
-| `USE_JINA_READER` | `true` = pakai Jina Reader sebagai fallback reader |
-| `CRAWL_MAX_PAGES` / `CRAWL_MAX_DEPTH` | Batas crawl multi-halaman (default 5 / 2) |
-| `RAG_CHUNK_SIZE` / `RAG_CHUNK_OVERLAP` / `RAG_TOP_K` | Tuning RAG (default 800 / 150 / 5) |
-| `RAGFLOW_API_URL` / `RAGFLOW_API_KEY` / `RAGFLOW_DATASET_ID` | Bridge ke RAGFlow |
-| `USE_GRAPHIFY_CLI` | `true` = pakai Graphify CLI jika terpasang |
-| `MEMORY_PERSIST` / `MEMORY_MAX_OBSERVATIONS` | Persistensi memori (default `true` / 200) |
-| `DIFY_API_URL` / `DIFY_API_KEY` | Bridge ke Dify workflow API |
 
 ## 💬 Cara Pakai
 
@@ -114,7 +106,7 @@ Copy `.env.example` ke `.env` dan isi:
 !deepscrape https://example.com --format excel
 !customscrape https://news.ycombinator.com/ --selector "span.titleline > a"
 !ai apa itu machine learning?
-!yt https://youtube.com/watch?v=...     (AI merangkum video YouTube)
+!yt https://youtube.com/watch?v=...     (AI merangkum video YouTube dengan sitasi)
 !analyze                          (reply ke gambar, AI mendeskripsikan gambar)
 !ocr | !baca                      (reply ke gambar, AI mengekstrak Teks/OCR)
 !pause | !pause 30m               (Heningkan bot agar tidak ikut nimbrung)
@@ -135,7 +127,7 @@ Copy `.env.example` ke `.env` dan isi:
 !crawl https://example.com --bridge firecrawl      (bridge: native | jina | firecrawl)
 !crawl https://example.com --selector "article h2" (adaptive selector, self-healing)
 !rag ingest <url|jobId|teks>                       (masukkan dokumen/web ke basis pengetahuan)
-!rag ask apa metodologi yang digunakan?            (jawaban + sitasi sumber)
+!rag ask apa metodologi yang digunakan?            (jawaban + sitasi sumber ala Perplexity)
 !rag stats | !rag list | !rag clear
 !graph <jobId|url|keyword|teks>                    (knowledge graph + God Nodes + Mermaid)
 !memory remember <fakta>                           (simpan ke memori persisten)
@@ -156,7 +148,7 @@ Anda bisa merekam _Voice Note_ (Pesan Suara), mengirim file dokumen (`.pdf`, `.t
 "tolong cari dataset covid di zenodo --ai"
 "carikan paper tentang deep learning dari semua tempat --multi"
 "download paper arXiv 2301.07041"
-(Kirim file PDF/TXT/MD/CSV langsung ke chat): Bot otomatis membaca, mengindeks ke RAG, dan merangkumnya!
+(Kirim file PDF/TXT/MD/CSV langsung ke chat): Bot otomatis membaca, mengindeks ke RAG, dan merangkumnya dengan sitasi [1]!
 (Setelah PDF terdownload / dikirim): "Tolong jelaskan bagian hasil eksperimennya!"
 ```
 
@@ -165,20 +157,22 @@ Anda bisa merekam _Voice Note_ (Pesan Suara), mengirim file dokumen (`.pdf`, `.t
 ```
 src/
 ├── bot/            # WhatsApp client (+ Health Watchdog), message handler, NLP, wizard
+│   └── templates/  # 7 Rich Preview Cards (code, books, forums, papers, datasets, images, general)
 ├── commands/       # 26+ command handlers (termasuk pause/mode, crawl, rag, graph, memory, workflow, skills)
 ├── engine/         # Provider router, deep scraper, scrape engine
 │   ├── llmCrawler.js       # Firecrawl/Crawl4AI-style HTML→Markdown + BFS crawler + bridges
 │   ├── adaptiveScraper.js  # Scrapling-style self-healing selectors + stealth headers
 │   └── providers/  # 28 data providers (images/papers/datasets/code/books/forums/general)
 ├── jobs/           # Bottleneck job queue + workers
-├── services/       # AI (+ Ollama Local AI), cache, formatters, i18n, images, packaging,
-│   │               # resilience, security, identity, watch, templates
+├── services/       # AI (+ Ollama Local AI, Citation Formatter), cache, formatters, i18n,
+│   │               # images, packaging, resilience, security, identity, watch, templates
 │   ├── pdf/        # OpenDataLoader-style layout-aware PDF loader
-│   ├── rag/        # RAGFlow-style chunking + Hybrid BM25/TF-IDF search
+│   ├── rag/        # RAGFlow-style chunking + Hybrid BM25/TF-IDF search + Score Guard
 │   ├── graph/      # Graphify-style knowledge graph
 │   ├── memory/     # Claude-Mem-style persistent 3-layer memory
 │   ├── compression/# Headroom-style context compressor
 │   ├── workflows/  # Dify-style declarative workflow engine
+│   ├── monitor/    # Web Dashboard v2.0 (Zero-Flicker SSE + Token Auth + Live Metrics)
 │   └── skills/     # Agent skill registry
 └── utils/          # HTTP client, file system, storage cleanup, validators, logger
 
@@ -189,25 +183,21 @@ skills/             # Agent Skills: karpathy-guidelines, superpowers, mattpocock
 .agents/rules/      # Guardrails arsitektur & konvensi pengembangan proyek
 ```
 
-## 🙏 Sumber Inspirasi
+## 📊 Web Dashboard v2.0
 
-Fitur baru diimplementasikan **native di Node.js** (tanpa dependensi Python) dengan konsep dari:
-[Firecrawl](https://github.com/firecrawl/firecrawl) · [Crawl4AI](https://github.com/unclecode/crawl4ai) · [Scrapling](https://github.com/D4Vinci/Scrapling) · [Agent-Reach](https://github.com/Panniantong/Agent-Reach) · [OpenDataLoader-PDF](https://github.com/opendataloader-project/opendataloader-pdf) · [RAGFlow](https://github.com/infiniflow/ragflow) · [Graphify](https://github.com/Graphify-Labs/graphify) · [Claude-Mem](https://github.com/thedotmack/claude-mem) · [Headroom](https://github.com/headroomlabs-ai/headroom) · [Dify](https://github.com/langgenius/dify).
-Agent Skills: [Karpathy Skills](https://github.com/multica-ai/andrej-karpathy-skills) · [Superpowers](https://github.com/obra/superpowers) · [Matt Pocock Skills](https://github.com/mattpocock/skills) · [ECC](https://github.com/affaan-m/ECC) · [Anthropic Skills](https://github.com/anthropics/skills).
-
-## 📊 Web Dashboard
-
-Setelah bot berjalan, buka `http://localhost:3000` untuk:
-- 📱 Scan QR code WhatsApp dari browser (tidak perlu akses terminal)
-- 🟢 Monitor status koneksi real-time (auto-refresh 5 detik)
-- 📈 Lihat metrik: uptime, memori, Node.js version
+Setelah bot berjalan, buka `http://localhost:3000` (atau `http://<ip>:3000` jika `DASHBOARD_HOST=0.0.0.0`):
+- ⚡ **Zero-Flicker Telemetry**: Pembaruan data real-time via Server-Sent Events (SSE `/api/events`) tanpa me-reload browser.
+- 📱 **QR Code WhatsApp**: Tampilan QR code live dengan rendering pixelated yang tajam dan auto-update instan.
+- 🔒 **Token-Based Authentication**: Form login aman jika `DASHBOARD_TOKEN` diisi (didukung cookie `HttpOnly` + `SameSite=Strict` dan API Bearer token).
+- 📈 **Metrik Komprehensif**: Pemantauan langsung Uptime, Pemakaian RAM Heap, Volume Pesan (DM vs Grup), Antrean Job, AI Provider aktif, dan status Anti-Nimbrung.
 
 **API Endpoints:**
 | Endpoint | Fungsi |
 |----------|--------|
-| `GET /api/status` | Status bot (JSON) |
-| `GET /api/qr` | QR code (base64 data URL) |
-| `GET /api/qr.png` | QR code (gambar PNG) |
+| `GET /api/status` | Status telemetri lengkap bot (JSON) |
+| `GET /api/events` | Stream data SSE real-time untuk dashboard |
+| `GET /api/qr` | QR code data URL (JSON) |
+| `GET /api/qr.png` | QR code gambar PNG langsung |
 
 ## 🐳 Docker
 

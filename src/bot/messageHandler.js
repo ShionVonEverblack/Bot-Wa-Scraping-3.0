@@ -20,6 +20,7 @@ const { sanitizeInput, checkRateLimit } = require('../services/security');
 const { friendlyError } = require('../utils/errorMessages');
 const { isChatPaused, isCommandOnlyMode } = require('../commands/handlers/pause.handler');
 const { cleanOldOutputs } = require('../utils/storageCleanup');
+const stats = require('../services/monitor/stats');
 
 const log = createLogger('bot:handler');
 
@@ -331,6 +332,7 @@ async function routeCommand(msg, client, cleanText) {
 
     if (handler && typeof handler.handle === 'function') {
       log.info(`Command: !${command}`, { args: args.slice(0, 5) });
+      stats.recordCommand(command);
       try { if (typeof msg.react === 'function') await msg.react('⏳'); } catch {}
       await sendTyping(msg);
       await handler.handle(msg, args, client);
@@ -662,12 +664,22 @@ async function handleDirectDocumentDrop(msg, client, userId, cleanText) {
       .trim();
 
     let bodyReply = '';
+    const docSources = (indexed.chunks || []).map((c, i) => ({
+      title: docTitle,
+      section: c.section || `Bagian ${i + 1}`,
+      rawText: c.rawText,
+    }));
+
     try {
       const aiService = require('../services/ai/aiService');
+      const { buildSourcesBlock, formatCitations } = require('../services/ai/citationFormatter');
+      const sourcesBlock = buildSourcesBlock(docSources.slice(0, 5));
       const prompt = userQuestion
-        ? `Berdasarkan isi dokumen "${docTitle}" berikut, jawab pertanyaan pengguna secara akurat: "${userQuestion}"\n\nIsi Dokumen:\n${fullText.slice(0, 4000)}`
-        : `Buat ringkasan eksekutif (NotebookLM Overview) dalam 3-5 poin penting dari dokumen "${docTitle}" berikut:\n\nIsi Dokumen:\n${fullText.slice(0, 4000)}`;
-      bodyReply = await aiService.chat(prompt);
+        ? `Berdasarkan isi dokumen "${docTitle}" berikut, jawab pertanyaan pengguna secara akurat: "${userQuestion}"\nSertakan sitasi [1], [2] pada klaim penting.\n\n=== KONTEKS DOKUMEN ===\n${sourcesBlock || fullText.slice(0, 4000)}`
+        : `Buat ringkasan eksekutif (NotebookLM Overview) dalam 3-5 poin penting dari dokumen "${docTitle}" berikut:\nSertakan sitasi [1], [2] pada poin penting bila relevan.\n\n=== KONTEKS DOKUMEN ===\n${sourcesBlock || fullText.slice(0, 4000)}`;
+      const rawAi = await aiService.chat(prompt);
+      const formatted = formatCitations(rawAi, docSources.slice(0, 5));
+      bodyReply = formatted.text;
     } catch {
       // Fallback to local RAG retrieval summary if cloud/local AI is unconfigured
       const ragRes = await ragEngine.answerWithRag(userQuestion || docTitle, { docId: indexed.docId });
@@ -746,12 +758,15 @@ async function handleSmartLinkDrop(msg, client, userId, cleanText, url) {
     });
 
     const aiService = require('../services/ai/aiService');
+    const { formatCitations } = require('../services/ai/citationFormatter');
+    const linkSource = [{ title: crawlResult?.title || 'Web Page', url }];
     const prompt = userQuestion
-      ? `Berdasarkan isi halaman web berikut, jawab pertanyaan pengguna: "${userQuestion}"\n\nIsi Halaman:\n${markdown.slice(0, 4000)}`
-      : `Buat ringkasan eksekutif yang padat, berbobot, dan mudah dipahami dalam 3-5 poin penting dari artikel/halaman web berikut:\n\nJudul: ${crawlResult?.title || ''}\nURL: ${url}\n\nKonten:\n${markdown.slice(0, 4000)}`;
+      ? `Berdasarkan isi halaman web berikut [1], jawab pertanyaan pengguna: "${userQuestion}"\nSertakan sitasi [1] pada fakta penting.\n\n[1] ${crawlResult?.title || ''} — ${url}:\n${markdown.slice(0, 4000)}`
+      : `Buat ringkasan eksekutif yang padat, berbobot, dan mudah dipahami dalam 3-5 poin penting dari artikel/halaman web berikut.\nSertakan sitasi [1] pada fakta penting.\n\n[1] ${crawlResult?.title || ''} — ${url}:\n${markdown.slice(0, 4000)}`;
 
-    const summary = await aiService.chat(prompt);
-    const replyText = `🌐 *Ringkasan Halaman Web:*\n*${crawlResult?.title || 'Web Page'}*\n\n${summary}`;
+    const rawSummary = await aiService.chat(prompt);
+    const formattedSummary = formatCitations(rawSummary, linkSource);
+    const replyText = `🌐 *Ringkasan Halaman Web:*\n*${crawlResult?.title || 'Web Page'}*\n\n${formattedSummary.text}`;
 
     await replyWithBrevityGuard(msg, replyText);
     try { if (typeof msg.react === 'function') await msg.react('✅'); } catch {}
@@ -790,6 +805,7 @@ async function handleMessage(msg, client) {
     const chatId = chat?.id?._serialized || msg.from || userId;
 
     log.info(`📩 ${isGroup ? `[${chat.name}]` : '[DM]'} ${contact.pushname || userId}: ${truncate(body, 80)}`);
+    stats.recordMessage({ isGroup });
 
     // 2. Access control
     const { allowList, denyList } = config.group;
