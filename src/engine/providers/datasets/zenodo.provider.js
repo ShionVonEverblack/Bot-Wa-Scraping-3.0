@@ -5,7 +5,7 @@
  * @module engine/providers/datasets/zenodo
  */
 
-const { get } = require('../../../utils/httpClient');
+const httpClient = require('../../../utils/httpClient');
 const { createLogger } = require('../../../services/monitor/logger');
 
 const log = createLogger('provider:zenodo');
@@ -30,7 +30,7 @@ module.exports = {
     try {
       const queryLimit = Math.min(limit, 100);
       
-      const response = await get('https://zenodo.org/api/records', {
+      const response = await httpClient.get('https://zenodo.org/api/records', {
         params: {
           q: keyword,
           type: 'dataset',

@@ -84,7 +84,9 @@ async function scrape(params) {
  * @returns {Object[]}
  */
 function normalizeItems(items, type) {
+  if (!Array.isArray(items)) return [];
   return items.map(item => {
+    if (!item || typeof item !== 'object') return { title: 'Untitled', url: '', description: '', source: 'unknown', sourceUrl: '' };
     const normalized = {
       title: String(item.title || 'Untitled').trim(),
       url: String(item.url || '').trim(),
@@ -154,10 +156,13 @@ function normalizeItems(items, type) {
  * @returns {Object[]}
  */
 function deduplicateItems(items) {
+  if (!Array.isArray(items)) return [];
   const seen = new Set();
   return items.filter(item => {
+    if (!item || typeof item !== 'object') return false;
+    const urlStr = item.url && typeof item.url === 'string' ? item.url : '';
     // Normalize URL for comparison
-    const key = item.url
+    const key = urlStr
       .replace(/^https?:\/\/(www\.)?/, '')
       .replace(/\/+$/, '')
       .toLowerCase();
@@ -175,7 +180,9 @@ function deduplicateItems(items) {
  * @returns {Object[]}
  */
 function rankItems(items, keyword) {
-  const terms = keyword.toLowerCase().split(/\s+/).filter(t => t.length > 2);
+  if (!Array.isArray(items)) return [];
+  const kw = typeof keyword === 'string' ? keyword.toLowerCase() : '';
+  const terms = kw.split(/\s+/).filter(t => t.length > 2);
   if (terms.length === 0) return items;
 
   return items

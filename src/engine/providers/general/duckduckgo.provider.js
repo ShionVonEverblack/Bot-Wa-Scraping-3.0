@@ -5,7 +5,7 @@
  * @module engine/providers/general/duckduckgo
  */
 
-const { get } = require('../../../utils/httpClient');
+const httpClient = require('../../../utils/httpClient');
 const { createLogger } = require('../../../services/monitor/logger');
 
 const log = createLogger('provider:duckduckgo');
@@ -28,7 +28,7 @@ module.exports = {
    */
   async scrape({ keyword, limit = 10, safeMode = true, signal }) {
     try {
-      const response = await get('https://api.duckduckgo.com/', {
+      const response = await httpClient.get('https://api.duckduckgo.com/', {
         params: {
           q: keyword,
           format: 'json',

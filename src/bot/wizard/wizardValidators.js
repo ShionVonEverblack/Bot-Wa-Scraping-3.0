@@ -32,12 +32,6 @@ function validateType(input) {
   const validTypes = ['images', 'papers', 'datasets', 'forums', 'books', 'general'];
   if (validTypes.includes(trimmed)) return { valid: true, value: trimmed };
   
-  // Also check aliases from normalizeType without defaulting to general
-  const { normalizeType } = require('../../utils/validators');
-  const normalized = normalizeType(trimmed);
-  // normalizeType defaults to 'general' if unknown. We only accept 'general' if the user explicitly typed 'general' or 'umum' (which normalizeType handles).
-  // But wait, if trimmed is "invalid", normalizeType returns "general".
-  // So a better check:
   if (trimmed === 'umum' || trimmed === 'general' || trimmed === 'web' || trimmed === 'website') {
     return { valid: true, value: 'general' };
   }

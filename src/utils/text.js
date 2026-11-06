@@ -65,7 +65,7 @@ function isWizardTrigger(text) {
  * @returns {string} Text without mentions
  */
 function stripMentions(text) {
-  if (!text) return '';
+  if (!text || typeof text !== 'string') return '';
   return text.replace(/@\d+/g, '').replace(/\s+/g, ' ').trim();
 }
 

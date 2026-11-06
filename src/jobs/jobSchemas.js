@@ -17,6 +17,7 @@ const JOB_STATUS = Object.freeze({
 
 const JOB_TYPES = Object.freeze({
   SCRAPE: 'SCRAPE',
+  SCRAPE_GENERAL: 'SCRAPE',
   DOWNLOAD_PAPER: 'DOWNLOAD_PAPER',
   CRAWL: 'CRAWL',
   WORKFLOW: 'WORKFLOW',

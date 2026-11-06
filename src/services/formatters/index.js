@@ -29,7 +29,7 @@ function toJson(items, meta = {}) {
  * @returns {string}
  */
 function toCsv(items) {
-  if (items.length === 0) return '';
+  if (!items || !items.length || typeof items[0] !== 'object' || items[0] === null) return '';
   const headers = Object.keys(items[0]);
   const escape = (val) => {
     const str = String(val == null ? '' : val);
@@ -47,7 +47,7 @@ function toCsv(items) {
  * @returns {string}
  */
 function toTsv(items) {
-  if (items.length === 0) return '';
+  if (!items || !items.length || typeof items[0] !== 'object' || items[0] === null) return '';
   const headers = Object.keys(items[0]);
   const escape = (val) => String(val == null ? '' : val).replace(/\t/g, ' ').replace(/\n/g, ' ');
   const rows = items.map(item => headers.map(h => escape(item[h])).join('\t'));
@@ -61,7 +61,7 @@ function toTsv(items) {
  * @returns {string}
  */
 function toHtml(items, meta = {}) {
-  if (items.length === 0) return '<p>No data</p>';
+  if (!items || !items.length || typeof items[0] !== 'object' || items[0] === null) return '<p>No data</p>';
   const headers = Object.keys(items[0]);
   const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -103,7 +103,7 @@ h1{color:#e94560}
  * @returns {string}
  */
 function toSql(items, tableName = 'scrape_results') {
-  if (items.length === 0) return '';
+  if (!items || !items.length || typeof items[0] !== 'object' || items[0] === null) return '';
   const headers = Object.keys(items[0]);
   const esc = (val) => {
     if (val == null) return 'NULL';
@@ -168,7 +168,7 @@ async function toExcel(items, meta = {}, outputDir) {
 
   const sheet = workbook.addWorksheet('Results');
 
-  if (items.length === 0) {
+  if (!items || items.length === 0 || typeof items[0] !== 'object' || items[0] === null) {
     sheet.addRow(['No data']);
   } else {
     const headers = Object.keys(items[0]);

@@ -5,7 +5,7 @@
  * @module engine/providers/papers/openalex
  */
 
-const { get } = require('../../../utils/httpClient');
+const httpClient = require('../../../utils/httpClient');
 const config = require('../../../config');
 const { createLogger } = require('../../../services/monitor/logger');
 
@@ -50,7 +50,7 @@ module.exports = {
         params.mailto = email;
       }
 
-      const response = await get('https://api.openalex.org/works', {
+      const response = await httpClient.get('https://api.openalex.org/works', {
         params,
         signal,
       });

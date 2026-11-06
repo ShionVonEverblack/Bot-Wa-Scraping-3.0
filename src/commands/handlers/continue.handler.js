@@ -32,20 +32,22 @@ async function handle(msg, args, client) {
       return;
     }
 
-    const chat = await msg.getChat();
-    const contact = await msg.getContact();
+    const chat = typeof msg.getChat === 'function' ? await msg.getChat().catch(() => null) : null;
+    const contact = typeof msg.getContact === 'function' ? await msg.getContact().catch(() => null) : null;
+    const userId = contact?.id?._serialized || msg.author || msg.from;
+    const chatId = chat?.id?._serialized || msg.from || userId;
 
     const newJob = await jobManager.createJob({
       request: {
         type: originalJob.type,
-        keyword: originalJob.request.keyword,
-        scrapeType: originalJob.request.scrapeType,
-        limit: originalJob.request.limit,
-        format: originalJob.request.format,
-        provider: originalJob.result?.providerUsed || originalJob.request.provider,
+        keyword: originalJob.request?.keyword || '',
+        scrapeType: originalJob.request?.scrapeType || 'general',
+        limit: originalJob.request?.limit || 10,
+        format: originalJob.request?.format || 'json',
+        provider: originalJob.result?.providerUsed || originalJob.request?.provider,
         page,
-        chatId: chat.id._serialized,
-        userId: contact.id._serialized,
+        chatId,
+        userId,
       },
       client,
     });

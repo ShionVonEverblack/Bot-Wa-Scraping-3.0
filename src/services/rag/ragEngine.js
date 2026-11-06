@@ -269,22 +269,23 @@ async function retrieveViaRagflowBridge(query, options = {}) {
   if (!baseUrl || !apiKey) return null;
 
   try {
-    const httpClient = require('../../utils/http');
-    const res = await httpClient.fetchJson(`${baseUrl}/api/v1/retrieval`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
+    const httpClient = require('../../utils/httpClient');
+    const res = await httpClient.post(
+      `${baseUrl}/api/v1/retrieval`,
+      {
         question: query,
         dataset_ids: datasetId ? [datasetId] : undefined,
         top_k: options.topK || config.rag?.topK || 5,
-      }),
-      timeout: 12000,
-      retries: 1,
-    });
-    const rawChunks = res?.data?.chunks || res?.chunks;
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        timeout: 12000,
+      }
+    );
+    const rawChunks = res?.data?.data?.chunks || res?.data?.chunks || res?.chunks;
     if (!Array.isArray(rawChunks) || rawChunks.length === 0) return null;
 
     return rawChunks.map((c, idx) => ({

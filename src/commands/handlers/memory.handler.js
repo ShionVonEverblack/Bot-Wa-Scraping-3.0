@@ -20,8 +20,8 @@ const log = createLogger('cmd:memory');
  * @param {string[]} args - Command arguments
  */
 async function handle(msg, args) {
-  const contact = await msg.getContact();
-  const userId = contact.id._serialized;
+  const contact = typeof msg.getContact === 'function' ? await msg.getContact().catch(() => null) : null;
+  const userId = contact?.id?._serialized || msg.author || msg.from;
   const sub = (args[0] || 'list').toLowerCase();
   const rest = args.slice(1).join(' ').trim();
 

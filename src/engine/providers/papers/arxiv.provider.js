@@ -5,7 +5,7 @@
  * @module engine/providers/papers/arxiv
  */
 
-const { get } = require('../../../utils/httpClient');
+const httpClient = require('../../../utils/httpClient');
 const xml2js = require('xml2js');
 const { createLogger } = require('../../../services/monitor/logger');
 
@@ -42,7 +42,7 @@ module.exports = {
       const maxResults = Math.min(limit, 100);
       const start = (page - 1) * maxResults;
 
-      const response = await get('http://export.arxiv.org/api/query', {
+      const response = await httpClient.get('http://export.arxiv.org/api/query', {
         params: {
           search_query: `all:${keyword}`,
           start,

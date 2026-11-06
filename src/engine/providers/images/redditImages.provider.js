@@ -5,7 +5,7 @@
  * @module engine/providers/images/redditImages
  */
 
-const { get } = require('../../../utils/httpClient');
+const httpClient = require('../../../utils/httpClient');
 const { createLogger } = require('../../../services/monitor/logger');
 
 const log = createLogger('provider:redditImages');
@@ -33,7 +33,7 @@ module.exports = {
       // Also we can filter by type=link to avoid fetching subreddits.
       const query = `${keyword} (url:.jpg OR url:.png OR url:.jpeg)`;
 
-      const response = await get('https://www.reddit.com/search.json', {
+      const response = await httpClient.get('https://www.reddit.com/search.json', {
         params: {
           q: query,
           limit: Math.min(limit * 2, 100), // Fetch more because some might not be images despite the search

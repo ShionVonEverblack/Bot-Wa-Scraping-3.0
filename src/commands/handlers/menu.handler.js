@@ -82,4 +82,6 @@ module.exports = {
   handle,
   getTextMenu,
   MENU_OPTIONS,
+  command: 'menu',
+  description: 'Interactive main menu with native poll buttons',
 };

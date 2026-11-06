@@ -5,7 +5,7 @@
  * @module engine/providers/images/wikimedia
  */
 
-const { get } = require('../../../utils/httpClient');
+const httpClient = require('../../../utils/httpClient');
 const { createLogger } = require('../../../services/monitor/logger');
 
 const log = createLogger('provider:wikimedia');
@@ -45,7 +45,7 @@ module.exports = {
         params.gsroffset = cursor;
       }
 
-      const response = await get('https://commons.wikimedia.org/w/api.php', {
+      const response = await httpClient.get('https://commons.wikimedia.org/w/api.php', {
         params,
         signal,
       });

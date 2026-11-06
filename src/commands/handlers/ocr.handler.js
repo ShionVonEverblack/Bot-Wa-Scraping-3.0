@@ -50,6 +50,18 @@ async function handle(msg) {
       prompt,
     });
 
+    try {
+      const contextMemory = require('../../bot/nlp/contextMemory');
+      const contact = typeof msg.getContact === 'function' ? await msg.getContact().catch(() => null) : null;
+      const userId = contact?.id?._serialized || msg.author || msg.from;
+      if (userId && extractedText) {
+        contextMemory.store(userId, {
+          lastDocumentTitle: 'Hasil OCR Gambar',
+          lastDocumentText: extractedText.slice(0, 4000),
+        });
+      }
+    } catch { /* ignore context store error */ }
+
     const formattedText = extractedText.trim().split('\n').map(line => `> ${line}`).join('\n');
     await msg.reply(`📄 *Hasil Ekstraksi OCR:*\n━━━━━━━━━━━━━━━━━━━━━━\n\n${formattedText}`);
   } catch (err) {

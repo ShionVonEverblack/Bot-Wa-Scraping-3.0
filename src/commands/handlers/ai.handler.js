@@ -50,6 +50,9 @@ async function handle(msg, args) {
         contextBlocks.push(memPrompt);
       }
       const ctx = contextMemory.get(userId);
+      if (ctx?.lastDocumentText) {
+        contextBlocks.push(`### Dokumen Aktif (${ctx.lastDocumentTitle || 'Dokumen'}):\n${ctx.lastDocumentText.slice(0, 4000)}`);
+      }
       const history = ctx?.messages || [];
       if (history.length > 0) {
         const compressed = compressMessages(history, 800);

@@ -29,7 +29,7 @@ function dispatchJob(job, client) {
       }
       return await processScrapeJob(job, client, signal);
     } catch (err) {
-      if (err.code === 'JOB_CANCELLED' || (signal && signal.aborted)) {
+      if (err.code === 'JOB_CANCELLED' || (signal && signal.aborted && err.code !== 'JOB_TIMEOUT')) {
         await jobStore.updateJob(job.jobId, {
           status: JOB_STATUS.CANCELLED,
           completedAt: new Date().toISOString(),
@@ -53,6 +53,29 @@ function dispatchJob(job, client) {
           );
         } catch { /* ignore */ }
       }
+    }
+  }).catch(async (queueErr) => {
+    if (queueErr && (queueErr.code === 'JOB_TIMEOUT' || queueErr.name === 'JOB_TIMEOUT')) {
+      log.warn(`Job ${job.jobId} timed out in queue`, { error: queueErr.message });
+      await jobStore.updateJob(job.jobId, {
+        status: JOB_STATUS.FAILED,
+        completedAt: new Date().toISOString(),
+        error: queueErr.message || 'Job timed out',
+      });
+      if (client && job.request?.chatId && typeof client.sendMessage === 'function') {
+        try {
+          await client.sendMessage(
+            job.request.chatId,
+            `⏱️ Job \`${job.jobId}\` gagal: Batas waktu pemrosesan habis (timeout).`
+          );
+        } catch { /* ignore */ }
+      }
+    } else if (queueErr && (queueErr.code === 'JOB_CANCELLED' || queueErr.name === 'JOB_CANCELLED')) {
+      await jobStore.updateJob(job.jobId, {
+        status: JOB_STATUS.CANCELLED,
+        completedAt: new Date().toISOString(),
+        error: 'Cancelled',
+      });
     }
   });
 }

@@ -18,8 +18,8 @@ const log = createLogger('cmd:history');
  */
 async function handle(msg) {
   try {
-    const contact = await msg.getContact();
-    const userId = contact.id._serialized;
+    const contact = typeof msg.getContact === 'function' ? await msg.getContact().catch(() => null) : null;
+    const userId = contact?.id?._serialized || msg.author || msg.from;
     const jobStore = require('../../jobs/jobStore');
 
     const jobs = await jobStore.listJobs({ userId, limit: 10 });

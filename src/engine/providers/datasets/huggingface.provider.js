@@ -5,7 +5,7 @@
  * @module engine/providers/datasets/huggingface
  */
 
-const { get } = require('../../../utils/httpClient');
+const httpClient = require('../../../utils/httpClient');
 const { createLogger } = require('../../../services/monitor/logger');
 
 const log = createLogger('provider:huggingface');
@@ -40,7 +40,7 @@ module.exports = {
         params.offset = parseInt(cursor, 10) || 0;
       }
 
-      const response = await get('https://huggingface.co/api/datasets', {
+      const response = await httpClient.get('https://huggingface.co/api/datasets', {
         params,
         signal,
       });

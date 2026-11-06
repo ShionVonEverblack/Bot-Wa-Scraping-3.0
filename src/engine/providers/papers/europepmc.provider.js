@@ -6,7 +6,7 @@
  * @module engine/providers/papers/europepmc
  */
 
-const { get } = require('../../../utils/httpClient');
+const httpClient = require('../../../utils/httpClient');
 const { createLogger } = require('../../../services/monitor/logger');
 
 const log = createLogger('provider:europepmc');
@@ -33,7 +33,7 @@ module.exports = {
       const perPage = Math.min(limit, 100);
       const cursorMark = cursor || '*';
 
-      const response = await get('https://www.ebi.ac.uk/europepmc/webservices/rest/search', {
+      const response = await httpClient.get('https://www.ebi.ac.uk/europepmc/webservices/rest/search', {
         params: {
           query: keyword,
           format: 'json',

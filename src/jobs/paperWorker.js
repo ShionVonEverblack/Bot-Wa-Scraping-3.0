@@ -312,6 +312,9 @@ async function processPaperJob(job, client, signal) {
   });
 
   const buffer = Buffer.from(response.data);
+  if (buffer.length < 4 || buffer.slice(0, 4).toString('utf-8') !== '%PDF') {
+    throw new Error('Downloaded file is not a valid PDF document (missing %PDF signature)');
+  }
   await writeFile(pdfPath, buffer);
 
   // Extract PDF text & structure for RAG / follow-up Q&A in contextMemory
@@ -328,10 +331,14 @@ async function processPaperJob(job, client, signal) {
     } catch { /* ignore PDF parse errors */ }
   }
 
-  if (extractedText && request.userId) {
+  if (request.userId) {
+    const docTitle = resolved.metadata?.title || rawId;
+    const docText = extractedText
+      ? extractedText.slice(0, 15000)
+      : (resolved.metadata?.abstract || resolved.metadata?.description || `Paper: ${docTitle}`);
     contextMemory.store(request.userId, {
-      lastDocumentTitle: resolved.metadata?.title || rawId,
-      lastDocumentText: extractedText.slice(0, 15000),
+      lastDocumentTitle: docTitle,
+      lastDocumentText: docText,
     });
   }
 

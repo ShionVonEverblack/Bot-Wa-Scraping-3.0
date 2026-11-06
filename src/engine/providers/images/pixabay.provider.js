@@ -5,7 +5,7 @@
  * @module engine/providers/images/pixabay
  */
 
-const { get } = require('../../../utils/httpClient');
+const httpClient = require('../../../utils/httpClient');
 const config = require('../../../config');
 const { createLogger } = require('../../../services/monitor/logger');
 
@@ -37,7 +37,7 @@ module.exports = {
 
     try {
       const perPage = Math.min(limit, 200);
-      const response = await get('https://pixabay.com/api/', {
+      const response = await httpClient.get('https://pixabay.com/api/', {
         params: {
           key: apiKey,
           q: keyword,

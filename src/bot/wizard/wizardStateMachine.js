@@ -24,6 +24,11 @@ const TIMEOUT_MS = 2 * 60 * 1000; // 2 minutes
  * @returns {string} First prompt
  */
 function start(userId) {
+  const existing = sessions.get(userId);
+  if (existing && existing.timeout) {
+    clearTimeout(existing.timeout);
+  }
+
   sessions.set(userId, {
     step: 0,
     data: { keyword: '', type: 'general', limit: 10, format: 'json' },

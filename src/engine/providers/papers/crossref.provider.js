@@ -5,7 +5,7 @@
  * @module engine/providers/papers/crossref
  */
 
-const { get } = require('../../../utils/httpClient');
+const httpClient = require('../../../utils/httpClient');
 const config = require('../../../config');
 const { createLogger } = require('../../../services/monitor/logger');
 
@@ -50,7 +50,7 @@ module.exports = {
         params.offset = (page - 1) * rows;
       }
 
-      const response = await get('https://api.crossref.org/works', {
+      const response = await httpClient.get('https://api.crossref.org/works', {
         params,
         signal,
         timeout: 30000,

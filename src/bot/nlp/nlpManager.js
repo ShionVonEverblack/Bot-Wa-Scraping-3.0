@@ -110,12 +110,20 @@ async function trainModel() {
   log.info('Training NLP model...');
   
   if (fs.existsSync(MODEL_PATH)) {
-    manager.load(MODEL_PATH);
-    log.info('Loaded existing NLP model from disk.');
+    try {
+      manager.load(MODEL_PATH);
+      log.info('Loaded existing NLP model from disk.');
+    } catch (loadErr) {
+      log.warn('Failed to load NLP model, retraining corpus', { error: loadErr.message });
+      addCorpus();
+      await manager.train();
+      try { manager.save(MODEL_PATH); } catch { /* ignore save error */ }
+      log.info('NLP model retrained and saved to disk.');
+    }
   } else {
     addCorpus();
     await manager.train();
-    manager.save(MODEL_PATH);
+    try { manager.save(MODEL_PATH); } catch { /* ignore save error */ }
     log.info('NLP model trained and saved to disk.');
   }
 

@@ -45,8 +45,16 @@ function checkRateLimit(userId) {
  * @returns {{ allowed: boolean, reason: string }}
  */
 function checkAccess(userId) {
-  const phone = extractPhone(userId);
-  const { allowList, denyList, adminPhones } = config.group;
+  if (!userId || typeof userId !== 'string') {
+    return { allowed: false, reason: 'invalid_user' };
+  }
+
+  const phone = normalizePhone(extractPhone(userId));
+  if (!phone) {
+    return { allowed: false, reason: 'invalid_phone' };
+  }
+
+  const { allowList = [], denyList = [] } = config.group || {};
 
   // Admins always allowed
   if (isAdmin(userId)) {
@@ -56,7 +64,8 @@ function checkAccess(userId) {
   // Denylist
   if (denyList.length > 0) {
     for (const denied of denyList) {
-      if (phone.includes(normalizePhone(denied))) {
+      const deniedPhone = normalizePhone(denied);
+      if (deniedPhone && phone === deniedPhone) {
         return { allowed: false, reason: 'denylist' };
       }
     }
@@ -64,7 +73,10 @@ function checkAccess(userId) {
 
   // Allowlist
   if (allowList.length > 0) {
-    const found = allowList.some(a => phone.includes(normalizePhone(a)));
+    const found = allowList.some(a => {
+      const allowedPhone = normalizePhone(a);
+      return Boolean(allowedPhone && phone === allowedPhone);
+    });
     if (!found) {
       return { allowed: false, reason: 'not_in_allowlist' };
     }

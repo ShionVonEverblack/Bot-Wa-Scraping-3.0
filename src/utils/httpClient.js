@@ -72,17 +72,21 @@ const client = createClient();
  * @returns {Promise<import('axios').AxiosResponse>}
  */
 async function get(url, options = {}) {
-  const maxRetries = options.maxRetries || 3;
-  delete options.maxRetries;
+  const { maxRetries = 3, ...requestOptions } = options;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       if (options.signal && options.signal.aborted) {
         throw new Error('Request cancelled');
       }
-      const response = await client.get(url, options);
+      const response = await client.get(url, requestOptions);
       return response;
     } catch (err) {
+      const isAborted = axios.isCancel(err) || options.signal?.aborted || err.name === 'CanceledError' || err.name === 'AbortError' || err.message === 'Request cancelled';
+      if (isAborted) {
+        throw err;
+      }
+
       const status = err.response?.status;
       const isRetryable = !status || status === 429 || status >= 500;
 
@@ -110,17 +114,21 @@ async function get(url, options = {}) {
  * @returns {Promise<import('axios').AxiosResponse>}
  */
 async function post(url, data, options = {}) {
-  const maxRetries = options.maxRetries || 3;
-  delete options.maxRetries;
+  const { maxRetries = 3, ...requestOptions } = options;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       if (options.signal && options.signal.aborted) {
         throw new Error('Request cancelled');
       }
-      const response = await client.post(url, data, options);
+      const response = await client.post(url, data, requestOptions);
       return response;
     } catch (err) {
+      const isAborted = axios.isCancel(err) || options.signal?.aborted || err.name === 'CanceledError' || err.name === 'AbortError' || err.message === 'Request cancelled';
+      if (isAborted) {
+        throw err;
+      }
+
       const status = err.response?.status;
       const isRetryable = !status || status === 429 || status >= 500;
 

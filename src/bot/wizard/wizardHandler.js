@@ -40,7 +40,7 @@ async function handleWizardInput(msg, client, userId, text) {
     // Execute the wizard result as a scrape job
     try {
       const jobManager = require('../../jobs/jobManager');
-      const chat = await msg.getChat();
+      const chat = typeof msg.getChat === 'function' ? await msg.getChat().catch(() => null) : null;
 
       const job = await jobManager.createJob({
         request: {
@@ -49,7 +49,7 @@ async function handleWizardInput(msg, client, userId, text) {
           scrapeType: result.data.type,
           limit: result.data.limit,
           format: result.data.format,
-          chatId: chat.id._serialized,
+          chatId: chat?.id?._serialized || msg.from || userId,
           userId,
         },
         client,

@@ -5,7 +5,7 @@
  * @module engine/providers/general/wikipedia
  */
 
-const { get } = require('../../../utils/httpClient');
+const httpClient = require('../../../utils/httpClient');
 const config = require('../../../config');
 const { createLogger } = require('../../../services/monitor/logger');
 
@@ -33,7 +33,7 @@ module.exports = {
       const srlimit = Math.min(limit, 50);
       const sroffset = cursor ? parseInt(cursor, 10) : 0;
 
-      const response = await get(`https://${lang}.wikipedia.org/w/api.php`, {
+      const response = await httpClient.get(`https://${lang}.wikipedia.org/w/api.php`, {
         params: {
           action: 'query',
           list: 'search',

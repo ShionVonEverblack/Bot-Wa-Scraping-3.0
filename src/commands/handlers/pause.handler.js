@@ -22,6 +22,22 @@ const log = createLogger('cmd:pause');
  */
 const chatStates = new Map();
 
+/** Maximum chat states to prevent unbounded memory growth. */
+const MAX_CHAT_STATES = 1000;
+
+/**
+ * Save chat state with maximum entries cap and oldest eviction.
+ * @param {string} chatId
+ * @param {{ mode: string, pausedUntil: number|null, updatedAt: number }} state
+ */
+function saveChatState(chatId, state) {
+  if (!chatStates.has(chatId) && chatStates.size >= MAX_CHAT_STATES) {
+    const oldestKey = chatStates.keys().next().value;
+    chatStates.delete(oldestKey);
+  }
+  chatStates.set(chatId, state);
+}
+
 /**
  * Resolve chatId from a WhatsApp message object.
  * @param {Object} msg
@@ -91,7 +107,7 @@ function isCommandOnlyMode(chatId) {
 function setChatPause(chatId, durationMs = null) {
   if (!chatId) return;
   const pausedUntil = durationMs && durationMs > 0 ? Date.now() + durationMs : Infinity;
-  chatStates.set(chatId, {
+  saveChatState(chatId, {
     mode: 'paused',
     pausedUntil,
     updatedAt: Date.now(),
@@ -111,7 +127,7 @@ function setChatMode(chatId, mode) {
     log.info(`Chat ${chatId} set to auto mode`);
     return;
   }
-  chatStates.set(chatId, {
+  saveChatState(chatId, {
     mode,
     pausedUntil: mode === 'paused' ? Infinity : null,
     updatedAt: Date.now(),

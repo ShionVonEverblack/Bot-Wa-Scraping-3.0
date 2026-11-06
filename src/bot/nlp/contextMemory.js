@@ -19,6 +19,9 @@ const CLEANUP_INTERVAL_MS = 5 * 60 * 1000;
 /** Max messages kept in history per user. */
 const MAX_HISTORY = 20;
 
+/** Maximum entries in store to prevent unbounded memory growth. */
+const MAX_ENTRIES = 1000;
+
 /**
  * @typedef {Object} UserContext
  * @property {string} userId
@@ -94,6 +97,10 @@ function storeContext(userId, update) {
 
   let ctx = store.get(userId);
   if (!ctx) {
+    if (store.size >= MAX_ENTRIES) {
+      const oldestKey = store.keys().next().value;
+      store.delete(oldestKey);
+    }
     ctx = {
       userId,
       lastKeyword: null,

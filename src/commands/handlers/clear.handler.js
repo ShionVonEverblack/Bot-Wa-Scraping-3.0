@@ -57,22 +57,30 @@ async function handle(msg, args, client) {
       const msgTimeMs = message.timestamp * 1000;
       
       // Check if message is from the bot, within the timeframe, and is not the loading message itself
-      if (message.fromMe && msgTimeMs >= cutoffTime && message.id._serialized !== loadingMsg.id._serialized) {
+      if (message.fromMe && msgTimeMs >= cutoffTime && (!loadingMsg?.id?._serialized || message.id?._serialized !== loadingMsg.id._serialized)) {
         try {
           await message.delete(true); // true = delete for everyone
           deletedCount++;
         } catch (delErr) {
-          log.warn(`Failed to delete message ${message.id._serialized}`, { error: delErr.message });
+          log.warn(`Failed to delete message ${message.id?._serialized}`, { error: delErr.message });
         }
       }
     }
 
-    await loadingMsg.edit(`✅ Selesai! Berhasil menghapus ${deletedCount} pesan bot dalam rentang ${timeInput} terakhir.`);
-    log.info(`Deleted ${deletedCount} messages in chat ${chat.id._serialized} for timeframe ${timeInput}`);
+    if (loadingMsg && typeof loadingMsg.edit === 'function') {
+      await loadingMsg.edit(`✅ Selesai! Berhasil menghapus ${deletedCount} pesan bot dalam rentang ${timeInput} terakhir.`).catch(() => msg.reply(`✅ Selesai! Berhasil menghapus ${deletedCount} pesan bot dalam rentang ${timeInput} terakhir.`));
+    } else {
+      await msg.reply(`✅ Selesai! Berhasil menghapus ${deletedCount} pesan bot dalam rentang ${timeInput} terakhir.`);
+    }
+    log.info(`Deleted ${deletedCount} messages in chat ${chat?.id?._serialized || 'unknown'} for timeframe ${timeInput}`);
 
   } catch (err) {
     log.error('Clear messages error', { error: err.message });
-    await loadingMsg.edit('❌ Terjadi kesalahan saat mencoba menghapus pesan.');
+    if (loadingMsg && typeof loadingMsg.edit === 'function') {
+      await loadingMsg.edit('❌ Terjadi kesalahan saat mencoba menghapus pesan.').catch(() => msg.reply('❌ Terjadi kesalahan saat mencoba menghapus pesan.'));
+    } else {
+      await msg.reply('❌ Terjadi kesalahan saat mencoba menghapus pesan.');
+    }
   }
 }
 

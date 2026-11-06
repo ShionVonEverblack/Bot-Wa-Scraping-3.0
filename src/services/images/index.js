@@ -7,7 +7,7 @@
 
 const sharp = require('sharp');
 const path = require('path');
-const { get } = require('../../utils/httpClient');
+const httpClient = require('../../utils/httpClient');
 const config = require('../../config');
 const { ensureDir, writeFile } = require('../../utils/fsUtil');
 const { createLogger } = require('../monitor/logger');
@@ -22,7 +22,7 @@ const log = createLogger('images');
  * @returns {Promise<Buffer>} Image buffer
  */
 async function downloadImage(url, options = {}) {
-  const response = await get(url, {
+  const response = await httpClient.get(url, {
     responseType: 'arraybuffer',
     timeout: options.timeout || 30000,
   });

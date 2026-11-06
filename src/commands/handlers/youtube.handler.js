@@ -47,6 +47,20 @@ async function handle(msg, args) {
       log.info('Transcript truncated due to length limits');
     }
 
+    // Synchronize multi-turn context memory
+    try {
+      const contextMemory = require('../../bot/nlp/contextMemory');
+      const contact = typeof msg.getContact === 'function' ? await msg.getContact().catch(() => null) : null;
+      const userId = contact?.id?._serialized || msg.author || msg.from;
+      if (userId && fullText) {
+        contextMemory.store(userId, {
+          lastUrl: url,
+          lastDocumentTitle: 'Transkrip YouTube: ' + url,
+          lastDocumentText: fullText.slice(0, 4000),
+        });
+      }
+    } catch { /* ignore context store error */ }
+
     await msg.reply(`✅ Transkrip ditarik (${fullText.length} karakter). Memproses analisis AI...`);
 
     // AI Prompt Engineering for Video Summarization

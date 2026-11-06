@@ -126,14 +126,10 @@ async function executeViaDifyBridge(workflow, input = {}) {
   if (!apiKey) return null;
 
   try {
-    const httpClient = require('../../utils/http');
-    const res = await httpClient.fetchJson(`${baseUrl}/workflows/run`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
+    const httpClient = require('../../utils/httpClient');
+    const res = await httpClient.post(
+      `${baseUrl}/workflows/run`,
+      {
         inputs: {
           workflow_id: workflow.id,
           query: input.query || input.keyword || '',
@@ -141,11 +137,16 @@ async function executeViaDifyBridge(workflow, input = {}) {
         },
         response_mode: 'blocking',
         user: input.userId || 'bot-wa-user',
-      }),
-      timeout: 25000,
-      retries: 1,
-    });
-    const outputs = res?.data?.outputs || res?.outputs;
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        timeout: 25000,
+      }
+    );
+    const outputs = res?.data?.data?.outputs || res?.data?.outputs || res?.outputs;
     if (outputs) {
       return {
         workflowId: workflow.id,

@@ -57,7 +57,7 @@ async function tryProviderWithRetry(prov, scrapeParams, maxRetries = MAX_RETRIES
     try {
       const result = await prov.scrape(scrapeParams);
 
-      if (result.items && result.items.length > 0) {
+      if (result && Array.isArray(result.items) && result.items.length > 0) {
         if (attempt > 1) log.info(`Provider ${prov.id} succeeded on retry #${attempt}`);
         circuitBreaker.recordSuccess(prov.id);
         return result;

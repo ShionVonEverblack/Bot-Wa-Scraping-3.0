@@ -69,6 +69,19 @@ async function handle(msg, args) {
         { title: parsedPdf.title || mediaAttachment.filename }
       );
 
+      try {
+        const contextMemory = require('../../bot/nlp/contextMemory');
+        const contact = typeof msg.getContact === 'function' ? await msg.getContact().catch(() => null) : null;
+        const userId = contact?.id?._serialized || msg.author || msg.from;
+        if (userId) {
+          const docText = (parsedPdf.markdown || parsedPdf.text || '').slice(0, 4000);
+          contextMemory.store(userId, {
+            lastDocumentTitle: parsedPdf.title || mediaAttachment.filename,
+            lastDocumentText: docText,
+          });
+        }
+      } catch { /* ignore */ }
+
       const followUpQuestion =
         sub === 'ingest' || sub === 'add' || sub === 'index'
           ? rest
@@ -144,6 +157,20 @@ async function handle(msg, args) {
         const indexed = ragEngine.indexDocument(`url_${Date.now()}`, doc.fitMarkdown || doc.markdown, {
           title: doc.title || target,
         });
+
+        try {
+          const contextMemory = require('../../bot/nlp/contextMemory');
+          const contact = typeof msg.getContact === 'function' ? await msg.getContact().catch(() => null) : null;
+          const userId = contact?.id?._serialized || msg.author || msg.from;
+          if (userId) {
+            contextMemory.store(userId, {
+              lastUrl: target,
+              lastDocumentTitle: doc.title || target,
+              lastDocumentText: (doc.fitMarkdown || doc.markdown || '').slice(0, 4000),
+            });
+          }
+        } catch { /* ignore */ }
+
         await msg.reply(
           `✅ Berhasil mengindeks *${indexed.title}* ke RAG!\n🆔 Doc ID: \`${indexed.docId}\` (*${indexed.chunkCount} chunks*)`
         );
@@ -163,6 +190,19 @@ async function handle(msg, args) {
         const indexed = ragEngine.indexDocument(`job_${target}`, combined, {
           title: `Job ${target}: ${job.request?.keyword || 'Results'}`,
         });
+
+        try {
+          const contextMemory = require('../../bot/nlp/contextMemory');
+          const contact = typeof msg.getContact === 'function' ? await msg.getContact().catch(() => null) : null;
+          const userId = contact?.id?._serialized || msg.author || msg.from;
+          if (userId) {
+            contextMemory.store(userId, {
+              lastDocumentTitle: `Job ${target}: ${job.request?.keyword || 'Results'}`,
+              lastDocumentText: combined.slice(0, 4000),
+            });
+          }
+        } catch { /* ignore */ }
+
         await msg.reply(
           `✅ Berhasil mengindeks hasil Job \`${target}\` ke RAG (*${indexed.chunkCount} chunks*)!`
         );
@@ -173,6 +213,19 @@ async function handle(msg, args) {
       const indexed = ragEngine.indexDocument(`txt_${Date.now()}`, target, {
         title: truncate(target, 40),
       });
+
+      try {
+        const contextMemory = require('../../bot/nlp/contextMemory');
+        const contact = typeof msg.getContact === 'function' ? await msg.getContact().catch(() => null) : null;
+        const userId = contact?.id?._serialized || msg.author || msg.from;
+        if (userId) {
+          contextMemory.store(userId, {
+            lastDocumentTitle: truncate(target, 40),
+            lastDocumentText: target.slice(0, 4000),
+          });
+        }
+      } catch { /* ignore */ }
+
       await msg.reply(`✅ Teks diindeks ke RAG (\`${indexed.docId}\`, *${indexed.chunkCount} chunks*).`);
       return;
     }

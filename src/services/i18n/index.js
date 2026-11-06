@@ -19,17 +19,23 @@ const log = createLogger('i18n');
  * @returns {string}
  */
 function t(key, lang = 'id', vars = {}) {
-  const strings = locales[lang] || locales['id'];
+  const strings = locales[lang] || locales['id'] || {};
   let text = strings[key];
 
   if (!text) {
     log.warn(`Missing translation: ${lang}.${key}`);
-    text = locales['id'][key] || key;
+    text = locales['id']?.[key] || key || '';
+  }
+
+  if (typeof text !== 'string') {
+    return String(text || '');
   }
 
   // Substitute variables: {varName}
-  for (const [name, value] of Object.entries(vars)) {
-    text = text.replace(new RegExp(`\\{${name}\\}`, 'g'), String(value));
+  if (vars && typeof vars === 'object') {
+    for (const [name, value] of Object.entries(vars)) {
+      text = text.replaceAll(`{${name}}`, String(value == null ? '' : value));
+    }
   }
 
   return text;

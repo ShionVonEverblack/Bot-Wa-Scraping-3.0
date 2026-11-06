@@ -11,9 +11,10 @@ const log = createLogger('cmd:watches');
 
 async function handle(msg) {
   try {
-    const contact = await msg.getContact();
+    const contact = typeof msg.getContact === 'function' ? await msg.getContact().catch(() => null) : null;
+    const userId = contact?.id?._serialized || msg.author || msg.from;
     const watchService = require('../../services/watch');
-    const watches = await watchService.listWatches(contact.id._serialized);
+    const watches = await watchService.listWatches(userId);
 
     if (watches.length === 0) {
       await msg.reply('⏰ Belum ada watch aktif.\nBuat dengan: `!watch <keyword> --every daily`');

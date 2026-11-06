@@ -46,9 +46,14 @@ function extractPhone(serializedId) {
  * @returns {boolean}
  */
 function isAdmin(userId) {
-  const phone = extractPhone(userId);
+  if (!userId || typeof userId !== 'string') return false;
+  const phone = normalizePhone(extractPhone(userId));
+  if (!phone) return false;
   const adminPhones = config.group.adminPhones || [];
-  return adminPhones.some(admin => phone.includes(normalizePhone(admin)));
+  return adminPhones.some(admin => {
+    const adminPhone = normalizePhone(admin);
+    return Boolean(adminPhone && phone === adminPhone);
+  });
 }
 
 /**

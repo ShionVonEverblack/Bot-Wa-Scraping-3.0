@@ -38,8 +38,8 @@ async function handle(msg, args, client) {
   const selector = selectorMatch[1].replace(/^["']|["']$/g, '').trim();
 
   try {
-    const chat = await msg.getChat();
-    if (chat.sendStateTyping) await chat.sendStateTyping();
+    const chat = typeof msg.getChat === 'function' ? await msg.getChat().catch(() => null) : null;
+    if (chat && typeof chat.sendStateTyping === 'function') await chat.sendStateTyping().catch(() => {});
     
     await msg.reply(`🔍 Sedang menyusuri halaman dan mencari selector \`${selector}\`...`);
     
@@ -62,4 +62,4 @@ async function handle(msg, args, client) {
   }
 }
 
-module.exports = { handle };
+module.exports = { handle, command: 'customscrape', description: 'Custom selector-based scraping' };

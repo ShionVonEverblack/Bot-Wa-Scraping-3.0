@@ -10,8 +10,8 @@
 const userLangs = new Map();
 
 async function handle(msg, args) {
-  const contact = await msg.getContact();
-  const userId = contact.id._serialized;
+  const contact = typeof msg.getContact === 'function' ? await msg.getContact().catch(() => null) : null;
+  const userId = contact?.id?._serialized || msg.author || msg.from;
   const lang = (args[0] || '').toLowerCase();
 
   if (!lang) {

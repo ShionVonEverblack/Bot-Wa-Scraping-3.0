@@ -20,12 +20,13 @@ const log = createLogger('cmd:admin');
  * @param {Object} client - WhatsApp client
  */
 async function handle(msg, args, client) {
-  const contact = await msg.getContact();
-  const userId = contact.id._serialized;
+  const contact = typeof msg.getContact === 'function' ? await msg.getContact().catch(() => null) : null;
+  const userId = contact?.id?._serialized || msg.author || msg.from || '';
   
   // 1. Authorization Check
-  if (!config.group.adminPhones || !config.group.adminPhones.some(phone => userId.includes(phone))) {
-    log.warn(`Unauthorized admin attempt by ${userId}`);
+  const { isAdmin } = require('../../services/identity');
+  if (!userId || !isAdmin(userId)) {
+    log.warn(`Unauthorized admin attempt by ${userId || 'unknown'}`);
     await msg.reply('⛔ Akses ditolak. Command ini khusus untuk Administrator (terdaftar di .env).');
     return;
   }
@@ -112,4 +113,4 @@ async function handle(msg, args, client) {
   }
 }
 
-module.exports = { handle };
+module.exports = { handle, command: 'admin', description: 'Privileged admin management' };

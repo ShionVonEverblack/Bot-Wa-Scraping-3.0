@@ -37,6 +37,21 @@ async function handle(msg, args, client) {
   try {
     const result = await deepScrape(url, { extract, waitFor: parsed.waitFor });
 
+    try {
+      const contextMemory = require('../../bot/nlp/contextMemory');
+      const contact = typeof msg.getContact === 'function' ? await msg.getContact().catch(() => null) : null;
+      const userId = contact?.id?._serialized || msg.author || msg.from;
+      if (userId && result) {
+        const paragraphs = Array.isArray(result.paragraphs) ? result.paragraphs.join('\n\n') : '';
+        const docText = paragraphs || result.text || result.description || '';
+        contextMemory.store(userId, {
+          lastUrl: url,
+          lastDocumentTitle: result.title || url,
+          lastDocumentText: docText.slice(0, 4000),
+        });
+      }
+    } catch { /* ignore context store error */ }
+
     // Build response text
     let response = `📊 *Deep Scrape Result*\n`;
     response += `🔗 ${result.url}\n`;

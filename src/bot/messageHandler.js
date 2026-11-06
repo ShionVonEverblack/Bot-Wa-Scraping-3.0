@@ -107,7 +107,7 @@ const cooldowns = new Map();
 const pendingInteractiveActions = new Map();
 
 const KNOWN_COMMANDS = [
-  'scrape', 'crawl', 'paper', 'rag', 'graph', 'memory', 'workflow', 'skills',
+  'scrape', 'customscrape', 'continue', 'crawl', 'paper', 'rag', 'graph', 'memory', 'workflow', 'skills',
   'deepscrape', 'template', 'analyze', 'ocr', 'youtube', 'help', 'menu',
   'clear', 'status', 'cancel', 'history', 'health', 'ai', 'settings',
   'lang', 'watch', 'unwatch', 'watches', 'wizard', 'next', 'send',
@@ -798,22 +798,22 @@ async function handleMessage(msg, client) {
       return;
     }
 
-    const contact = await msg.getContact();
-    const userId = contact.id._serialized;
-    const chat = await msg.getChat();
-    const isGroup = chat.isGroup;
+    const contact = typeof msg.getContact === 'function' ? await msg.getContact().catch(() => null) : null;
+    const userId = contact?.id?._serialized || msg.author || msg.from;
+    const chat = typeof msg.getChat === 'function' ? await msg.getChat().catch(() => null) : null;
+    const isGroup = Boolean(chat?.isGroup);
     const chatId = chat?.id?._serialized || msg.from || userId;
 
-    log.info(`📩 ${isGroup ? `[${chat.name}]` : '[DM]'} ${contact.pushname || userId}: ${truncate(body, 80)}`);
+    log.info(`📩 ${isGroup ? `[${chat?.name || 'Group'}]` : '[DM]'} ${contact?.pushname || userId}: ${truncate(body, 80)}`);
     stats.recordMessage({ isGroup });
 
     // 2. Access control
-    const { allowList, denyList } = config.group;
-    if (denyList.length > 0 && denyList.some(p => userId.includes(p))) {
+    const { allowList = [], denyList = [] } = config.group || {};
+    if (userId && denyList.length > 0 && denyList.some(p => userId.includes(p))) {
       log.debug(`Denied: ${userId}`);
       return;
     }
-    if (allowList.length > 0 && !allowList.some(p => userId.includes(p))) {
+    if (userId && allowList.length > 0 && !allowList.some(p => userId.includes(p))) {
       log.debug(`Not in allowlist: ${userId}`);
       return;
     }
@@ -821,6 +821,11 @@ async function handleMessage(msg, client) {
     // 2b. Check Pause & Command-Only Mode (Anti-Nimbrung Guard)
     const preCleanText = sanitizeInput(stripMentions(body));
     const isCmd = startsWithCommand(preCleanText);
+
+    if (isGroup && config.group && config.group.allowCommands === false && isCmd) {
+      log.debug(`Commands are disabled in groups: ${chatId}`);
+      return;
+    }
 
     if (isChatPaused(chatId)) {
       if (!isCmd) {
@@ -843,7 +848,7 @@ async function handleMessage(msg, client) {
     }
 
     // 3. Mention guard (group only)
-    if (isGroup && config.group.requireMention) {
+    if (isGroup && config.group && config.group.requireMention) {
       const mentioned = await isBotMentioned(msg);
       if (!mentioned && !isCmd) return;
     }

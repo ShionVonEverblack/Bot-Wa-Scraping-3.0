@@ -30,16 +30,18 @@ async function handle(msg, args, client) {
   }
 
   try {
-    const chat = await msg.getChat();
-    const contact = await msg.getContact();
+    const chat = typeof msg.getChat === 'function' ? await msg.getChat().catch(() => null) : null;
+    const contact = typeof msg.getContact === 'function' ? await msg.getContact().catch(() => null) : null;
+    const userId = contact?.id?._serialized || msg.author || msg.from;
+    const chatId = chat?.id?._serialized || msg.from || userId;
     const jobManager = require('../../jobs/jobManager');
 
     const job = await jobManager.createJob({
       request: {
         type: 'DOWNLOAD_PAPER',
         identifier,
-        chatId: chat.id._serialized,
-        userId: contact.id._serialized,
+        chatId,
+        userId,
       },
       client,
     });

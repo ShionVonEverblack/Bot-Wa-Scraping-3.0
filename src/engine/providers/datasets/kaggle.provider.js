@@ -5,7 +5,7 @@
  * @module engine/providers/datasets/kaggle
  */
 
-const { get } = require('../../../utils/httpClient');
+const httpClient = require('../../../utils/httpClient');
 const config = require('../../../config');
 const { createLogger } = require('../../../services/monitor/logger');
 
@@ -42,7 +42,7 @@ module.exports = {
       const auth = Buffer.from(`${username}:${key}`).toString('base64');
       const perPage = Math.min(limit, 20);
 
-      const response = await get(`${BASE_URL}/datasets/list`, {
+      const response = await httpClient.get(`${BASE_URL}/datasets/list`, {
         params: {
           search: keyword,
           page,

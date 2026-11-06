@@ -46,8 +46,8 @@ async function handle(msg, args) {
   }
 
   try {
-    const contact = await msg.getContact();
-    const userId = contact.id._serialized;
+    const contact = typeof msg.getContact === 'function' ? await msg.getContact().catch(() => null) : null;
+    const userId = contact?.id?._serialized || msg.author || msg.from;
 
     await msg.reply(`⚙️ Menjalankan workflow \`${workflowId}\` untuk *"${query}"*...`);
     const result = await workflowEngine.runWorkflow(workflowId, {

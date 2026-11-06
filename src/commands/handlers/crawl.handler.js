@@ -82,6 +82,20 @@ async function handle(msg, args) {
         .map((p, i) => `${i + 1}. *${truncate(p.title || p.url, 50)}* (${p.wordCount} kata)\n   🔗 ${p.url}`)
         .join('\n');
 
+      // Store in contextMemory so user can ask follow-up questions about multi-page crawl
+      try {
+        const contextMemory = require('../../bot/nlp/contextMemory');
+        const contact = typeof msg.getContact === 'function' ? await msg.getContact().catch(() => null) : null;
+        const userId = contact?.id?._serialized || msg.author || msg.from;
+        if (userId && siteResult.combinedMarkdown) {
+          contextMemory.store(userId, {
+            lastUrl: url,
+            lastDocumentTitle: 'Multi-Page Crawl: ' + url,
+            lastDocumentText: siteResult.combinedMarkdown.slice(0, 4000),
+          });
+        }
+      } catch { /* ignore context store error */ }
+
       await msg.reply(
         [
           `🕷️ *Multi-Page Crawl Selesai (${siteResult.pagesVisited} halaman)*`,

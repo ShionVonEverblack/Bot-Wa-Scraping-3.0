@@ -45,7 +45,7 @@ const MAX_PAGES = config.puppeteer?.maxPages || 5;
  * @returns {string|null}
  */
 function detectBravePath() {
-  if (config.puppeteer.braveExecutable) {
+  if (config.puppeteer?.braveExecutable) {
     return config.puppeteer.braveExecutable;
   }
 
@@ -91,7 +91,7 @@ async function getBrowser() {
   log.info('Launching Brave browser...');
   browserInstance = await puppeteer.launch({
     executablePath,
-    headless: config.puppeteer.headless,
+    headless: config.puppeteer?.headless ?? true,
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',

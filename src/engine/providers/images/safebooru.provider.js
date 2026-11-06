@@ -5,7 +5,7 @@
  * @module engine/providers/images/safebooru
  */
 
-const { get } = require('../../../utils/httpClient');
+const httpClient = require('../../../utils/httpClient');
 const { createLogger } = require('../../../services/monitor/logger');
 
 const log = createLogger('provider:safebooru');
@@ -36,7 +36,7 @@ module.exports = {
       // Convert spaces to underscores for Danbooru-style tags
       const tags = keyword.trim().replace(/\s+/g, '_');
 
-      const response = await get('https://safebooru.org/index.php', {
+      const response = await httpClient.get('https://safebooru.org/index.php', {
         params: {
           page: 'dapi',
           s: 'post',

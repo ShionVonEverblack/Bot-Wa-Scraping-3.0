@@ -5,7 +5,7 @@
  * @module engine/providers/papers/semanticscholar
  */
 
-const { get } = require('../../../utils/httpClient');
+const httpClient = require('../../../utils/httpClient');
 const config = require('../../../config');
 const { createLogger } = require('../../../services/monitor/logger');
 
@@ -43,7 +43,7 @@ module.exports = {
 
       const fields = 'title,url,abstract,authors,year,citationCount,openAccessPdf,externalIds,venue,publicationTypes,isOpenAccess';
 
-      const response = await get(`${BASE_URL}/paper/search`, {
+      const response = await httpClient.get(`${BASE_URL}/paper/search`, {
         params: {
           query: keyword,
           limit: queryLimit,

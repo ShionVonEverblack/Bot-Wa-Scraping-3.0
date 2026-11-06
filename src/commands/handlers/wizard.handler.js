@@ -7,8 +7,8 @@
  */
 
 async function handle(msg, args, client) {
-  const contact = await msg.getContact();
-  const userId = contact.id._serialized;
+  const contact = typeof msg.getContact === 'function' ? await msg.getContact().catch(() => null) : null;
+  const userId = contact?.id?._serialized || msg.author || msg.from;
 
   const { startWizard } = require('../../bot/wizard/wizardHandler');
   await startWizard(msg, userId);

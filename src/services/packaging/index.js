@@ -26,7 +26,7 @@ async function createZipFromJob(job, formats = ['json', 'csv', 'txt']) {
   const dir = config.dirs.outputs;
   await ensureDir(dir);
 
-  const keyword = (job.request.keyword || 'results').replace(/[^a-zA-Z0-9]/g, '_').slice(0, 30);
+  const keyword = (job?.request?.keyword || 'results').replace(/[^a-zA-Z0-9]/g, '_').slice(0, 30);
   const zipName = `${keyword}_${Date.now()}.zip`;
   const zipPath = path.join(dir, zipName);
 
@@ -49,17 +49,19 @@ async function createZipFromJob(job, formats = ['json', 'csv', 'txt']) {
     (async () => {
       try {
         const meta = {
-          keyword: job.request.keyword,
-          providerUsed: job.result?.providerUsed,
+          keyword: job?.request?.keyword || 'results',
+          providerUsed: job?.result?.providerUsed,
         };
+
+        const items = job?.result?.items || [];
 
         for (const format of formats) {
           try {
             if (format === 'excel') {
-              const filepath = await require('../formatters').toExcel(job.result.items, meta);
+              const filepath = await require('../formatters').toExcel(items, meta);
               archive.file(filepath, { name: path.basename(filepath) });
             } else {
-              const { filepath } = await formatAndSave(job.result.items, format, meta);
+              const { filepath } = await formatAndSave(items, format, meta);
               archive.file(filepath, { name: path.basename(filepath) });
             }
           } catch (err) {
@@ -69,13 +71,13 @@ async function createZipFromJob(job, formats = ['json', 'csv', 'txt']) {
 
         // Add job metadata as README
         const readme = [
-          `Job: ${job.jobId}`,
-          `Keyword: ${job.request.keyword}`,
-          `Type: ${job.request.scrapeType}`,
-          `Provider: ${job.result?.providerUsed || '-'}`,
-          `Items: ${job.result?.itemCount || 0}`,
-          `Created: ${job.createdAt}`,
-          `Completed: ${job.completedAt}`,
+          `Job: ${job?.jobId || '-'}`,
+          `Keyword: ${job?.request?.keyword || '-'}`,
+          `Type: ${job?.request?.scrapeType || '-'}`,
+          `Provider: ${job?.result?.providerUsed || '-'}`,
+          `Items: ${job?.result?.itemCount || 0}`,
+          `Created: ${job?.createdAt || '-'}`,
+          `Completed: ${job?.completedAt || '-'}`,
         ].join('\n');
 
         archive.append(readme, { name: 'README.txt' });

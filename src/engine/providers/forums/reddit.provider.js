@@ -5,7 +5,7 @@
  * @module engine/providers/forums/reddit
  */
 
-const { get } = require('../../../utils/httpClient');
+const httpClient = require('../../../utils/httpClient');
 const { createLogger } = require('../../../services/monitor/logger');
 
 const log = createLogger('provider:reddit');
@@ -29,7 +29,7 @@ module.exports = {
    */
   async scrape({ keyword, limit = 10, safeMode = true, signal, cursor }) {
     try {
-      const response = await get('https://www.reddit.com/search.json', {
+      const response = await httpClient.get('https://www.reddit.com/search.json', {
         params: {
           q: keyword,
           limit: Math.min(limit, 100), // Reddit allows up to 100

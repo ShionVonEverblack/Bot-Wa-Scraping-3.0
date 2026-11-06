@@ -22,7 +22,14 @@ const currentLevel = LEVELS[config.logLevel] ?? LEVELS.info;
 function formatEntry(level, module, message, data) {
   const ts = new Date().toISOString();
   const prefix = `[${ts}] [${level.toUpperCase().padEnd(5)}] [${module}]`;
-  const dataStr = data ? ` ${JSON.stringify(data)}` : '';
+  let dataStr = '';
+  if (data !== undefined && data !== null) {
+    try {
+      dataStr = ` ${JSON.stringify(data)}`;
+    } catch {
+      dataStr = ' [Circular or Non-Serializable Data]';
+    }
+  }
   return `${prefix} ${message}${dataStr}`;
 }
 

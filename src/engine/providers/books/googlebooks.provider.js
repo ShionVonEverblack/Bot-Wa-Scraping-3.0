@@ -5,7 +5,7 @@
  * @module engine/providers/books/googlebooks
  */
 
-const { get } = require('../../../utils/httpClient');
+const httpClient = require('../../../utils/httpClient');
 const { createLogger } = require('../../../services/monitor/logger');
 
 const log = createLogger('provider:googlebooks');
@@ -30,7 +30,7 @@ module.exports = {
   async scrape({ keyword, limit = 10, safeMode = true, signal, page = 1 }) {
     try {
       const startIndex = (page - 1) * limit;
-      const response = await get('https://www.googleapis.com/books/v1/volumes', {
+      const response = await httpClient.get('https://www.googleapis.com/books/v1/volumes', {
         params: {
           q: keyword,
           maxResults: Math.min(limit, 40), // Google Books API limit is 40

@@ -44,9 +44,10 @@ async function handle(msg, args, client) {
   const provider = parsed.provider || parsed.p || null;
   const useAI = parsed.ai === true || parsed.ai === 'true';
 
-  const chat = await msg.getChat();
-  const contact = await msg.getContact();
-  const userId = contact.id._serialized;
+  const chat = typeof msg.getChat === 'function' ? await msg.getChat().catch(() => null) : null;
+  const contact = typeof msg.getContact === 'function' ? await msg.getContact().catch(() => null) : null;
+  const userId = contact?.id?._serialized || msg.author || msg.from;
+  const chatId = chat?.id?._serialized || msg.from || userId;
 
   const typeEmoji = { images: '🖼️', papers: '📄', datasets: '📊', forums: '💬', books: '📚', general: '🔍' };
 
@@ -62,7 +63,7 @@ async function handle(msg, args, client) {
         format,
         provider,
         useAI,
-        chatId: chat.id._serialized,
+        chatId,
         userId,
       },
       client,

@@ -5,7 +5,7 @@
  * @module engine/providers/images/unsplash
  */
 
-const { get } = require('../../../utils/httpClient');
+const httpClient = require('../../../utils/httpClient');
 const config = require('../../../config');
 const { createLogger } = require('../../../services/monitor/logger');
 
@@ -38,7 +38,7 @@ module.exports = {
     try {
       const perPage = Math.min(limit, 30);
       const url = 'https://api.unsplash.com/search/photos';
-      const response = await get(url, {
+      const response = await httpClient.get(url, {
         params: {
           query: keyword,
           page,

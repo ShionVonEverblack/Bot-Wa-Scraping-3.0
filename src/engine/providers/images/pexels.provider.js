@@ -5,7 +5,7 @@
  * @module engine/providers/images/pexels
  */
 
-const { get } = require('../../../utils/httpClient');
+const httpClient = require('../../../utils/httpClient');
 const config = require('../../../config');
 const { createLogger } = require('../../../services/monitor/logger');
 
@@ -37,7 +37,7 @@ module.exports = {
 
     try {
       const perPage = Math.min(limit, 80);
-      const response = await get('https://api.pexels.com/v1/search', {
+      const response = await httpClient.get('https://api.pexels.com/v1/search', {
         params: { query: keyword, page, per_page: perPage },
         headers: { 'Authorization': apiKey },
         signal,

@@ -11,6 +11,7 @@ const config = require('../config');
 const { ensureDir, writeJson, readJson } = require('../utils/fsUtil');
 const { createLogger } = require('../services/monitor/logger');
 const { createJobObject, JOB_STATUS } = require('./jobSchemas');
+const { generateJobId } = require('../utils/id');
 
 const log = createLogger('jobs:store');
 
@@ -47,6 +48,9 @@ async function persistJob(job) {
  */
 async function createJob(request) {
   const job = createJobObject(request);
+  while (jobs.has(job.jobId)) {
+    job.jobId = generateJobId();
+  }
   jobs.set(job.jobId, job);
   await persistJob(job);
   return job;
@@ -93,8 +97,8 @@ async function updateJob(jobId, updates = {}) {
   const job = await getJob(jobId);
   if (!job) return null;
 
-  // Terminal state guard: a CANCELLED job must not be overwritten by COMPLETED or RUNNING
-  if (job.status === JOB_STATUS.CANCELLED && updates.status && updates.status !== JOB_STATUS.CANCELLED) {
+  // Terminal state guard: CANCELLED and FAILED jobs must not be overwritten by late callbacks
+  if ((job.status === JOB_STATUS.CANCELLED || job.status === JOB_STATUS.FAILED) && updates.status && updates.status !== job.status) {
     return job;
   }
 
